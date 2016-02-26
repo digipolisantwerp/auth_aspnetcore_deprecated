@@ -1,0 +1,34 @@
+{
+	"version": "1.0.0",
+	"description": "Authorization toolbox.",
+	"authors": [ "Digipolis.be" ],
+	"tags": [ "" ],
+	"projectUrl": "",
+	"licenseUrl": "",
+  "dependencies": {
+    "Microsoft.AspNet.Authorization": "1.0.0-rc1-final",
+    "Microsoft.Extensions.Caching.Memory": "1.0.0-rc1-final",
+    "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-final",
+    "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
+    "System.Net.Http": "4.0.1-rc2-23818",
+    "System.Net.Http.Formatting.Extension": "5.2.3.0",
+    "Microsoft.Extensions.Configuration": "1.0.0-rc1-final",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final"
+  },
+	"frameworks": {
+		"dnx451": { }
+	},
+	"exclude": [
+		"node_modules",
+		"bower_components",
+		".grunt"
+	],
+    "publishExclude": [
+        "node_modules",
+		"bower_components",
+		"**.xproj",
+		"**.user",
+		"**.vspscc"
+    ]
+}
+

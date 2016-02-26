@@ -1,0 +1,58 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+
+        <h4>Don't forget to launch the SamplePDP using dnx web!</h4>
+        <div>
+            <label>Enter your Jwt token here:</label>
+            <textarea id="jwttoken"></textarea>
+        </div>
+        <button onclick="executeCustomBasedRequest('GET')">Read ticket</button>
+        <button onclick="executeCustomBasedRequest('POST')">Create ticket</button>
+        <button onclick="executeCustomBasedRequest('PUT')">Update ticket</button>
+        <button onclick="executeCustomBasedRequest('DELETE')">Delete ticket</button>
+        <button onclick="getActionWithCustomPermission()">GetActionWithCustomPermission</button>
+        <div id="response"></div>
+    </div>
+
+</div>
+
+<script>
+
+    executeCustomBasedRequest = function (httpMethod) {
+
+        var jwt = $("#jwttoken").val();
+
+        $.ajax("http://localhost:51020/api/Tickets", {
+            method: httpMethod,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + jwt);
+            }
+        }).then(function (response) {
+            $('#response').html(response);
+        }).fail(function(error){
+            $('#response').html(error.statusText);
+        });
+    };
+
+    getActionWithCustomPermission = function () {
+
+        var jwt = $("#jwttoken").val();
+
+        $.ajax("http://localhost:51020/api/Tickets/getActionWithCustomPermission", {
+            method: 'GET',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + jwt);
+            }
+        }).then(function (response) {
+            $('#response').html(response);
+        }).fail(function (error) {
+            $('#response').html(error.statusText);
+        });
+    };
+
+</script>

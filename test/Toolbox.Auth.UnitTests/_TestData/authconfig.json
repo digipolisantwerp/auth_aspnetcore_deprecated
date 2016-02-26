@@ -1,0 +1,10 @@
+﻿{
+  "Auth": {
+    "ApplicationName": "TestApp",
+    "PdpUrl": "http://test.pedp.be/",
+    "PdpCacheDuration": 60,
+    "JwtAudienceUrl":  "http://pdp.identity.be",
+    "jwtValidIssuer": "issuer",
+    "JwtUserIdClaimType": "sub"
+  }
+}

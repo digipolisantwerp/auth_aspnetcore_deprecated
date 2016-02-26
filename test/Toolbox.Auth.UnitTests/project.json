@@ -1,0 +1,22 @@
+{
+	"version": "1.0.0-*",
+	"description": "Auth Toolbox unit tests.",
+	"authors": [ "Digipolis.be" ],
+	"tags": [ "" ],
+	"projectUrl": "",
+	"licenseUrl": "",
+  "dependencies": {
+    "Toolbox.Auth": "",
+    "Moq": "4.2.1510.2205",
+    "xunit": "2.1.0-rc1-build3168",
+    "xunit.runner.dnx": "2.1.0-rc1-build204",
+    "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-final",
+    "Microsoft.Extensions.Caching.Memory": "1.0.0-rc1-final"
+  },
+    "commands": {
+        "test": "xunit.runner.dnx"
+    },
+	"frameworks": {
+		"dnx451": { }
+	}
+}
