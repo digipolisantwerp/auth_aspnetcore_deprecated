@@ -22,4 +22,9 @@
         public const string UPDATE = "update";
         public const string DELETE = "delete";
     }
+
+    internal static class Claims
+    {
+        public const string PermissionsType = "permissions";
+    };
 }

@@ -21,12 +21,12 @@
         /// <summary>
         /// The audience url used to validate the Jwt token.
         /// </summary>
-        public string JwtAudienceUrl { get; set; }
+        public string JwtAudience { get; set; }
         
         /// <summary>
         /// The issuer string used to validate the Jwt token.
         /// </summary>
-        public string jwtValidIssuer { get; set; }
+        public string JwtIssuer { get; set; }
 
         /// <summary>
         /// The claim type used to store the user id in the Jwt token.

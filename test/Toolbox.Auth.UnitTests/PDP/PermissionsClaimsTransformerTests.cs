@@ -1,0 +1,97 @@
+﻿using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Toolbox.Auth.Options;
+using Toolbox.Auth.PDP;
+using Xunit;
+
+namespace Toolbox.Auth.UnitTests.PDP
+{
+    public class PermissionsClaimsTransformerTests
+    {
+        private readonly AuthOptions _authOptions;
+        private readonly string _userId = "user123";
+
+        public PermissionsClaimsTransformerTests()
+        {
+            _authOptions = new AuthOptions
+            {
+                ApplicationName = "APP"
+            };
+        }
+
+        [Fact]
+        public void ThrowsExceptionIfOptionsWrapperIsNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => new PermissionsClaimsTransformer(null, Mock.Of<IPolicyDescisionProvider>()));
+        }
+
+        [Fact]
+        public void ThrowsExceptionIfOptionsAreNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => new PermissionsClaimsTransformer(Options.Create<AuthOptions>(null), 
+                Mock.Of<IPolicyDescisionProvider>()));
+        }
+
+        [Fact]
+        public void ThrowsExceptionIfPolicyDescisionProviderIsNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => new PermissionsClaimsTransformer(Options.Create(new AuthOptions()),
+               null));
+        }
+
+        [Fact]
+        public async Task SetClaims()
+        {
+            var pepResponse = new PepResponse
+            {
+                applicationId = _authOptions.ApplicationName,
+                userId = _userId,
+                permissions = new List<String>(new string[] { "permission1", "permission2" })
+            };
+
+            var pdpProvider = CreateMockPolicyDescisionProvider(pepResponse);
+
+            var transformer = new PermissionsClaimsTransformer(Options.Create(_authOptions), pdpProvider);
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.Name, _userId) }, "Bearer"));
+            var result = await transformer.TransformAsync(user);
+
+            Assert.NotNull(result);
+            Assert.True(result.HasClaim(Claims.PermissionsType, "permission1"));
+            Assert.True(result.HasClaim(Claims.PermissionsType, "permission2"));
+        }
+
+        [Fact]
+        public async Task DoesNothingWhenNoPermissionsReturned()
+        {
+            var pepResponse = new PepResponse
+            {
+                applicationId = _authOptions.ApplicationName,
+                userId = _userId,
+                //permissions = new List<String>(new string[] { "permission1", "permission2" })
+            };
+
+            var pdpProvider = CreateMockPolicyDescisionProvider(pepResponse);
+
+            var transformer = new PermissionsClaimsTransformer(Options.Create(_authOptions), pdpProvider);
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.Name, _userId) }, "Bearer"));
+            var result = await transformer.TransformAsync(user);
+
+            Assert.NotNull(result);
+            Assert.False(result.HasClaim(c => c.Type == Claims.PermissionsType));
+        }
+
+        private IPolicyDescisionProvider CreateMockPolicyDescisionProvider(PepResponse pepResponse)
+        {
+            var mockPdpProvider = new Mock<IPolicyDescisionProvider>();
+            mockPdpProvider.Setup(p => p.GetPermissions(_userId, _authOptions.ApplicationName))
+                .ReturnsAsync(pepResponse);
+
+            return mockPdpProvider.Object;
+        }
+            
+}
+}

@@ -11,22 +11,6 @@ namespace Toolbox.Auth.Authorization
 {
     public class AllowedResourceResolver : IAllowedResourceResolver
     {
-        //public IEnumerable<string> ResolveAllowedResources(AuthorizationContext context)
-        //{
-        //    var authContext = context.Resource as Microsoft.AspNet.Mvc.Filters.AuthorizationContext;
-        //    var actionDescriptor = authContext.ActionDescriptor as ControllerActionDescriptor;
-
-        //    var allowedResources = ResolveFromAttributeProperties(actionDescriptor);
-
-        //    if (!allowedResources.Any())
-        //    {
-        //        var resolvedResource = ResolveFromConvention(authContext, actionDescriptor);
-        //        allowedResources.Add(resolvedResource);
-        //    }
-
-        //    return allowedResources;
-        //}
-
         public IEnumerable<string> ResolveFromAttributeProperties(AuthorizationContext context)
         {
             var authContext = context.Resource as Microsoft.AspNet.Mvc.Filters.AuthorizationContext;

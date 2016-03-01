@@ -1,16 +1,23 @@
 ﻿using Microsoft.AspNet.Authorization;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net.Http;
 using Toolbox.Auth.Authorization;
 using Toolbox.Auth.Options;
 using Toolbox.Auth.PDP;
-using Microsoft.Extensions.Configuration;
 
 namespace Toolbox.Auth
 {
     public static class ServiceCollectionExtensions
     {
+
+        /// <summary>
+        /// Adds Authentication and Authorization services to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="setupAction">A setup action to customize the AuthOptions options.</param>
+        /// <returns></returns>
         public static IServiceCollection AddAuth(this IServiceCollection services, Action<AuthOptions> setupAction)
         {
             if (setupAction == null) throw new ArgumentNullException(nameof(setupAction), $"{nameof(setupAction)} cannot be null.");
@@ -23,6 +30,12 @@ namespace Toolbox.Auth
             return services;
         }
 
+        /// <summary>
+        /// Adds Authentication and Authorization services to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="setupAction">A setup action to customize the AuthOptionsJsonFile options.</param>
+        /// <returns></returns>
         public static IServiceCollection AddAuth(this IServiceCollection services, Action<AuthOptionsJsonFile> setupAction)
         {
             if (setupAction == null) throw new ArgumentNullException(nameof(setupAction), $"{nameof(setupAction)} cannot be null.");
@@ -59,6 +72,7 @@ namespace Toolbox.Auth
             services.AddSingleton<IAuthorizationHandler, CustomBasedAuthorizationHandler>();
             services.AddSingleton<IAllowedResourceResolver, AllowedResourceResolver>();
             services.AddSingleton<HttpMessageHandler, HttpClientHandler>();
+            services.AddSingleton<PermissionsClaimsTransformer>();
         }
     }
 }

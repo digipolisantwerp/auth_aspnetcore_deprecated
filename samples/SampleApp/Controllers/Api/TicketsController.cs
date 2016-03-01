@@ -10,14 +10,13 @@ using Toolbox.Auth.Authorization;
 namespace SampleApp.Controllers.Api
 {
     [Route("api/[Controller]")]
-    //[AuthorizePermissions] // => apply convention based permissions on all controller actions
+    //[AuthorizeByConvention] // => apply convention based permissions on all controller actions
     public class TicketsController
     {
-        //The purpose of this controller is to demonstrate the use of the "AuthorizePermissions" attribute using the default conventions
-        //To demonstrate that the conventions are based on the http request method and not the action method name, the method names are appended with "Action"
+        //The purpose of this controller is to demonstrate the use of the "AuthorizeByConvention" and "AuthorizeWith" attributes.
 
-        [HttpGet]
-        [AuthorizeByConvention]  // => a user with permission 'read-tickets' will be allowed
+        [HttpGet]                   // => The Http method determines the first part of the permission, not the action method name!
+        [AuthorizeByConvention]     // => a user with permission 'read-tickets' will be allowed
         //or [Authorize(Policy = Policies.ConventionBased)]
         public IActionResult GetAction()
         {
@@ -26,8 +25,8 @@ namespace SampleApp.Controllers.Api
 
         [HttpGet]
         [Route("getactionwithcustompermission")]
-        [AuthorizeByConvention]
-        [AuthorizeWith(CustomPermission = "permission-125")]  // => a user with permission 'permission-125' will be allowed
+        [AuthorizeByConvention]                               
+        [AuthorizeWith(CustomPermission = "permission-125")]  // => Two attributes placed : only a user with permission 'read-tickets' AND 'permission-125' will be allowed
         public IActionResult GetActionWithCustomPermission()
         {
             return new ObjectResult("Authorized: response from tickets GetActionWithCustomPermission()");

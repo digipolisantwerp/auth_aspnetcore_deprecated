@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.OptionsModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Toolbox.Auth.Options;
@@ -25,7 +23,7 @@ namespace Toolbox.Auth.PDP
 
             _cache = cache;
             _options = options.Value;
-            _client = new HttpClient(handler, true);
+            _client = new HttpClient(handler);
 
             if (_options.PdpCacheDuration > 0)
             {
@@ -34,27 +32,7 @@ namespace Toolbox.Auth.PDP
             }
         }
 
-        public async Task<bool> HasAccessAsync(string user, string application, string resource)
-        {
-            var pepResponse = await GetPermissions(user, application);
-
-            if (pepResponse != null && pepResponse.permissions.Any(r => r.ToLower() == resource.ToLower()))
-                return true;
-
-            return false;
-        }
-
-        public async Task<bool> HasAccessAsync(string user, string application, IEnumerable<string> resources)
-        {
-            foreach (var resource in resources)
-            {
-                if (await HasAccessAsync(user, application, resource))
-                    return true;
-            }
-            return false;
-        }
-
-        private async Task<PepResponse> GetPermissions(string user, string application)
+        public async Task<PepResponse> GetPermissions(string user, string application)
         {
             PepResponse pepResponse = null;
 

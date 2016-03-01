@@ -100,6 +100,24 @@ namespace Toolbox.Auth.UnitTests.Startup
         }
 
         [Fact]
+        private void PermissionsClaimsTransformerIsRegistratedAsSingleton()
+        {
+            var services = new ServiceCollection();
+            services.AddAuth(options =>
+            {
+                options.FileName = @"_TestData/authconfig.json";
+                options.Section = "Auth";
+            });
+
+            var registrations = services.Where(sd => sd.ServiceType == typeof(PermissionsClaimsTransformer) &&
+                                                     sd.ImplementationType == typeof(PermissionsClaimsTransformer))
+                                        .ToArray();
+
+            Assert.Equal(1, registrations.Count());
+            Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
+        }
+
+        [Fact]
         private void AuthOptionsAreRegistratedAsSingleton()
         {
             var services = new ServiceCollection();
@@ -108,7 +126,7 @@ namespace Toolbox.Auth.UnitTests.Startup
                 options.ApplicationName = "AppName";
                 options.PdpUrl = "pdpUrl";
                 options.PdpCacheDuration = 25;
-                options.JwtAudienceUrl = "jwtAudienceUrl";
+                options.JwtAudience = "jwtAudienceUrl";
                 options.JwtUserIdClaimType = "sub";
             });
 
@@ -127,7 +145,7 @@ namespace Toolbox.Auth.UnitTests.Startup
             Assert.Equal("AppName", authOptions.ApplicationName);
             Assert.Equal("pdpUrl", authOptions.PdpUrl);
             Assert.Equal(25, authOptions.PdpCacheDuration);
-            Assert.Equal("jwtAudienceUrl", authOptions.JwtAudienceUrl);
+            Assert.Equal("jwtAudienceUrl", authOptions.JwtAudience);
             Assert.Equal("sub", authOptions.JwtUserIdClaimType);
         }
 

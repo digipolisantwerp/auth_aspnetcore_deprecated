@@ -9,6 +9,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Toolbox.Auth;
 using Microsoft.AspNet.Authentication.JwtBearer;
+using Toolbox.Auth.PDP;
+using Microsoft.Extensions.OptionsModel;
+using Toolbox.Auth.Options;
+using System.Security.Claims;
 
 namespace SampleApp
 {
@@ -37,8 +41,8 @@ namespace SampleApp
                 options.ApplicationName = "SampleApp";
                 options.PdpUrl = "http://localhost:5000";
                 options.PdpCacheDuration = 0; //No caching for the samples
-                options.JwtAudienceUrl = "";
-                options.jwtValidIssuer = "SampleIDP";
+                options.JwtAudience = "";
+                options.JwtIssuer = "SampleIDP";
             });
 
             services.AddMvc();
@@ -61,25 +65,8 @@ namespace SampleApp
 
             app.UseIISPlatformHandler();
 
-            var options = new JwtBearerOptions
-            {
-                AutomaticAuthenticate = true,
-            };
-
-            options.TokenValidationParameters.ValidateActor = false;
-
-            options.TokenValidationParameters.ValidateAudience = false;
-            options.TokenValidationParameters.ValidAudience = "www.example.com";
-
-            options.TokenValidationParameters.ValidateIssuer = false;
-            options.TokenValidationParameters.ValidIssuer = "Online JWT Builder";
-
-            options.TokenValidationParameters.ValidateLifetime = false;
-
-            options.TokenValidationParameters.ValidateIssuerSigningKey = false;
-            options.TokenValidationParameters.ValidateSignature = false;
-
-            app.UseJwtBearerAuthentication(options);
+            //Add authorization middleware
+            app.UseAuth();
 
             app.UseStaticFiles();
 

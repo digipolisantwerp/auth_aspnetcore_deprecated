@@ -30,10 +30,10 @@ namespace SamplePDP
                 context.Response.Headers.Add("Content-Type", "application/json");
 
                 //User has convention based permissions
-                await context.Response.WriteAsync("{'applicationid':'SampleAPP','userid':'user123','permissions':['read-tickets','create-tickets','update-tickets','delete-tickets', 'permission-125']}");
+                //await context.Response.WriteAsync("{'applicationid':'SampleAPP','userid':'user123','permissions':['read-tickets','create-tickets','update-tickets','delete-tickets']}");
 
                 //User has a non convention based permission
-                //await context.Response.WriteAsync("{'applicationid':'SampleAPP','userid':'user123','permissions':['permission-125']}");
+                await context.Response.WriteAsync("{'applicationid':'SampleAPP','userid':'user123','permissions':['read-tickets','create-tickets','update-tickets','delete-tickets', 'permission-125']}");
 
                 //User has no permissions
                 //await context.Response.WriteAsync("{'applicationid':'SampleAPP','userid':'user123','permissions':[]}");
