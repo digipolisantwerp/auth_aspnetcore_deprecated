@@ -41,16 +41,18 @@ namespace Toolbox.Auth
 
             jwtBearerOptions.TokenValidationParameters.ValidateActor = false;
 
-            jwtBearerOptions.TokenValidationParameters.ValidateAudience = false;
+            jwtBearerOptions.TokenValidationParameters.ValidateAudience = true;
             jwtBearerOptions.TokenValidationParameters.ValidAudience = authOptions.JwtAudience;
 
-            jwtBearerOptions.TokenValidationParameters.ValidateIssuer = false;
+            jwtBearerOptions.TokenValidationParameters.ValidateIssuer = true;
             jwtBearerOptions.TokenValidationParameters.ValidIssuer = authOptions.JwtIssuer;
 
             jwtBearerOptions.TokenValidationParameters.ValidateLifetime = false;
 
             jwtBearerOptions.TokenValidationParameters.ValidateIssuerSigningKey = false;
             jwtBearerOptions.TokenValidationParameters.ValidateSignature = false;
+
+            jwtBearerOptions.TokenValidationParameters.NameClaimType = authOptions.JwtUserIdClaimType;
 
             return jwtBearerOptions;
         }

@@ -41,8 +41,8 @@ namespace SampleApp
                 options.ApplicationName = "SampleApp";
                 options.PdpUrl = "http://localhost:5000";
                 options.PdpCacheDuration = 0; //No caching for the samples
-                options.JwtAudience = "";
-                options.JwtIssuer = "SampleIDP";
+                options.JwtAudience = "SampleApp";
+                options.JwtIssuer = "Online JWT Builder";
             });
 
             services.AddMvc();
