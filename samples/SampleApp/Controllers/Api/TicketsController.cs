@@ -26,8 +26,8 @@ namespace SampleApp.Controllers.Api
         [HttpGet]
         [Route("getactionwithcustompermission")]
         [AuthorizeByConvention]                               
-        [AuthorizeWith(CustomPermission = "permission-125")]  // => Two attributes placed : only a user with permission 'read-tickets' AND 'permission-125' will be allowed
-        //[AuthorizeWith(CustomPermissions = new[] { "permission-125", "permission-321" })] // or at least one of the provided permissions
+        [AuthorizeWith(Permission = "permission-125")]  // => Two attributes placed : only a user with permission 'read-tickets' AND 'permission-125' will be allowed
+        //[AuthorizeWith(Permissions = new[] { "permission-125", "permission-321" })] // or at least one of the provided permissions
         public IActionResult GetActionWithCustomPermission()
         {
             return new ObjectResult("Authorized: response from tickets GetActionWithCustomPermission()");

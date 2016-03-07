@@ -167,20 +167,20 @@ For example when the **AuthorizeByConvention** attribute is placed on an http GE
 
 When placing the **AuthorizeWith** attribute on a controller or action it is possible to define the permission the user must have to allow access to the resource.
 
-The attribute property **CustomPermission** has to be set in order to define the permission.
+The attribute property **Permission** has to be set in order to define the permission.
 ``` csharp
     [HttpGet]
-    [AuthorizeWith(CustomPermission = "permission-125")]  // => a user with permission 'permission-125' will be allowed
+    [AuthorizeWith(Permission = "permission-125")]  // => a user with permission 'permission-125' will be allowed
     public IActionResult GetActionWithCustomPermission()
     {
         ...
     }
 ```
 
-Alternatively a list of permissions can be set on the **CustomPermissions** property to define multiple permissions where at least one must match.
+Alternatively a list of permissions can be set on the **Permissions** property to define multiple permissions where at least one must match.
 ``` csharp
     [HttpPost]
-    [AuthorizeWith(CustomPermissions = new[] { "permission-125", "permission-321" })]  // => a user with permission 'permission-125' or 'permission-321' will be allowed
+    [AuthorizeWith(Permissions = new[] { "permission-125", "permission-321" })]  // => a user with permission 'permission-125' or 'permission-321' will be allowed
     public IActionResult PostAction()
     {
         ...

@@ -19,7 +19,7 @@ namespace Toolbox.Auth.UnitTests.Authorization.AllowedResourceResolverTests
         [Fact]
         public void ResolveSingleCustomPermission()
         {
-            var resolver = new AllowedResourceResolver();
+            var resolver = new RequiredPermissionsResolver();
             var context = CreateAuthorizationContext(typeof(CustomBasedResourceController), "GetSingle");
 
             var allowedResources = resolver.ResolveFromAttributeProperties(context);
@@ -30,7 +30,7 @@ namespace Toolbox.Auth.UnitTests.Authorization.AllowedResourceResolverTests
         [Fact]
         public void ResolveMultipleCustomPermission()
         {
-            var resolver = new AllowedResourceResolver();
+            var resolver = new RequiredPermissionsResolver();
             var context = CreateAuthorizationContext(typeof(CustomBasedResourceController), "GetMultiple");
 
             var allowedResources = resolver.ResolveFromAttributeProperties(context);

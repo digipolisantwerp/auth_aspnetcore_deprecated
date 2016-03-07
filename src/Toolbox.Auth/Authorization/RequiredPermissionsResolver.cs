@@ -9,35 +9,35 @@ using static Toolbox.Auth.Operations;
 
 namespace Toolbox.Auth.Authorization
 {
-    public class AllowedResourceResolver : IAllowedResourceResolver
+    public class RequiredPermissionsResolver : IRequiredPermissionsResolver
     {
         public IEnumerable<string> ResolveFromAttributeProperties(AuthorizationContext context)
         {
             var authContext = context.Resource as Microsoft.AspNet.Mvc.Filters.AuthorizationContext;
             var actionDescriptor = authContext.ActionDescriptor as ControllerActionDescriptor;
 
-            var allowedResources = new List<string>();
+            var requiredPermissions = new List<string>();
             var authorizePermissionsAttribute = actionDescriptor.MethodInfo.CustomAttributes
                                                                 .FirstOrDefault(a => a.AttributeType == typeof(AuthorizeWithAttribute));
 
             if (authorizePermissionsAttribute != null)
             {
-                var customPermissions = authorizePermissionsAttribute.NamedArguments
-                    .FirstOrDefault(a => a.MemberName == nameof(AuthorizeWithAttribute.CustomPermissions))
+                var permissions = authorizePermissionsAttribute.NamedArguments
+                    .FirstOrDefault(a => a.MemberName == nameof(AuthorizeWithAttribute.Permissions))
                     .TypedValue.Value as ReadOnlyCollection<CustomAttributeTypedArgument>;
 
-                if (customPermissions != null)
-                    customPermissions.ToList<CustomAttributeTypedArgument>().ForEach(p => allowedResources.Add(p.Value.ToString()));
+                if (permissions != null)
+                    permissions.ToList<CustomAttributeTypedArgument>().ForEach(p => requiredPermissions.Add(p.Value.ToString()));
 
-                var customPermission = authorizePermissionsAttribute.NamedArguments
-                    .FirstOrDefault(a => a.MemberName == nameof(AuthorizeWithAttribute.CustomPermission))
+                var permission = authorizePermissionsAttribute.NamedArguments
+                    .FirstOrDefault(a => a.MemberName == nameof(AuthorizeWithAttribute.Permission))
                     .TypedValue.Value?.ToString();
 
-                if (customPermission != null)
-                    allowedResources.Add(customPermission);
+                if (permission != null)
+                    requiredPermissions.Add(permission);
             }
 
-            return allowedResources;
+            return requiredPermissions;
         }
 
         public string ResolveFromConvention(AuthorizationContext context)

@@ -9,7 +9,7 @@ namespace Toolbox.Auth.Authorization
         {
         }
 
-        public string CustomPermission { get; set; }
-        public string[] CustomPermissions { get; set; }
+        public string Permission { get; set; }
+        public string[] Permissions { get; set; }
     }
 }

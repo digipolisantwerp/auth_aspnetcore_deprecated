@@ -9,13 +9,13 @@ namespace Toolbox.Auth.UnitTests
 {
     public class MockMessageHandler : HttpMessageHandler
     {
-        private readonly PepResponse _pepResponseContent;
+        private readonly PdpResponse _pdpResponseContent;
         private readonly HttpStatusCode _responseCode;
 
-        public MockMessageHandler(HttpStatusCode responseCode, PepResponse responseContent)
+        public MockMessageHandler(HttpStatusCode responseCode, PdpResponse responseContent)
         {
             _responseCode = responseCode;
-            _pepResponseContent = responseContent;
+            _pdpResponseContent = responseContent;
         }
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -26,7 +26,7 @@ namespace Toolbox.Auth.UnitTests
             {
                 case HttpStatusCode.OK:
                     response = new HttpResponseMessage(HttpStatusCode.OK);
-                    response.Content = new ObjectContent<PepResponse>(_pepResponseContent, new JsonMediaTypeFormatter());
+                    response.Content = new ObjectContent<PdpResponse>(_pdpResponseContent, new JsonMediaTypeFormatter());
                     break;
                 case HttpStatusCode.NotFound:
                     response = new HttpResponseMessage(HttpStatusCode.NotFound);

@@ -46,14 +46,14 @@ namespace Toolbox.Auth.UnitTests.PDP
         [Fact]
         public async Task SetClaims()
         {
-            var pepResponse = new PepResponse
+            var pdpResponse = new PdpResponse
             {
                 applicationId = _authOptions.ApplicationName,
                 userId = _userId,
                 permissions = new List<String>(new string[] { "permission1", "permission2" })
             };
 
-            var pdpProvider = CreateMockPolicyDescisionProvider(pepResponse);
+            var pdpProvider = CreateMockPolicyDescisionProvider(pdpResponse);
 
             var transformer = new PermissionsClaimsTransformer(Options.Create(_authOptions), pdpProvider);
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.Name, _userId) }, "Bearer"));
@@ -67,14 +67,14 @@ namespace Toolbox.Auth.UnitTests.PDP
         [Fact]
         public async Task DoesNothingWhenNoPermissionsReturned()
         {
-            var pepResponse = new PepResponse
+            var pdpResponse = new PdpResponse
             {
                 applicationId = _authOptions.ApplicationName,
                 userId = _userId,
                 //permissions = new List<String>(new string[] { "permission1", "permission2" })
             };
 
-            var pdpProvider = CreateMockPolicyDescisionProvider(pepResponse);
+            var pdpProvider = CreateMockPolicyDescisionProvider(pdpResponse);
 
             var transformer = new PermissionsClaimsTransformer(Options.Create(_authOptions), pdpProvider);
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.Name, _userId) }, "Bearer"));
@@ -84,11 +84,11 @@ namespace Toolbox.Auth.UnitTests.PDP
             Assert.False(result.HasClaim(c => c.Type == Claims.PermissionsType));
         }
 
-        private IPolicyDescisionProvider CreateMockPolicyDescisionProvider(PepResponse pepResponse)
+        private IPolicyDescisionProvider CreateMockPolicyDescisionProvider(PdpResponse pdpResponse)
         {
             var mockPdpProvider = new Mock<IPolicyDescisionProvider>();
             mockPdpProvider.Setup(p => p.GetPermissions(_userId, _authOptions.ApplicationName))
-                .ReturnsAsync(pepResponse);
+                .ReturnsAsync(pdpResponse);
 
             return mockPdpProvider.Object;
         }

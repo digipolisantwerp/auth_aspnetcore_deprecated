@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Toolbox.Auth.Authorization
 {
-    public interface IAllowedResourceResolver
+    public interface IRequiredPermissionsResolver
     {
         IEnumerable<string> ResolveFromAttributeProperties(AuthorizationContext context);
         string ResolveFromConvention(AuthorizationContext context);

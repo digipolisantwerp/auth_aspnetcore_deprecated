@@ -34,5 +34,15 @@
         /// </summary>
         public string JwtUserIdClaimType { get; set; } = AuthOptionsDefaults.JwtUserIdClaimType;
 
+        /// <summary>
+        /// The url to the Jwt signing key endpoint.
+        /// </summary>
+        public string JwtSigningKeyProviderUrl { get; set; }
+
+        /// <summary>
+        /// The duration in minutes the Jwt signing key is cached.
+        /// </summary>
+        public int JwtSigningKeyCacheDuration { get; set; } = 10;
+
     }
 }

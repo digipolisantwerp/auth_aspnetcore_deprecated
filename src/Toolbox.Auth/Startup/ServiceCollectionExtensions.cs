@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net.Http;
 using Toolbox.Auth.Authorization;
+using Toolbox.Auth.Jwt;
 using Toolbox.Auth.Options;
 using Toolbox.Auth.PDP;
 
@@ -70,9 +71,11 @@ namespace Toolbox.Auth
             services.AddSingleton<IPolicyDescisionProvider, PolicyDescisionProvider>();
             services.AddSingleton<IAuthorizationHandler, ConventionBasedAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, CustomBasedAuthorizationHandler>();
-            services.AddSingleton<IAllowedResourceResolver, AllowedResourceResolver>();
-            services.AddSingleton<HttpMessageHandler, HttpClientHandler>();
+            services.AddSingleton<IRequiredPermissionsResolver, RequiredPermissionsResolver>();
             services.AddSingleton<PermissionsClaimsTransformer>();
+            services.AddSingleton<IJwtSigningKeyProvider, JwtSigningKeyProvider>();
+            services.AddSingleton<HttpMessageHandler, HttpClientHandler>();
+            services.AddSingleton<IJwtTokenSignatureValidator, JwtTokenSignatureValidator>();
         }
     }
 }

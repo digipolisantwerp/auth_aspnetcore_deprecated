@@ -2,7 +2,7 @@
 
 namespace Toolbox.Auth.PDP
 {
-    public class PepResponse
+    public class PdpResponse
     {
         public string applicationId { get; set; }
         public string userId { get; set; }

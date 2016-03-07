@@ -68,9 +68,9 @@ namespace Toolbox.Auth.UnitTests.Authorization
             Assert.False(context.HasSucceeded);
         }
 
-        private IAllowedResourceResolver CreateMockAllowedResourceResolver(string allowedResource)
+        private IRequiredPermissionsResolver CreateMockAllowedResourceResolver(string allowedResource)
         {
-            var mockAllowedResourceResolver = new Mock<IAllowedResourceResolver>();
+            var mockAllowedResourceResolver = new Mock<IRequiredPermissionsResolver>();
             mockAllowedResourceResolver.Setup(r => r.ResolveFromConvention(It.IsAny<AuthorizationContext>()))
                 .Returns(allowedResource);
 

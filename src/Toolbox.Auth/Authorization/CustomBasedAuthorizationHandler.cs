@@ -6,9 +6,9 @@ namespace Toolbox.Auth.Authorization
 {
     internal class CustomBasedAuthorizationHandler : AuthorizationHandler<CustomBasedRequirement>
     {
-        private readonly IAllowedResourceResolver _resourceResolver;
+        private readonly IRequiredPermissionsResolver _resourceResolver;
 
-        public CustomBasedAuthorizationHandler(IAllowedResourceResolver resourceResolver)
+        public CustomBasedAuthorizationHandler(IRequiredPermissionsResolver resourceResolver)
         {
             if (resourceResolver == null) throw new ArgumentNullException(nameof(resourceResolver), $"{nameof(resourceResolver)} cannot be null");
 
@@ -17,9 +17,9 @@ namespace Toolbox.Auth.Authorization
 
         protected override void Handle(AuthorizationContext context, CustomBasedRequirement requirement)
         {
-            var allowedResources = _resourceResolver.ResolveFromAttributeProperties(context);
+            var requiredPermissions = _resourceResolver.ResolveFromAttributeProperties(context);
 
-            if (allowedResources.Any(r => context.User.HasClaim(Claims.PermissionsType, r)))
+            if (requiredPermissions.Any(r => context.User.HasClaim(Claims.PermissionsType, r)))
                 context.Succeed(requirement);
         }
     }

@@ -5,9 +5,9 @@ namespace Toolbox.Auth.Authorization
 {
     internal class ConventionBasedAuthorizationHandler : AuthorizationHandler<ConventionBasedRequirement>
     {
-        private readonly IAllowedResourceResolver _resourceResolver;
+        private readonly IRequiredPermissionsResolver _resourceResolver;
 
-        public ConventionBasedAuthorizationHandler(IAllowedResourceResolver resourceResolver)
+        public ConventionBasedAuthorizationHandler(IRequiredPermissionsResolver resourceResolver)
         {
             if (resourceResolver == null) throw new ArgumentNullException(nameof(resourceResolver), $"{nameof(resourceResolver)} cannot be null");
 
@@ -16,9 +16,9 @@ namespace Toolbox.Auth.Authorization
 
         protected override void Handle(AuthorizationContext context, ConventionBasedRequirement requirement)
         {
-            var allowedResource = _resourceResolver.ResolveFromConvention(context);
+            var requiredPermission = _resourceResolver.ResolveFromConvention(context);
 
-            if (context.User.HasClaim(Claims.PermissionsType, allowedResource))
+            if (context.User.HasClaim(Claims.PermissionsType, requiredPermission))
                 context.Succeed(requirement);
         }
     }

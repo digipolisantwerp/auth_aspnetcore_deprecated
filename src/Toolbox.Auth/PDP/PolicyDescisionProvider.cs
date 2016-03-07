@@ -24,6 +24,7 @@ namespace Toolbox.Auth.PDP
             _cache = cache;
             _options = options.Value;
             _client = new HttpClient(handler);
+            _client.DefaultRequestHeaders.Add("apikey", "");
 
             if (_options.PdpCacheDuration > 0)
             {
@@ -32,41 +33,35 @@ namespace Toolbox.Auth.PDP
             }
         }
 
-        public async Task<PepResponse> GetPermissions(string user, string application)
+        public async Task<PdpResponse> GetPermissions(string user, string application)
         {
-            PepResponse pepResponse = null;
+            PdpResponse pdpResponse = null;
 
             if (cachingEnabled)
             {
-                pepResponse = _cache.Get<PepResponse>(BuildCacheKey(user));
+                pdpResponse = _cache.Get<PdpResponse>(BuildCacheKey(user));
 
-                if (pepResponse != null)
-                    return pepResponse;
+                if (pdpResponse != null)
+                    return pdpResponse;
             }
 
             var response = await _client.GetAsync($"{_options.PdpUrl}/{application}/users/{user}/permissions");
             if (response.IsSuccessStatusCode)
             {
-                pepResponse = await response.Content.ReadAsAsync<PepResponse>();
+                pdpResponse = await response.Content.ReadAsAsync<PdpResponse>();
             }
             else
             {
                 //ToDo log the error
             }
 
-            if (cachingEnabled && pepResponse != null)
-                _cache.Set(BuildCacheKey(user), pepResponse, _cacheOptions);
+            if (cachingEnabled && pdpResponse != null)
+                _cache.Set(BuildCacheKey(user), pdpResponse, _cacheOptions);
 
-            return pepResponse;
+            return pdpResponse;
         }
 
-        private string BuildCacheKey(string user) => $"pdp-{user}";
-
-        public void Dispose()
-        {
-            _client.Dispose();
-            _cache.Dispose();
-        }
+        private string BuildCacheKey(string user) => $"pdpResponse-{user}";
     }
 }
 

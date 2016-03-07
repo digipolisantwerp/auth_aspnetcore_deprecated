@@ -5,14 +5,14 @@ namespace Toolbox.Auth.UnitTests.Authorization.AllowedResourceResolverTests
 {
     public class CustomBasedResourceController : Controller
     {
-        [AuthorizeWith(CustomPermission = "custompermission")]
+        [AuthorizeWith(Permission = "custompermission")]
         [HttpGet]
         public IActionResult GetSingle()
         {
             return new ObjectResult("result");
         }
 
-        [AuthorizeWith(CustomPermissions = new[] { "permission1", "permission2" })]
+        [AuthorizeWith(Permissions = new[] { "permission1", "permission2" })]
         [HttpGet]
         public IActionResult GetMultiple()
         {

@@ -60,18 +60,18 @@ namespace Toolbox.Auth.UnitTests.PDP
         {
             var mockedCache = CreateEmptyMockedCache();
 
-            var pepResponse = new PepResponse
+            var pdpResponse = new PdpResponse
             {
                 applicationId = _application,
                 userId = _userId,
                 permissions = new List<String>(new string[] { requestedresource })
             };
 
-            var mockHandler = new MockMessageHandler(HttpStatusCode.OK, pepResponse);
+            var mockHandler =new MockMessageHandler(HttpStatusCode.OK, pdpResponse);
             var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler);
             var result = await provider.GetPermissions(_userId, _application);
 
-            Assert.Equal(pepResponse, result);
+            Assert.Equal(pdpResponse, result);
         }
 
         [Fact]
@@ -79,7 +79,7 @@ namespace Toolbox.Auth.UnitTests.PDP
         {
             var mockedCache = CreateEmptyMockedCache();
 
-            var pepResponse = new PepResponse
+            var pdpResponse = new PdpResponse
             {
                 applicationId = _application,
                 userId = _userId,
@@ -94,22 +94,22 @@ namespace Toolbox.Auth.UnitTests.PDP
         }
 
         [Fact]
-        public async Task GetCachedPepResponse()
+        public async Task GetCachedPdpResponse()
         {
-            var pepResponse = new PepResponse
+            var pdpResponse = new PdpResponse
             {
                 applicationId = _application,
                 userId = _userId,
                 permissions = new List<String>(new string[] { requestedresource })
             };
 
-            var mockedCache = CreateMockedCache(BuildCacheKey(_userId), pepResponse);
+            var mockedCache = CreateMockedCache(BuildCacheKey(_userId), pdpResponse);
             var mockHandler = new MockMessageHandler(HttpStatusCode.NotFound, null);
             var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler);
 
             var result = await provider.GetPermissions(_userId, _application);
 
-            Assert.Equal(pepResponse, result);
+            Assert.Equal(pdpResponse, result);
         }
 
         [Fact]
@@ -117,19 +117,19 @@ namespace Toolbox.Auth.UnitTests.PDP
         {
             var mockedCache = CreateEmptyMockedCache();
 
-            var pepResponse = new PepResponse
+            var pdpResponse = new PdpResponse
             {
                 applicationId = _application,
                 userId = _userId,
                 permissions = new List<String>(new string[] { requestedresource })
             };
 
-            var mockHandler = new MockMessageHandler(HttpStatusCode.OK, pepResponse);
+            var mockHandler = new MockMessageHandler(HttpStatusCode.OK, pdpResponse);
             var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler);
 
             var result = await provider.GetPermissions(_userId, _application);
 
-            mockedCache.Verify(m => m.Set((object)BuildCacheKey(_userId), (object)pepResponse, It.IsAny<MemoryCacheEntryOptions>()), Times.Once);
+            mockedCache.Verify(m => m.Set((object)BuildCacheKey(_userId), (object)pdpResponse, It.IsAny<MemoryCacheEntryOptions>()), Times.Once);
         }
 
         [Fact]
@@ -142,14 +142,14 @@ namespace Toolbox.Auth.UnitTests.PDP
                 .Callback<object, object, MemoryCacheEntryOptions>((a, b, options) => memoryCacheEntryOptions = options);
 
 
-            var pepResponse = new PepResponse
+            var pdpResponse = new PdpResponse
             {
                 applicationId = _application,
                 userId = _userId,
                 permissions = new List<String>(new string[] { requestedresource })
             };
 
-            var mockHandler = new MockMessageHandler(HttpStatusCode.OK, pepResponse);
+            var mockHandler = new MockMessageHandler(HttpStatusCode.OK, pdpResponse);
             var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler);
 
             var result = await provider.GetPermissions(_userId, _application);
@@ -157,17 +157,17 @@ namespace Toolbox.Auth.UnitTests.PDP
             Assert.True(memoryCacheEntryOptions.AbsoluteExpirationRelativeToNow.Value == new TimeSpan(0, _options.PdpCacheDuration, 0));
         }
 
-        private string BuildCacheKey(string userId) => $"pdp-{userId}";
+        private string BuildCacheKey(string userId) => $"pdpResponse-{userId}";
 
         private Mock<IMemoryCache> CreateEmptyMockedCache()
         {
             return CreateMockedCache("", null);
         }
 
-        private Mock<IMemoryCache> CreateMockedCache(string key, PepResponse pepResponse)
+        private Mock<IMemoryCache> CreateMockedCache(string key, PdpResponse pdpResponse)
         {
             var mockCache = new Mock<IMemoryCache>();
-            var cachedObject = pepResponse as object;
+            var cachedObject = pdpResponse as object;
 
             mockCache.Setup(c => c.TryGetValue("", out cachedObject))
                 .Returns(false);

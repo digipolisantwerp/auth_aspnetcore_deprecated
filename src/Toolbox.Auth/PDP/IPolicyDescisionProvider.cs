@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 namespace Toolbox.Auth.PDP
 {
-    public interface IPolicyDescisionProvider : IDisposable
+    public interface IPolicyDescisionProvider
     {
-        Task<PepResponse> GetPermissions(string user, string application);
+        Task<PdpResponse> GetPermissions(string user, string application);
     }
 }

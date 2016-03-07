@@ -19,7 +19,7 @@ namespace Toolbox.Auth.UnitTests.Authorization.AllowedResourceResolverTests
         [Fact]
         public void GetRequest()
         {
-            var resolver = new AllowedResourceResolver();
+            var resolver = new RequiredPermissionsResolver();
             var context = CreateAuthorizationContext(typeof(ConventionsBasedResourceController), "Get", HttpMethod.Get);
 
             var allowedResources = resolver.ResolveFromConvention(context);
@@ -30,7 +30,7 @@ namespace Toolbox.Auth.UnitTests.Authorization.AllowedResourceResolverTests
         [Fact]
         public void PostRequest()
         {
-            var resolver = new AllowedResourceResolver();
+            var resolver = new RequiredPermissionsResolver();
             var context = CreateAuthorizationContext(typeof(ConventionsBasedResourceController), "Post", HttpMethod.Post);
 
             var allowedResources = resolver.ResolveFromConvention(context);
@@ -41,7 +41,7 @@ namespace Toolbox.Auth.UnitTests.Authorization.AllowedResourceResolverTests
         [Fact]
         public void PutRequest()
         {
-            var resolver = new AllowedResourceResolver();
+            var resolver = new RequiredPermissionsResolver();
             var context = CreateAuthorizationContext(typeof(ConventionsBasedResourceController), "Put", HttpMethod.Put);
 
             var allowedResources = resolver.ResolveFromConvention(context);
@@ -63,7 +63,7 @@ namespace Toolbox.Auth.UnitTests.Authorization.AllowedResourceResolverTests
         [Fact]
         public void DeleteRequest()
         {
-            var resolver = new AllowedResourceResolver();
+            var resolver = new RequiredPermissionsResolver();
             var context = CreateAuthorizationContext(typeof(ConventionsBasedResourceController), "Delete", HttpMethod.Delete);
 
             var allowedResources = resolver.ResolveFromConvention(context);

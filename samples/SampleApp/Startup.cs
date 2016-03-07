@@ -39,10 +39,12 @@ namespace SampleApp
             services.AddAuth(options =>
             {
                 options.ApplicationName = "SampleApp";
-                options.PdpUrl = "http://localhost:5000";
+                options.PdpUrl = "http://localhost:5000/pdp";
                 options.PdpCacheDuration = 0; //No caching for the samples
                 options.JwtAudience = "SampleApp";
                 options.JwtIssuer = "Online JWT Builder";
+                options.JwtSigningKeyProviderUrl = "http://localhost:5000/signingKey";
+                options.JwtSigningKeyCacheDuration = 0;
             });
 
             services.AddMvc();
