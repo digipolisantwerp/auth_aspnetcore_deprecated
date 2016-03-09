@@ -10,7 +10,7 @@ using System.Security.Claims;
 using Toolbox.Auth.Authorization;
 using Xunit;
 
-namespace Toolbox.Auth.UnitTests.Authorization.AllowedResourceResolverTests
+namespace Toolbox.Auth.UnitTests.Authorization.ResolverTests
 {
     public class ConventionBasedTests
     {
@@ -22,9 +22,9 @@ namespace Toolbox.Auth.UnitTests.Authorization.AllowedResourceResolverTests
             var resolver = new RequiredPermissionsResolver();
             var context = CreateAuthorizationContext(typeof(ConventionsBasedResourceController), "Get", HttpMethod.Get);
 
-            var allowedResources = resolver.ResolveFromConvention(context);
+            var requiredPermissions = resolver.ResolveFromConvention(context);
 
-            Assert.Contains("read-conventionsbasedresource", allowedResources);
+            Assert.Contains("read-conventionsbasedresource", requiredPermissions);
         }
 
         [Fact]
@@ -33,9 +33,9 @@ namespace Toolbox.Auth.UnitTests.Authorization.AllowedResourceResolverTests
             var resolver = new RequiredPermissionsResolver();
             var context = CreateAuthorizationContext(typeof(ConventionsBasedResourceController), "Post", HttpMethod.Post);
 
-            var allowedResources = resolver.ResolveFromConvention(context);
+            var requiredPermissions = resolver.ResolveFromConvention(context);
 
-            Assert.Contains("create-conventionsbasedresource", allowedResources);
+            Assert.Contains("create-conventionsbasedresource", requiredPermissions);
         }
 
         [Fact]
@@ -44,21 +44,10 @@ namespace Toolbox.Auth.UnitTests.Authorization.AllowedResourceResolverTests
             var resolver = new RequiredPermissionsResolver();
             var context = CreateAuthorizationContext(typeof(ConventionsBasedResourceController), "Put", HttpMethod.Put);
 
-            var allowedResources = resolver.ResolveFromConvention(context);
+            var requiredPermissions = resolver.ResolveFromConvention(context);
 
-            Assert.Contains("update-conventionsbasedresource", allowedResources);
+            Assert.Contains("update-conventionsbasedresource", requiredPermissions);
         }
-
-        //[Fact]
-        //public void PatchRequest()
-        //{
-        //    var resolver = new AllowedResourceResolver();
-        //    var context = CreateAuthorizationContext(typeof(ResourceController), "Patch", HttpMethod.Pat);
-
-        //    var allowedResources = resolver.ResolveFromConvention(context);
-
-        //    Assert.Contains("write-conventionsbasedresource", allowedResources);
-        //}
 
         [Fact]
         public void DeleteRequest()
@@ -66,9 +55,9 @@ namespace Toolbox.Auth.UnitTests.Authorization.AllowedResourceResolverTests
             var resolver = new RequiredPermissionsResolver();
             var context = CreateAuthorizationContext(typeof(ConventionsBasedResourceController), "Delete", HttpMethod.Delete);
 
-            var allowedResources = resolver.ResolveFromConvention(context);
+            var requiredPermissions = resolver.ResolveFromConvention(context);
 
-            Assert.Contains("delete-conventionsbasedresource", allowedResources);
+            Assert.Contains("delete-conventionsbasedresource", requiredPermissions);
         }
 
         private AuthorizationContext CreateAuthorizationContext(Type controllerType, string action, HttpMethod httpMethod)

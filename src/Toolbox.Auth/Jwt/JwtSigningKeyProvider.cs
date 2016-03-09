@@ -40,11 +40,11 @@ namespace Toolbox.Auth.Jwt
             if (_cachingEnabled)
             {
                 //Preload singing key on startup
-                ResolveSigningKey(true).Wait();
+                ResolveSigningKeyAsync(true).Wait();
             }
         }
 
-        public async Task<SecurityKey> ResolveSigningKey(bool allowCached)
+        public async Task<SecurityKey> ResolveSigningKeyAsync(bool allowCached)
         {
             SecurityKey signingKey = null;
 
@@ -61,8 +61,6 @@ namespace Toolbox.Auth.Jwt
             {
                 var keyString = await response.Content.ReadAsStringAsync();
                 byte[] keyBytes = Encoding.UTF8.GetBytes(keyString);
-                //if (keyBytes.Length < 64)
-                //    Array.Resize(ref keyBytes, 64);
                 signingKey = new SymmetricSecurityKey(keyBytes);
             }
             else

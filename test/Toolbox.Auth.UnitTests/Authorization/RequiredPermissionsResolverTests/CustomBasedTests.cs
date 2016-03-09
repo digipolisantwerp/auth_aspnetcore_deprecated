@@ -10,7 +10,7 @@ using System.Security.Claims;
 using Toolbox.Auth.Authorization;
 using Xunit;
 
-namespace Toolbox.Auth.UnitTests.Authorization.AllowedResourceResolverTests
+namespace Toolbox.Auth.UnitTests.Authorization.ResolverTests
 {
     public class CustomBasedTests
     {
@@ -22,9 +22,9 @@ namespace Toolbox.Auth.UnitTests.Authorization.AllowedResourceResolverTests
             var resolver = new RequiredPermissionsResolver();
             var context = CreateAuthorizationContext(typeof(CustomBasedResourceController), "GetSingle");
 
-            var allowedResources = resolver.ResolveFromAttributeProperties(context);
+            var requiredPermissions = resolver.ResolveFromAttributeProperties(context);
 
-            Assert.Contains("custompermission", allowedResources);
+            Assert.Contains("custompermission", requiredPermissions);
         }
 
         [Fact]
@@ -33,11 +33,11 @@ namespace Toolbox.Auth.UnitTests.Authorization.AllowedResourceResolverTests
             var resolver = new RequiredPermissionsResolver();
             var context = CreateAuthorizationContext(typeof(CustomBasedResourceController), "GetMultiple");
 
-            var allowedResources = resolver.ResolveFromAttributeProperties(context);
+            var requiredPermissions = resolver.ResolveFromAttributeProperties(context);
 
-            Assert.Equal(2, allowedResources.Count());
-            Assert.Contains("permission1", allowedResources);
-            Assert.Contains("permission2", allowedResources);
+            Assert.Equal(2, requiredPermissions.Count());
+            Assert.Contains("permission1", requiredPermissions);
+            Assert.Contains("permission2", requiredPermissions);
         }
 
         private AuthorizationContext CreateAuthorizationContext(Type controllerType, string action)

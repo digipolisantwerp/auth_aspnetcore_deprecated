@@ -30,7 +30,7 @@ namespace Toolbox.Auth.Jwt
 
             if (isValid == false)
             {
-                validationParameters.IssuerSigningKey = _jwtSigningKeyProvider.ResolveSigningKey(false).Result;
+                validationParameters.IssuerSigningKey = _jwtSigningKeyProvider.ResolveSigningKeyAsync(false).Result;
 
                 isValid = ValidateToken(jwt, validationParameters.IssuerSigningKey);
 

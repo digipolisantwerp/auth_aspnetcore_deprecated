@@ -5,6 +5,6 @@ namespace Toolbox.Auth.Jwt
 {
     public interface IJwtSigningKeyProvider
     {
-        Task<SecurityKey> ResolveSigningKey(bool allowCached);
+        Task<SecurityKey> ResolveSigningKeyAsync(bool allowCached);
     }
 }

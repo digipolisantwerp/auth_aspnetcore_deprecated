@@ -24,6 +24,9 @@ namespace Toolbox.Auth.PDP
 
         public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
         {
+            if (principal?.Identity?.Name == null)
+                return principal;
+
             var pdpResponse = await _pdpProvider.GetPermissions(principal.Identity.Name, _authOptions.ApplicationName);
 
             pdpResponse?.permissions?.ToList().ForEach(permission =>

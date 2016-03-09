@@ -2,26 +2,46 @@
     ViewData["Title"] = "Home Page";
 }
 
-
 <div class="row">
     <div class="col-md-12">
 
         <h4>Don't forget to launch the SamplePDP using dnx web!</h4>
-        <div>
+        <div class="form-group">
             <label>Enter your Jwt token here:</label>
-            <textarea id="jwttoken"></textarea>
+            <button class="btn btn-default btn-xs" onclick="clearToken()">Clear</button>
+            <textarea class="form-control" id="jwttoken" rows="10"></textarea>
         </div>
-        <button onclick="executeCustomBasedRequest('GET')">Read ticket</button>
-        <button onclick="executeCustomBasedRequest('POST')">Create ticket</button>
-        <button onclick="executeCustomBasedRequest('PUT')">Update ticket</button>
-        <button onclick="executeCustomBasedRequest('DELETE')">Delete ticket</button>
-        <button onclick="getActionWithCustomPermission()">GetActionWithCustomPermission</button>
-        <div id="response"></div>
+
+        <div class="form-group">
+            <button class="btn btn-default" onclick="executeCustomBasedRequest('GET')">Read ticket</button>
+            <button class="btn btn-default" onclick="executeCustomBasedRequest('POST')">Create ticket</button>
+            <button class="btn btn-default" onclick="executeCustomBasedRequest('PUT')">Update ticket</button>
+            <button class="btn btn-default" onclick="executeCustomBasedRequest('DELETE')">Delete ticket</button>
+            <button class="btn btn-default" onclick="getActionWithCustomPermission()">GetActionWithCustomPermission</button>
+            <button class="btn btn-default" onclick="getActionWithAnonymousPermission()">Anonymous</button>
+        </div>
+
+        <div class="form-group">
+            <label>Result:</label>
+            <p class="bg-success" id="response"></p>
+            <p class="bg-danger" id="error"></p>
+        </div>
     </div>
 
 </div>
 
+@section scripts{
 <script>
+
+    setResponse = function (response) {
+        $('#response').html(response);
+        $('#error').html('');
+    };
+
+    setError = function (error) {
+        $('#error').html(error.statusText);
+        $('#response').html('');
+    };
 
     executeCustomBasedRequest = function (httpMethod) {
 
@@ -32,11 +52,8 @@
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("Authorization", "Bearer " + jwt);
             }
-        }).then(function (response) {
-            $('#response').html(response);
-        }).fail(function(error){
-            $('#response').html(error.statusText);
-        });
+        }).then(function (response) { setResponse(response); })
+          .fail(function (error) { setError(error); });
     };
 
     getActionWithCustomPermission = function () {
@@ -48,11 +65,26 @@
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("Authorization", "Bearer " + jwt);
             }
-        }).then(function (response) {
-            $('#response').html(response);
-        }).fail(function (error) {
-            $('#response').html(error.statusText);
-        });
+        }).then(function (response) { setResponse(response); })
+          .fail(function (error) { setError(error); });
+    };
+
+    getActionWithAnonymousPermission = function () {
+
+        var jwt = $("#jwttoken").val();
+
+        $.ajax("http://localhost:51020/api/Tickets/AllowAnonymous", {
+            method: 'GET',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + jwt);
+            }
+        }).then(function (response) { setResponse(response); })
+          .fail(function (error) { setError(error); });
+    };
+
+    clearToken = function () {
+        $("#jwttoken").val('');
     };
 
 </script>
+}

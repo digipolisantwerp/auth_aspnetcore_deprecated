@@ -13,6 +13,8 @@ using Toolbox.Auth.PDP;
 using Microsoft.Extensions.OptionsModel;
 using Toolbox.Auth.Options;
 using System.Security.Claims;
+using Microsoft.AspNet.Diagnostics;
+using System.IdentityModel.Tokens;
 
 namespace SampleApp
 {
@@ -25,6 +27,9 @@ namespace SampleApp
                 .AddJsonFile("appsettings.json")
                 .AddEnvironmentVariables();
 
+            //Recomended way to store your secrets / passwords
+            //builder.AddUserSecrets();
+
             Configuration = builder.Build();
         }
 
@@ -33,8 +38,6 @@ namespace SampleApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication();
-
             //Add authorization services with options
             services.AddAuth(options =>
             {
@@ -45,6 +48,8 @@ namespace SampleApp
                 options.JwtIssuer = "Online JWT Builder";
                 options.JwtSigningKeyProviderUrl = "http://localhost:5000/signingKey";
                 options.JwtSigningKeyCacheDuration = 0;
+                options.jwtSigningKeyProviderApikey = "yoursupersecretkey";         //don't do this in your code! just for demo purpose
+                //options.jwtSigningKeyProviderApikey = Configuration["apikey"];    //using the recomended way (see https://docs.asp.net/en/latest/security/app-secrets.html)
             });
 
             services.AddMvc();
@@ -64,7 +69,7 @@ namespace SampleApp
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
+            
             app.UseIISPlatformHandler();
 
             //Add authorization middleware

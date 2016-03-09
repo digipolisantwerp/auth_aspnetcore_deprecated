@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNet.Mvc;
 using Toolbox.Auth.Authorization;
 
-namespace Toolbox.Auth.UnitTests.Authorization.AllowedResourceResolverTests
+namespace Toolbox.Auth.UnitTests.Authorization.ResolverTests
 {
     public class CustomBasedResourceController : Controller
     {

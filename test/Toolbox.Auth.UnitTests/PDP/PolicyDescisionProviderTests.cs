@@ -67,7 +67,7 @@ namespace Toolbox.Auth.UnitTests.PDP
                 permissions = new List<String>(new string[] { requestedresource })
             };
 
-            var mockHandler =new MockMessageHandler(HttpStatusCode.OK, pdpResponse);
+            var mockHandler =new MockMessageHandler<PdpResponse>(HttpStatusCode.OK, pdpResponse);
             var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler);
             var result = await provider.GetPermissions(_userId, _application);
 
@@ -86,7 +86,7 @@ namespace Toolbox.Auth.UnitTests.PDP
                 permissions = new List<String>(new string[] { requestedresource })
             };
 
-            var mockHandler = new MockMessageHandler(HttpStatusCode.NotFound, null);
+            var mockHandler = new MockMessageHandler<PdpResponse>(HttpStatusCode.NotFound, null);
             var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler);
             var result = await provider.GetPermissions("otherUser", _application);
 
@@ -104,7 +104,7 @@ namespace Toolbox.Auth.UnitTests.PDP
             };
 
             var mockedCache = CreateMockedCache(BuildCacheKey(_userId), pdpResponse);
-            var mockHandler = new MockMessageHandler(HttpStatusCode.NotFound, null);
+            var mockHandler = new MockMessageHandler<PdpResponse>(HttpStatusCode.NotFound, null);
             var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler);
 
             var result = await provider.GetPermissions(_userId, _application);
@@ -124,7 +124,7 @@ namespace Toolbox.Auth.UnitTests.PDP
                 permissions = new List<String>(new string[] { requestedresource })
             };
 
-            var mockHandler = new MockMessageHandler(HttpStatusCode.OK, pdpResponse);
+            var mockHandler = new MockMessageHandler<PdpResponse>(HttpStatusCode.OK, pdpResponse);
             var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler);
 
             var result = await provider.GetPermissions(_userId, _application);
@@ -149,7 +149,7 @@ namespace Toolbox.Auth.UnitTests.PDP
                 permissions = new List<String>(new string[] { requestedresource })
             };
 
-            var mockHandler = new MockMessageHandler(HttpStatusCode.OK, pdpResponse);
+            var mockHandler = new MockMessageHandler<PdpResponse>(HttpStatusCode.OK, pdpResponse);
             var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler);
 
             var result = await provider.GetPermissions(_userId, _application);

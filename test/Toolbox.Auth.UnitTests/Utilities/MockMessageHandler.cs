@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Threading;
@@ -7,15 +8,15 @@ using Toolbox.Auth.PDP;
 
 namespace Toolbox.Auth.UnitTests
 {
-    public class MockMessageHandler : HttpMessageHandler
+    public class MockMessageHandler<T> : HttpMessageHandler
     {
-        private readonly PdpResponse _pdpResponseContent;
+        private readonly T _responseContent;
         private readonly HttpStatusCode _responseCode;
 
-        public MockMessageHandler(HttpStatusCode responseCode, PdpResponse responseContent)
+        public MockMessageHandler(HttpStatusCode responseCode, T responseContent)
         {
             _responseCode = responseCode;
-            _pdpResponseContent = responseContent;
+            _responseContent = responseContent;
         }
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -26,7 +27,16 @@ namespace Toolbox.Auth.UnitTests
             {
                 case HttpStatusCode.OK:
                     response = new HttpResponseMessage(HttpStatusCode.OK);
-                    response.Content = new ObjectContent<PdpResponse>(_pdpResponseContent, new JsonMediaTypeFormatter());
+
+                    if (typeof(T) == typeof(string))
+                    {
+                        response.Content = new StringContent(_responseContent as String);
+                    }
+                    else
+                    {
+                        response.Content = new ObjectContent<T>(_responseContent, new JsonMediaTypeFormatter());
+                    }
+
                     break;
                 case HttpStatusCode.NotFound:
                     response = new HttpResponseMessage(HttpStatusCode.NotFound);

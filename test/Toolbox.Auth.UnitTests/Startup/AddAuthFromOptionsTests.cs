@@ -24,7 +24,6 @@ namespace Toolbox.Auth.UnitTests.Startup
                     options.PdpCacheDuration = 60;
                     options.JwtAudience = "audience";
                     options.JwtIssuer = "issuer";
-                    options.JwtUserIdClaimType = "sub";
                 });
             };
         }

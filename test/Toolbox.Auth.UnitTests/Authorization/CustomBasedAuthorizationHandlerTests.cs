@@ -26,7 +26,7 @@ namespace Toolbox.Auth.UnitTests.Authorization
         }
 
         [Fact]
-        public void ThrowsExceptionIfAllowedResourceResolverIsNull()
+        public void ThrowsExceptionIfRequiredPermissionsResolverIsNull()
         {
             Assert.Throws<ArgumentNullException>(() => new CustomBasedAuthorizationHandler(null));
         }
@@ -34,13 +34,13 @@ namespace Toolbox.Auth.UnitTests.Authorization
         [Fact]
         public void SucceedWhenPermissionsGranted()
         {
-            var allowedResources = new[] { "customPermission" };
-            var mockAllowedResourceResolver = CreateMockAllowedResourceResolver(allowedResources);
-            var handler = new CustomBasedAuthorizationHandler(mockAllowedResourceResolver);
+            var requiredPermissions = new[] { "customPermission" };
+            var mockRequiredPermissionsResolver = CreateMockRequiredPermissionsResolver(requiredPermissions);
+            var handler = new CustomBasedAuthorizationHandler(mockRequiredPermissionsResolver);
 
             var permissionClaims = new List<Claim>(new Claim[]
                 {
-                    new Claim(Claims.PermissionsType, allowedResources[0])
+                    new Claim(Claims.PermissionsType, requiredPermissions[0])
                 });
 
             var context = CreateAuthorizationContext(permissionClaims);
@@ -53,9 +53,9 @@ namespace Toolbox.Auth.UnitTests.Authorization
         [Fact]
         public void NotSucceedWhenPermissionsRefused()
         {
-            var allowedResources = new[] { "customPermission" };
-            var mockAllowedResourceResolver = CreateMockAllowedResourceResolver(allowedResources);
-            var handler = new CustomBasedAuthorizationHandler(mockAllowedResourceResolver);
+            var requiredPermissions = new[] { "customPermission" };
+            var mockRequiredPermissionsResolver = CreateMockRequiredPermissionsResolver(requiredPermissions);
+            var handler = new CustomBasedAuthorizationHandler(mockRequiredPermissionsResolver);
 
             var permissionClaims = new List<Claim>(new Claim[]
                 {
@@ -69,13 +69,13 @@ namespace Toolbox.Auth.UnitTests.Authorization
             Assert.False(context.HasSucceeded);
         }
 
-        private IRequiredPermissionsResolver CreateMockAllowedResourceResolver(IEnumerable<string> allowedResources)
+        private IRequiredPermissionsResolver CreateMockRequiredPermissionsResolver(IEnumerable<string> requiredPermissions)
         {
-            var mockAllowedResourceResolver = new Mock<IRequiredPermissionsResolver>();
-            mockAllowedResourceResolver.Setup(r => r.ResolveFromAttributeProperties(It.IsAny<AuthorizationContext>()))
-                .Returns(allowedResources);
+            var mockRequiredPermissionsResolver = new Mock<IRequiredPermissionsResolver>();
+            mockRequiredPermissionsResolver.Setup(r => r.ResolveFromAttributeProperties(It.IsAny<AuthorizationContext>()))
+                .Returns(requiredPermissions);
 
-            return mockAllowedResourceResolver.Object;
+            return mockRequiredPermissionsResolver.Object;
         }
 
         private AuthorizationContext CreateAuthorizationContext(List<Claim> claims)

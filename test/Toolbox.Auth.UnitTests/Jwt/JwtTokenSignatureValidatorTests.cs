@@ -15,7 +15,6 @@ namespace Toolbox.Auth.UnitTests.Jwt
         [Fact]
         public void ValidateToken()
         {
-            //var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJhdWQiOiJTYW1wbGVBcHAiLCJleHAiOjE0NTcwMDIxNTAsImp0aSI6ImhXYXhrMG1CalZUNHc1WHdLUlI3eHciLCJpYXQiOjE0NTY5OTg1NTAsIm5iZiI6MTQ1Njk5ODQzMCwic3ViIjoiZXgwMjU1MEBkaWdhbnQuYW50d2VycGVuLmxvY2FsIiwibmFtZSI6ImV4MDI1NTAiLCJzdXJuYW1lIjoiSGFubm9uIiwiZ2l2ZW5uYW1lIjoiSmltbXkifQ.n6tih6JQuATq0opfiPunb5rHc7nmWg23eQMMfg6310w";
             var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE0NTcwMjA0NzAsImV4cCI6MTQ4ODU1NjczNywiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSJ9.ihr1jlf4-MUuB6PzmhPYZpklv27SSGyvoDX3jyOxu1M";
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("secret"));
@@ -72,7 +71,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
         {
             var mockProvider = new Mock<IJwtSigningKeyProvider>();
 
-            mockProvider.Setup(p => p.ResolveSigningKey(false))
+            mockProvider.Setup(p => p.ResolveSigningKeyAsync(false))
                 .ReturnsAsync(key);
 
             return mockProvider.Object;

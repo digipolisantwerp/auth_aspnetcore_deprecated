@@ -53,6 +53,14 @@ namespace SampleApp.Controllers.Api
         {
             return new ObjectResult("Authorized: response from tickets DeleteAction()");
         }
-               
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("allowanonymous")]
+        public IActionResult AllowAnonymous()
+        {
+            return new ObjectResult("Authorized: response from tickets AllowAnonymous()");
+        }
+
     }
 }

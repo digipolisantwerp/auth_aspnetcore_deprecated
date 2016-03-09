@@ -60,7 +60,7 @@ namespace Toolbox.Auth.UnitTests.Startup
 
 
         [Fact]
-        public void AllowedResourceResolverIsRegistratedAsSingleton()
+        public void RequiredPermissionsResolverIsRegistratedAsSingleton()
         {
             var services = new ServiceCollection();
 
@@ -129,7 +129,6 @@ namespace Toolbox.Auth.UnitTests.Startup
             Assert.Equal(60, authOptions.PdpCacheDuration);
             Assert.Equal("audience", authOptions.JwtAudience);
             Assert.Equal("issuer", authOptions.JwtIssuer);
-            Assert.Equal("sub", authOptions.JwtUserIdClaimType);
         }
 
         [Fact]

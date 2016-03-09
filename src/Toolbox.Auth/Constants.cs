@@ -27,4 +27,9 @@
     {
         public const string PermissionsType = "permissions";
     };
+
+    internal static class HeaderKeys
+    {
+        public const string Apikey = "apikey";
+    }
 }

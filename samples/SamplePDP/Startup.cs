@@ -45,8 +45,6 @@ namespace SamplePDP
                 {
                     await context.Response.WriteAsync("secret");
                 }
-
-
             });
         }
 
