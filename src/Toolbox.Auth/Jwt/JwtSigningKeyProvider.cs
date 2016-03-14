@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using System;
 using System.Collections.Generic;
@@ -20,16 +21,19 @@ namespace Toolbox.Auth.Jwt
         private readonly HttpClient _client;
         private readonly bool _cachingEnabled;
         private const string CACHE_KEY = "JwtSigningKey";
+        private readonly ILogger<JwtSigningKeyProvider> _logger;
 
-        public JwtSigningKeyProvider(IMemoryCache cache, IOptions<AuthOptions> options, HttpMessageHandler handler)
+        public JwtSigningKeyProvider(IMemoryCache cache, IOptions<AuthOptions> options, HttpMessageHandler handler, ILogger<JwtSigningKeyProvider> logger)
         {
             if (cache == null) throw new ArgumentNullException(nameof(cache), $"{nameof(cache)} cannot be null");
             if (options == null || options.Value == null) throw new ArgumentNullException(nameof(options), $"{nameof(options)} cannot be null");
             if (handler == null) throw new ArgumentNullException(nameof(handler), $"{nameof(handler)} cannot be null");
+            if (logger == null) throw new ArgumentNullException(nameof(logger), $"{nameof(logger)} cannot be null");
 
             _cache = cache;
             _options = options.Value;
             _client = new HttpClient(handler, true);
+            _logger = logger;
 
             if (_options.JwtSigningKeyCacheDuration > 0)
             {
@@ -65,8 +69,7 @@ namespace Toolbox.Auth.Jwt
             }
             else
             {
-                //ToDo log the error
-                //throw exception ??
+                _logger.LogCritical($"Impossible to retreive signing key from {_options.JwtSigningKeyProviderUrl}. Response status code: {response.StatusCode}");
             }
 
             if (_cachingEnabled)

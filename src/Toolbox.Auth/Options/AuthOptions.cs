@@ -14,7 +14,7 @@
 
         /// <summary>
         /// The duration in minutes the responses from the PDP are cached.
-        /// Set to zero to disable caching.
+        /// Set to zero to disable caching. Default = 0.
         /// </summary>
         public int PdpCacheDuration { get; set; }
 
@@ -34,15 +34,20 @@
         public string JwtSigningKeyProviderUrl { get; set; }
 
         /// <summary>
-        /// The api key for the signing key provider authentication
+        /// The api key for the signing key provider authentication.
         /// </summary>
         public string jwtSigningKeyProviderApikey { get; set; }
         
         /// <summary>
         /// The duration in minutes the Jwt signing key is cached.
+        /// Default = 10 minutes.
         /// </summary>
         public int JwtSigningKeyCacheDuration { get; set; } = 10;
 
-        
+        /// <summary>
+        /// The clock skew in minutes to apply for the Jwt expiration validation.
+        /// Default = 1 minute.
+        /// </summary>
+        public int JwtValidatorClockSkew { get; set; } = 1;
     }
 }

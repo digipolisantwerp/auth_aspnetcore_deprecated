@@ -61,22 +61,13 @@ namespace SampleApp
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
-            
+            app.UseDeveloperExceptionPage();
             app.UseIISPlatformHandler();
 
             //Add authorization middleware
             app.UseAuth();
 
             app.UseStaticFiles();
-
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

@@ -5,6 +5,11 @@
     "PdpCacheDuration": 60,
     "JwtAudience": "audience",
     "JwtIssuer": "issuer",
-    "JwtUserIdClaimType": "sub"
+    "JwtUserIdClaimType": "sub",
+    "JwtSigningKeyProviderUrl": "singingKeyProviderUrl",
+    "jwtSigningKeyProviderApikey": "singinKeyProviderApiKey",
+    "JwtSigningKeyCacheDuration": 8,
+    "JwtValidatorClockSkew": 3
+
   }
 }

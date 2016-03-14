@@ -1,16 +1,13 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Moq;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Toolbox.Auth.Jwt;
 using Toolbox.Auth.Options;
-using Toolbox.Auth.PDP;
 using Xunit;
 
 namespace Toolbox.Auth.UnitTests.Jwt
@@ -20,6 +17,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
         private string _jwtKeyProviderUrl = "http://test.com";
         private AuthOptions _options;
         private const string CACHE_KEY = "JwtSigningKey";
+        private TestLogger<JwtSigningKeyProvider> _logger = TestLogger<JwtSigningKeyProvider>.CreateLogger();
 
         public JwtSigningKeyProviderTests()
         {
@@ -31,14 +29,16 @@ namespace Toolbox.Auth.UnitTests.Jwt
         {
             Assert.Throws<ArgumentNullException>(() => new JwtSigningKeyProvider(null,
                 Options.Create(new AuthOptions()),
-                Mock.Of<HttpClientHandler>()));
+                Mock.Of<HttpClientHandler>(),
+                _logger));
         }
 
         [Fact]
         public void ThrowsExceptionIfOptionsWrapperIsNull()
         {
             Assert.Throws<ArgumentNullException>(() => new JwtSigningKeyProvider(Mock.Of<IMemoryCache>(), null,
-                Mock.Of<HttpClientHandler>()));
+                Mock.Of<HttpClientHandler>(),
+                _logger));
         }
 
         [Fact]
@@ -46,7 +46,8 @@ namespace Toolbox.Auth.UnitTests.Jwt
         {
             Assert.Throws<ArgumentNullException>(() => new JwtSigningKeyProvider(Mock.Of<IMemoryCache>(),
                 Options.Create<AuthOptions>(null),
-                Mock.Of<HttpClientHandler>()));
+                Mock.Of<HttpClientHandler>(),
+                _logger));
         }
 
         [Fact]
@@ -54,7 +55,17 @@ namespace Toolbox.Auth.UnitTests.Jwt
         {
             Assert.Throws<ArgumentNullException>(() => new JwtSigningKeyProvider(Mock.Of<IMemoryCache>(),
                 Options.Create(new AuthOptions()),
-               null));
+                null,
+                _logger));
+        }
+
+        [Fact]
+        public void ThrowsExceptionIfLoggerIsNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => new JwtSigningKeyProvider(Mock.Of<IMemoryCache>(),
+                Options.Create(new AuthOptions()),
+                Mock.Of<HttpClientHandler>(),
+                null));
         }
 
         [Fact]
@@ -64,7 +75,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
             string key = "signingkey";
 
             var mockHandler = new MockMessageHandler<string>(HttpStatusCode.OK, key);
-            var provider = new JwtSigningKeyProvider(mockedCache.Object, Options.Create(_options), mockHandler);
+            var provider = new JwtSigningKeyProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
             var securityKey = await provider.ResolveSigningKeyAsync(true) as SymmetricSecurityKey;
 
             Assert.NotNull(securityKey);
@@ -77,10 +88,11 @@ namespace Toolbox.Auth.UnitTests.Jwt
             var mockedCache = CreateEmptyMockedCache();
 
             var mockHandler = new MockMessageHandler<string>(HttpStatusCode.NotFound, null);
-            var provider = new JwtSigningKeyProvider(mockedCache.Object, Options.Create(_options), mockHandler);
+            var provider = new JwtSigningKeyProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
             var securityKey = await provider.ResolveSigningKeyAsync(true) as SymmetricSecurityKey;
 
             Assert.Null(securityKey);
+            Assert.NotEmpty(_logger.LoggedMessages);
         }
 
         [Fact]
@@ -90,7 +102,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
 
             var mockedCache = CreateMockedCache(CACHE_KEY, key);
             var mockHandler = new MockMessageHandler<string>(HttpStatusCode.NotFound, null);
-            var provider = new JwtSigningKeyProvider(mockedCache.Object, Options.Create(_options), mockHandler);
+            var provider = new JwtSigningKeyProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
             var securityKey = await provider.ResolveSigningKeyAsync(true) as SymmetricSecurityKey;
 
             Assert.NotNull(securityKey);
@@ -105,7 +117,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
 
             var mockedCache = CreateMockedCache(CACHE_KEY, cachedKey);
             var mockHandler = new MockMessageHandler<string>(HttpStatusCode.OK, nonCachedKey);
-            var provider = new JwtSigningKeyProvider(mockedCache.Object, Options.Create(_options), mockHandler);
+            var provider = new JwtSigningKeyProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
             var securityKey = await provider.ResolveSigningKeyAsync(false) as SymmetricSecurityKey;
 
             Assert.NotNull(securityKey);
@@ -119,7 +131,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
             string key = "signingkey";
 
             var mockHandler = new MockMessageHandler<string>(HttpStatusCode.OK, key);
-            var provider = new JwtSigningKeyProvider(mockedCache.Object, Options.Create(_options), mockHandler);
+            var provider = new JwtSigningKeyProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
 
             await provider.ResolveSigningKeyAsync(false);
 
@@ -139,7 +151,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
             string key = "signingkey";
 
             var mockHandler = new MockMessageHandler<string>(HttpStatusCode.OK, key);
-            var provider = new JwtSigningKeyProvider(mockedCache.Object, Options.Create(_options), mockHandler);
+            var provider = new JwtSigningKeyProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
 
             await provider.ResolveSigningKeyAsync(false);
 

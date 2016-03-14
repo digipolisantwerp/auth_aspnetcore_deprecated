@@ -1,15 +1,4 @@
-﻿using Microsoft.AspNet.Authorization;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.OptionsModel;
-using System;
-using System.Linq;
-using System.Net.Http;
-using Toolbox.Auth.Authorization;
-using Toolbox.Auth.Options;
-using Toolbox.Auth.PDP;
-using Xunit;
-
-namespace Toolbox.Auth.UnitTests.Startup
+﻿namespace Toolbox.Auth.UnitTests.Startup
 {
     public class AddAuthFromOptionsTests : AddAuthBaseTests
     {
@@ -24,6 +13,10 @@ namespace Toolbox.Auth.UnitTests.Startup
                     options.PdpCacheDuration = 60;
                     options.JwtAudience = "audience";
                     options.JwtIssuer = "issuer";
+                    options.JwtSigningKeyProviderUrl = "singingKeyProviderUrl";
+                    options.jwtSigningKeyProviderApikey = "singinKeyProviderApiKey";
+                    options.JwtSigningKeyCacheDuration = 8;
+                    options.JwtValidatorClockSkew = 3;
                 });
             };
         }

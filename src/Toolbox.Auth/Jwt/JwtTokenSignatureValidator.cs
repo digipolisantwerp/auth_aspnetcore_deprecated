@@ -26,22 +26,21 @@ namespace Toolbox.Auth.Jwt
         {
             var jwt = new JwtSecurityToken(token);
 
-            var isValid = ValidateToken(jwt, validationParameters.IssuerSigningKey);
+            var isValid = ValidateSignature(jwt, validationParameters.IssuerSigningKey);
 
             if (isValid == false)
             {
                 validationParameters.IssuerSigningKey = _jwtSigningKeyProvider.ResolveSigningKeyAsync(false).Result;
 
-                isValid = ValidateToken(jwt, validationParameters.IssuerSigningKey);
+                isValid = ValidateSignature(jwt, validationParameters.IssuerSigningKey);
 
                 if (isValid == false)
                     throw new Exception("Invalid Jwt signature.");
             }
-
             return jwt;
         }
 
-        public bool ValidateToken(JwtSecurityToken token, SecurityKey securityKey)
+        public bool ValidateSignature(JwtSecurityToken token, SecurityKey securityKey)
         {
             var encodedData = token.RawHeader + "." + token.RawPayload;
             var key = (securityKey as SymmetricSecurityKey).Key;

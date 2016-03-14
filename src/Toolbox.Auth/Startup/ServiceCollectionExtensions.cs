@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using Toolbox.Auth.Authorization;
 using Toolbox.Auth.Jwt;
@@ -57,6 +59,8 @@ namespace Toolbox.Auth
 
         private static void AddAuthorization(IServiceCollection services)
         {
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap = new Dictionary<string, string>();
+
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(Policies.ConventionBased,

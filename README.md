@@ -93,7 +93,10 @@ PdpUrl | The url for the policy decision provider (PDP). |
 PdpCacheDuration | The duration in minutes the responses from the PDP are cached. Set to zero to disable caching.| 0  
 JwtIssuer | The issuer value used to validate the Jwt token.| 
 JwtAudience | The audience url used to validate the Jwt token.| 
-JwtUserIdClaimType | The claim type used to store the user id in the Jwt token.| sub
+JwtSigningKeyProviderUrl | The url to the Jwt signing key endpoint.|
+jwtSigningKeyProviderApikey | The api key for the signing key provider authentication.|
+JwtSigningKeyCacheDuration | The duration in minutes the Jwt signing key is cached.| 10
+JwtValidatorClockSkew | The clock skew in minutes to apply for the Jwt expiration validation.| 1
 
 ## Configuration in Startup.Configure
 

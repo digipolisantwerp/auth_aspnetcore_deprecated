@@ -129,6 +129,10 @@ namespace Toolbox.Auth.UnitTests.Startup
             Assert.Equal(60, authOptions.PdpCacheDuration);
             Assert.Equal("audience", authOptions.JwtAudience);
             Assert.Equal("issuer", authOptions.JwtIssuer);
+            Assert.Equal("singingKeyProviderUrl", authOptions.JwtSigningKeyProviderUrl);
+            Assert.Equal("singinKeyProviderApiKey", authOptions.jwtSigningKeyProviderApikey);
+            Assert.Equal(8, authOptions.JwtSigningKeyCacheDuration);
+            Assert.Equal(3, authOptions.JwtValidatorClockSkew);
         }
 
         [Fact]

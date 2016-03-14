@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using System;
 using System.Net.Http;
@@ -14,17 +15,20 @@ namespace Toolbox.Auth.PDP
         private readonly MemoryCacheEntryOptions _cacheOptions;
         private readonly HttpClient _client;
         private readonly bool cachingEnabled;
+        private readonly ILogger<PolicyDescisionProvider> _logger;
 
-        public PolicyDescisionProvider(IMemoryCache cache, IOptions<AuthOptions> options, HttpMessageHandler handler)
+        public PolicyDescisionProvider(IMemoryCache cache, IOptions<AuthOptions> options, HttpMessageHandler handler, ILogger<PolicyDescisionProvider> logger)
         {
             if (cache == null) throw new ArgumentNullException(nameof(cache), $"{nameof(cache)} cannot be null");
             if (options == null || options.Value == null) throw new ArgumentNullException(nameof(options), $"{nameof(options)} cannot be null");
             if (handler == null) throw new ArgumentNullException(nameof(handler), $"{nameof(handler)} cannot be null");
+            if (logger == null) throw new ArgumentNullException(nameof(logger), $"{nameof(logger)} cannot be null");
 
             _cache = cache;
             _options = options.Value;
             _client = new HttpClient(handler);
             _client.DefaultRequestHeaders.Add(HeaderKeys.Apikey, _options.jwtSigningKeyProviderApikey);
+            _logger = logger;
 
             if (_options.PdpCacheDuration > 0)
             {
@@ -52,7 +56,7 @@ namespace Toolbox.Auth.PDP
             }
             else
             {
-                //ToDo log the error
+                _logger.LogCritical($"Impossible to retreive permissions from {_options.JwtSigningKeyProviderUrl} for {application} / {user}. Response status code: {response.StatusCode}");
             }
 
             if (cachingEnabled && pdpResponse != null)

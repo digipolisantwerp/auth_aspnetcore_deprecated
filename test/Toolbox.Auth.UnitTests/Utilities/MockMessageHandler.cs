@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Threading;
 using System.Threading.Tasks;
-using Toolbox.Auth.PDP;
 
 namespace Toolbox.Auth.UnitTests
 {

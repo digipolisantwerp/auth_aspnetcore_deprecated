@@ -18,6 +18,7 @@ namespace Toolbox.Auth.UnitTests.PDP
         private string _pdpUrl = "http://test.com";
         private string requestedresource = "requestedResource";
         private AuthOptions _options;
+        private TestLogger<PolicyDescisionProvider> _logger = TestLogger<PolicyDescisionProvider>.CreateLogger();
 
         public PolicyDescisionProviderTests()
         {
@@ -29,14 +30,16 @@ namespace Toolbox.Auth.UnitTests.PDP
         {
             Assert.Throws<ArgumentNullException>(() => new PolicyDescisionProvider(null,
                 Options.Create(new AuthOptions()),
-                Mock.Of<HttpClientHandler>()));
+                Mock.Of<HttpClientHandler>(),
+                _logger));
         }
 
         [Fact]
         public void ThrowsExceptionIfOptionsWrapperIsNull()
         {
             Assert.Throws<ArgumentNullException>(() => new PolicyDescisionProvider(Mock.Of<IMemoryCache>(), null,
-                Mock.Of<HttpClientHandler>()));
+                Mock.Of<HttpClientHandler>(),
+                _logger));
         }
 
         [Fact]
@@ -44,7 +47,8 @@ namespace Toolbox.Auth.UnitTests.PDP
         {
             Assert.Throws<ArgumentNullException>(() => new PolicyDescisionProvider(Mock.Of<IMemoryCache>(),
                 Options.Create<AuthOptions>(null),
-                Mock.Of<HttpClientHandler>()));
+                Mock.Of<HttpClientHandler>(),
+                _logger));
         }
 
         [Fact]
@@ -52,7 +56,17 @@ namespace Toolbox.Auth.UnitTests.PDP
         {
             Assert.Throws<ArgumentNullException>(() => new PolicyDescisionProvider(Mock.Of<IMemoryCache>(),
                 Options.Create(new AuthOptions()),
-               null));
+               null,
+                _logger));
+        }
+
+        [Fact]
+        public void ThrowsExceptionIfLoggerIsNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => new PolicyDescisionProvider(Mock.Of<IMemoryCache>(),
+                Options.Create(new AuthOptions()),
+                Mock.Of<HttpClientHandler>(),
+                null));
         }
 
         [Fact]
@@ -68,7 +82,7 @@ namespace Toolbox.Auth.UnitTests.PDP
             };
 
             var mockHandler =new MockMessageHandler<PdpResponse>(HttpStatusCode.OK, pdpResponse);
-            var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler);
+            var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
             var result = await provider.GetPermissions(_userId, _application);
 
             Assert.Equal(pdpResponse, result);
@@ -87,10 +101,11 @@ namespace Toolbox.Auth.UnitTests.PDP
             };
 
             var mockHandler = new MockMessageHandler<PdpResponse>(HttpStatusCode.NotFound, null);
-            var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler);
+            var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
             var result = await provider.GetPermissions("otherUser", _application);
 
             Assert.Null(result);
+            Assert.NotEmpty(_logger.LoggedMessages);
         }
 
         [Fact]
@@ -105,7 +120,7 @@ namespace Toolbox.Auth.UnitTests.PDP
 
             var mockedCache = CreateMockedCache(BuildCacheKey(_userId), pdpResponse);
             var mockHandler = new MockMessageHandler<PdpResponse>(HttpStatusCode.NotFound, null);
-            var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler);
+            var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
 
             var result = await provider.GetPermissions(_userId, _application);
 
@@ -125,7 +140,7 @@ namespace Toolbox.Auth.UnitTests.PDP
             };
 
             var mockHandler = new MockMessageHandler<PdpResponse>(HttpStatusCode.OK, pdpResponse);
-            var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler);
+            var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
 
             var result = await provider.GetPermissions(_userId, _application);
 
@@ -150,7 +165,7 @@ namespace Toolbox.Auth.UnitTests.PDP
             };
 
             var mockHandler = new MockMessageHandler<PdpResponse>(HttpStatusCode.OK, pdpResponse);
-            var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler);
+            var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
 
             var result = await provider.GetPermissions(_userId, _application);
 

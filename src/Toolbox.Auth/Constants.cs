@@ -26,6 +26,7 @@
     internal static class Claims
     {
         public const string PermissionsType = "permissions";
+        public const string Sub = "sub";
     };
 
     internal static class HeaderKeys
