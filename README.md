@@ -224,13 +224,13 @@ Both **AuthorizeByConvention** and **AuthorizeWith** attributes are derived from
 
 ## Jwt token
  
- The toolbow uses a Jwt (Jason Web Token) to perform its authentication. The token must be present in the request as a authorization header.
+ The toolbox uses a Jwt (JSON Web Token) to perform its authentication. The token must be present in the request as a authorization header.
  For more details on how a Jwt is structured see https://jwt.io/introduction.  
  For development you can generate a jwt using an online tool like http://jwtbuilder.jamiekurtz.com.
  
- 
- ### Structure
- Here is an example of a Jwt after base64 decoding:
+### Structure
+
+ Here is an example of a Jwt (without signature) after base64 decoding:
  
  ``` json
 {
@@ -265,7 +265,7 @@ The value from the expiration claim ("exp") is compared against the current serv
 
 ### Signature validation
 
-In order to check token origin and integrity token signature must be validated. 
+In order to check the token origin and integrity, the token signature must be validated. 
 The signature from the token is considered to be an H-MAC SHA256 (HS256) encrypted with a symmetric key.
 
 The signing key used to validate the signature will be aquired from the instance that issued the token.

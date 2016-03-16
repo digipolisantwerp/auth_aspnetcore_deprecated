@@ -1,23 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Builder;
+﻿using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Toolbox.Auth;
-using Microsoft.AspNet.Authentication.JwtBearer;
-using Toolbox.Auth.PDP;
-using Microsoft.Extensions.OptionsModel;
-using Toolbox.Auth.Options;
-using System.Security.Claims;
-using Microsoft.AspNet.Diagnostics;
-using System.IdentityModel.Tokens;
 using SampleApp.Policies;
-using System.Security.Claims;
-using Swashbuckle.SwaggerGen;
+using Toolbox.Auth;
 
 namespace SampleApp
 {
