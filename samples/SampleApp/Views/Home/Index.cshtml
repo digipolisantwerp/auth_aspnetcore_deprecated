@@ -9,16 +9,29 @@
         <div class="form-group">
             <label>Enter your Jwt token here:</label>
             <button class="btn btn-default btn-xs" onclick="clearToken()">Clear</button>
+            <a href="http://jwtbuilder.jamiekurtz.com/" target="_blank">Generate a jwt</a>
             <textarea class="form-control" id="jwttoken" rows="10"></textarea>
         </div>
 
+        <h4>Resources on the tickets endpoint use AuthorizeByConvention and AuthorizeWith attributes.</h4>
+
         <div class="form-group">
-            <button class="btn btn-default" onclick="executeCustomBasedRequest('GET')">Read ticket</button>
-            <button class="btn btn-default" onclick="executeCustomBasedRequest('POST')">Create ticket</button>
-            <button class="btn btn-default" onclick="executeCustomBasedRequest('PUT')">Update ticket</button>
-            <button class="btn btn-default" onclick="executeCustomBasedRequest('DELETE')">Delete ticket</button>
-            <button class="btn btn-default" onclick="getActionWithCustomPermission()">GetActionWithCustomPermission</button>
-            <button class="btn btn-default" onclick="getActionWithAnonymousPermission()">Anonymous</button>
+            <button class="btn btn-default" onclick="executeCustomBasedRequest('Tickets', 'GET')">Read ticket</button>
+            <button class="btn btn-default" onclick="executeCustomBasedRequest('Tickets', 'POST')">Create ticket</button>
+            <button class="btn btn-default" onclick="executeCustomBasedRequest('Tickets', 'PUT')">Update ticket</button>
+            <button class="btn btn-default" onclick="executeCustomBasedRequest('Tickets', 'DELETE')">Delete ticket</button>
+            <button class="btn btn-default" onclick="executeCustomBasedRequest('Tickets/getActionWithCustomPermission', 'GET')">GetActionWithCustomPermission</button>
+            <button class="btn btn-default" onclick="executeCustomBasedRequest('Tickets/AllowAnonymous', 'GET')">Anonymous</button>
+        </div>
+
+        <h4>Resources on the persons endpoint use the default Miscosoft.AspNet Authorization possibilities.</h4>
+
+        <div class="form-group">
+            <button class="btn btn-default" onclick="executeCustomBasedRequest('Persons', 'GET')">Read person</button>
+            <button class="btn btn-default" onclick="executeCustomBasedRequest('Persons', 'POST')">Create person</button>
+            <button class="btn btn-default" onclick="executeCustomBasedRequest('Persons', 'PUT')">Update person</button>
+            <button class="btn btn-default" onclick="executeCustomBasedRequest('Persons', 'DELETE')">Delete person</button>
+            <button class="btn btn-default" onclick="executeCustomBasedRequest('Persons/AllowAnonymous', 'GET')">Anonymous</button>
         </div>
 
         <div class="form-group">
@@ -43,11 +56,11 @@
         $('#response').html('');
     };
 
-    executeCustomBasedRequest = function (httpMethod) {
+    executeCustomBasedRequest = function (endpoint, httpMethod) {
 
         var jwt = $("#jwttoken").val();
 
-        $.ajax("http://localhost:51020/api/Tickets", {
+        $.ajax("http://localhost:51020/api/" + endpoint, {
             method: httpMethod,
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("Authorization", "Bearer " + jwt);
@@ -56,31 +69,31 @@
           .fail(function (error) { setError(error); });
     };
 
-    getActionWithCustomPermission = function () {
+    //getActionWithCustomPermission = function () {
 
-        var jwt = $("#jwttoken").val();
+    //    var jwt = $("#jwttoken").val();
 
-        $.ajax("http://localhost:51020/api/Tickets/getActionWithCustomPermission", {
-            method: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Bearer " + jwt);
-            }
-        }).then(function (response) { setResponse(response); })
-          .fail(function (error) { setError(error); });
-    };
+    //    $.ajax("http://localhost:51020/api/Tickets/getActionWithCustomPermission", {
+    //        method: 'GET',
+    //        beforeSend: function (xhr) {
+    //            xhr.setRequestHeader("Authorization", "Bearer " + jwt);
+    //        }
+    //    }).then(function (response) { setResponse(response); })
+    //      .fail(function (error) { setError(error); });
+    //};
 
-    getActionWithAnonymousPermission = function () {
+    //getActionWithAnonymousPermission = function () {
 
-        var jwt = $("#jwttoken").val();
+    //    var jwt = $("#jwttoken").val();
 
-        $.ajax("http://localhost:51020/api/Tickets/AllowAnonymous", {
-            method: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Bearer " + jwt);
-            }
-        }).then(function (response) { setResponse(response); })
-          .fail(function (error) { setError(error); });
-    };
+    //    $.ajax("http://localhost:51020/api/Tickets/AllowAnonymous", {
+    //        method: 'GET',
+    //        beforeSend: function (xhr) {
+    //            xhr.setRequestHeader("Authorization", "Bearer " + jwt);
+    //        }
+    //    }).then(function (response) { setResponse(response); })
+    //      .fail(function (error) { setError(error); });
+    //};
 
     clearToken = function () {
         $("#jwttoken").val('');

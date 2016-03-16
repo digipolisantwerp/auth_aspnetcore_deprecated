@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
+using System.Linq;
 using Toolbox.Auth.Authorization;
 using Toolbox.Auth.Jwt;
 using Toolbox.Auth.Options;
@@ -20,14 +21,15 @@ namespace Toolbox.Auth
         /// </summary>
         /// <param name="services"></param>
         /// <param name="setupAction">A setup action to customize the AuthOptions options.</param>
+        /// <param name="policies">A optional set of policies to add to the authorization middelware.</param>
         /// <returns></returns>
-        public static IServiceCollection AddAuth(this IServiceCollection services, Action<AuthOptions> setupAction)
+        public static IServiceCollection AddAuth(this IServiceCollection services, Action<AuthOptions> setupAction, Dictionary<string, AuthorizationPolicy> policies = null)
         {
             if (setupAction == null) throw new ArgumentNullException(nameof(setupAction), $"{nameof(setupAction)} cannot be null.");
 
             services.Configure(setupAction);
 
-            AddAuthorization(services);
+            AddAuthorization(services, policies);
             RegisterServices(services);
 
             return services;
@@ -38,8 +40,9 @@ namespace Toolbox.Auth
         /// </summary>
         /// <param name="services"></param>
         /// <param name="setupAction">A setup action to customize the AuthOptionsJsonFile options.</param>
+        /// <param name="policies">A optional set of policies to add to the authorization middelware.</param>
         /// <returns></returns>
-        public static IServiceCollection AddAuth(this IServiceCollection services, Action<AuthOptionsJsonFile> setupAction)
+        public static IServiceCollection AddAuth(this IServiceCollection services, Action<AuthOptionsJsonFile> setupAction, Dictionary<string, AuthorizationPolicy> policies = null)
         {
             if (setupAction == null) throw new ArgumentNullException(nameof(setupAction), $"{nameof(setupAction)} cannot be null.");
 
@@ -51,13 +54,13 @@ namespace Toolbox.Auth
             var section = config.GetSection(options.Section);
             services.Configure<AuthOptions>(section);
 
-            AddAuthorization(services);
+            AddAuthorization(services, policies);
             RegisterServices(services);
 
             return services;
         }
 
-        private static void AddAuthorization(IServiceCollection services)
+        private static void AddAuthorization(IServiceCollection services, Dictionary<string, AuthorizationPolicy> policies)
         {
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap = new Dictionary<string, string>();
 
@@ -67,6 +70,14 @@ namespace Toolbox.Auth
                                   policy => policy.Requirements.Add(new ConventionBasedRequirement()));
                 options.AddPolicy(Policies.CustomBased,
                                   policy => policy.Requirements.Add(new CustomBasedRequirement()));
+
+                if (policies != null)
+                {
+                    foreach (var policy in policies)
+                    {
+                        options.AddPolicy(policy.Key, policy.Value);
+                    }
+                }
             });
         }
 

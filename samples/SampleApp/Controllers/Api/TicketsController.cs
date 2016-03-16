@@ -17,6 +17,7 @@ namespace SampleApp.Controllers.Api
 
         [HttpGet]                   // => The Http method determines the first part of the permission, not the action method name!
         [AuthorizeByConvention]     // => a user with permission 'read-tickets' will be allowed
+        //[Authorize(Policy = Policies.ConventionBased)]  // => results in the same as using the "AuthorizeByConvention" attribute
         //or [Authorize(Policy = Policies.ConventionBased)]
         public IActionResult GetAction()
         {
@@ -25,7 +26,6 @@ namespace SampleApp.Controllers.Api
 
         [HttpGet]
         [Route("getactionwithcustompermission")]
-        [AuthorizeByConvention]                               
         [AuthorizeWith(Permission = "permission-125")]  // => Two attributes placed : only a user with permission 'read-tickets' AND 'permission-125' will be allowed
         //[AuthorizeWith(Permissions = new[] { "permission-125", "permission-321" })] // or at least one of the provided permissions
         public IActionResult GetActionWithCustomPermission()

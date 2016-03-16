@@ -1,4 +1,12 @@
-﻿namespace Toolbox.Auth.UnitTests.Startup
+﻿using Microsoft.AspNet.Authorization;
+using Microsoft.AspNet.Authorization.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.OptionsModel;
+using System.Collections.Generic;
+using System.Linq;
+using Xunit;
+
+namespace Toolbox.Auth.UnitTests.Startup
 {
     public class AddAuthFromOptionsTests : AddAuthBaseTests
     {
@@ -19,6 +27,40 @@
                     options.JwtValidatorClockSkew = 3;
                 });
             };
+        }
+
+        [Fact]
+        public void AdditionalPoliciesAreAdded()
+        {
+            var services = new ServiceCollection();
+
+            var policiesDictionary = new Dictionary<string, AuthorizationPolicy>();
+            var firstPolicy = new AuthorizationPolicyBuilder()
+                                .RequireAuthenticatedUser()
+                                .Build();
+            policiesDictionary.Add("FirstPolicy", firstPolicy);
+
+            var secondPolicy = new AuthorizationPolicyBuilder()
+                                .RequireClaim("someclaim")
+                                .Build();
+            policiesDictionary.Add("SecondPolicy", secondPolicy);
+
+            services.AddAuth(options => 
+            {
+                options.ApplicationName = "AppName";
+            }, policiesDictionary);
+
+            var authorizationOptions = services.BuildServiceProvider().GetRequiredService<IOptions<AuthorizationOptions>>()?.Value;
+
+            var testPolicy = authorizationOptions?.GetPolicy("FirstPolicy");
+
+            Assert.NotNull(testPolicy);
+            Assert.NotEmpty(testPolicy.Requirements.Where(r => r.GetType() == typeof(DenyAnonymousAuthorizationRequirement)));
+
+            testPolicy = authorizationOptions?.GetPolicy("SecondPolicy");
+
+            Assert.NotNull(testPolicy);
+            Assert.NotEmpty(testPolicy.Requirements.Where(r => r.GetType() == typeof(ClaimsAuthorizationRequirement)));
         }
     }
 }

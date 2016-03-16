@@ -14,9 +14,9 @@
 
         /// <summary>
         /// The duration in minutes the responses from the PDP are cached.
-        /// Set to zero to disable caching. Default = 0.
+        /// Set to zero to disable caching. Default = 60.
         /// </summary>
-        public int PdpCacheDuration { get; set; }
+        public int PdpCacheDuration { get; set; } = 60;
 
         /// <summary>
         /// The audience url used to validate the Jwt token.

@@ -49,7 +49,7 @@ namespace Toolbox.Auth.PDP
                     return pdpResponse;
             }
 
-            var response = await _client.GetAsync($"{_options.PdpUrl}/{application}/users/{user}/permissions");
+            var response = await _client.GetAsync($"{_options.PdpUrl}/applications/{application}/users/{user}/permissions");
             if (response.IsSuccessStatusCode)
             {
                 pdpResponse = await response.Content.ReadAsAsync<PdpResponse>();

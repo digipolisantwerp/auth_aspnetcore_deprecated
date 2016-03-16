@@ -15,6 +15,9 @@ using Toolbox.Auth.Options;
 using System.Security.Claims;
 using Microsoft.AspNet.Diagnostics;
 using System.IdentityModel.Tokens;
+using SampleApp.Policies;
+using System.Security.Claims;
+using Swashbuckle.SwaggerGen;
 
 namespace SampleApp
 {
@@ -38,11 +41,13 @@ namespace SampleApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //Add authorization services with options
+            //Add authorization services with options and policies
             services.AddAuth(options =>
             {
-                options.ApplicationName = "SampleApp";
-                options.PdpUrl = "http://localhost:5000/pdp";
+                //options.ApplicationName = "SampleApp";
+                //options.PdpUrl = "http://localhost:5000/pdp";
+                options.ApplicationName = "JHTEST01";
+                options.PdpUrl = "https://esb-app1-o.antwerpen.be/authz/v1";
                 options.PdpCacheDuration = 0; //No caching for the samples
                 options.JwtAudience = "SampleApp";
                 options.JwtIssuer = "Online JWT Builder";
@@ -50,9 +55,12 @@ namespace SampleApp
                 options.JwtSigningKeyCacheDuration = 0;
                 options.jwtSigningKeyProviderApikey = "yoursupersecretkey";         //don't do this in your code! just for demo purpose
                 //options.jwtSigningKeyProviderApikey = Configuration["apikey"];    //using the recomended way (see https://docs.asp.net/en/latest/security/app-secrets.html)
-            });
+            }, PolicyBuilder.Build());
 
             services.AddMvc();
+
+            services.AddSwaggerGen();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,6 +76,10 @@ namespace SampleApp
             app.UseAuth();
 
             app.UseStaticFiles();
+
+            app.UseSwaggerGen();
+            app.UseSwaggerUi();
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
