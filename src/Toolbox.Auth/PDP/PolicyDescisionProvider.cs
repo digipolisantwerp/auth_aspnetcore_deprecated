@@ -56,7 +56,7 @@ namespace Toolbox.Auth.PDP
             }
             else
             {
-                _logger.LogCritical($"Impossible to retreive permissions from {_options.JwtSigningKeyProviderUrl} for {application} / {user}. Response status code: {response.StatusCode}");
+                _logger.LogCritical($"Impossible to retreive permissions from {_options.PdpUrl} for {application} / {user}. Response status code: {response.StatusCode}");
             }
 
             if (cachingEnabled && pdpResponse != null)

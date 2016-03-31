@@ -31,12 +31,13 @@ namespace SampleApp
             //Add authorization services with options and policies
             services.AddAuth(options =>
             {
-                //options.ApplicationName = "SampleApp";
-                //options.PdpUrl = "http://localhost:5000/pdp";
-                options.ApplicationName = "JHTEST01";
-                options.PdpUrl = "https://esb-app1-o.antwerpen.be/authz/v1";
+                options.ApplicationName = "SampleApp";
+                options.PdpUrl = "http://localhost:5000/pdp";
+                //options.ApplicationName = "JHUAT03";
+                //options.PdpUrl = "https://esb-app1-o.antwerpen.be/authz/v1";
                 options.PdpCacheDuration = 0; //No caching for the samples
                 options.JwtAudience = "SampleApp";
+                //options.JwtIssuer = "5f75f0c6cf4d4c4f97dd0ab68ce534f4";
                 options.JwtIssuer = "Online JWT Builder";
                 options.JwtSigningKeyProviderUrl = "http://localhost:5000/signingKey";
                 options.JwtSigningKeyCacheDuration = 0;
@@ -45,6 +46,15 @@ namespace SampleApp
             }, PolicyBuilder.Build());
 
             services.AddMvc();
+
+            //If you want to require an authenticated user for all endpoints you can use the setup as below
+            //services.AddMvc(config =>
+            //{
+            //    var policy = new AuthorizationPolicyBuilder()
+            //                    .RequireAuthenticatedUser()
+            //                    .Build();
+            //    config.Filters.Add(new AuthorizeFilter(policy));
+            //});
 
             services.AddSwaggerGen();
 

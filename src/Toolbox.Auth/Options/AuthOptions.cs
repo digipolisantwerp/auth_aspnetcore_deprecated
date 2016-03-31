@@ -46,8 +46,8 @@
 
         /// <summary>
         /// The clock skew in minutes to apply for the Jwt expiration validation.
-        /// Default = 1 minute.
+        /// Default = 0 minutes.
         /// </summary>
-        public int JwtValidatorClockSkew { get; set; } = 1;
+        public int JwtValidatorClockSkew { get; set; } = 0;
     }
 }
