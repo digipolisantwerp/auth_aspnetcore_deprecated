@@ -22,7 +22,7 @@ namespace Toolbox.Auth.UnitTests.Startup
                     options.JwtAudience = "audience";
                     options.JwtIssuer = "issuer";
                     options.JwtSigningKeyProviderUrl = "singingKeyProviderUrl";
-                    options.jwtSigningKeyProviderApikey = "singinKeyProviderApiKey";
+                    options.JwtSigningKeyProviderApikey = "singinKeyProviderApiKey";
                     options.JwtSigningKeyCacheDuration = 8;
                     options.JwtValidatorClockSkew = 3;
                 });

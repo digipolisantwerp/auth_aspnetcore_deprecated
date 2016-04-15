@@ -3,8 +3,15 @@ using Toolbox.Auth.Authorization;
 
 namespace Toolbox.Auth.UnitTests.Authorization.ResolverTests
 {
+    [AuthorizeWith(Permission = "controllerpermission")]
     public class CustomBasedResourceController : Controller
     {
+        [HttpGet]
+        public IActionResult Get()
+        {
+            return new ObjectResult("result");
+        }
+
         [AuthorizeWith(Permission = "custompermission")]
         [HttpGet]
         public IActionResult GetSingle()

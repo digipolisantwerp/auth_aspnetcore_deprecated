@@ -67,9 +67,17 @@ namespace Toolbox.Auth
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(Policies.ConventionBased,
-                                  policy => policy.Requirements.Add(new ConventionBasedRequirement()));
+                                  policy =>
+                                  {
+                                      policy.AuthenticationSchemes.Add(AuthSchemes.TokenInHeader);
+                                      policy.Requirements.Add(new ConventionBasedRequirement());
+                                  });
                 options.AddPolicy(Policies.CustomBased,
-                                  policy => policy.Requirements.Add(new CustomBasedRequirement()));
+                                  policy =>
+                                  {
+                                      policy.AuthenticationSchemes.Add(AuthSchemes.TokenInHeader);
+                                      policy.Requirements.Add(new CustomBasedRequirement());
+                                  });
 
                 if (policies != null)
                 {

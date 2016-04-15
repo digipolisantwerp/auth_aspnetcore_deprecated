@@ -6,6 +6,12 @@
         public const string CustomBased = "CustomBased";
     }
 
+    public static class AuthSchemes
+    {
+        public const string TokenInCookie = "CookieAuth";
+        public const string TokenInHeader = "JwtHeaderAuth";
+    }
+
     internal static class HttpMethods
     {
         public const string GET = "GET";

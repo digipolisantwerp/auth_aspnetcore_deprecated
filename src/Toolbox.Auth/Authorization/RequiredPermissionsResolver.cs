@@ -17,25 +17,28 @@ namespace Toolbox.Auth.Authorization
             var actionDescriptor = authContext.ActionDescriptor as ControllerActionDescriptor;
 
             var requiredPermissions = new List<string>();
-            var authorizePermissionsAttribute = actionDescriptor.MethodInfo.CustomAttributes
-                                                                .FirstOrDefault(a => a.AttributeType == typeof(AuthorizeWithAttribute));
+            var attributes = actionDescriptor.MethodInfo.CustomAttributes
+                                                                .Where(a => a.AttributeType == typeof(AuthorizeWithAttribute)).ToList();
 
-            if (authorizePermissionsAttribute != null)
+            attributes.AddRange(actionDescriptor.ControllerTypeInfo.CustomAttributes
+                                                                .Where(a => a.AttributeType == typeof(AuthorizeWithAttribute)).ToList());
+
+            attributes.ForEach(attribute =>
             {
-                var permissions = authorizePermissionsAttribute.NamedArguments
+                var permissions = attribute.NamedArguments
                     .FirstOrDefault(a => a.MemberName == nameof(AuthorizeWithAttribute.Permissions))
                     .TypedValue.Value as ReadOnlyCollection<CustomAttributeTypedArgument>;
 
                 if (permissions != null)
                     permissions.ToList<CustomAttributeTypedArgument>().ForEach(p => requiredPermissions.Add(p.Value.ToString()));
 
-                var permission = authorizePermissionsAttribute.NamedArguments
+                var permission = attribute.NamedArguments
                     .FirstOrDefault(a => a.MemberName == nameof(AuthorizeWithAttribute.Permission))
                     .TypedValue.Value?.ToString();
 
                 if (permission != null)
                     requiredPermissions.Add(permission);
-            }
+            });
 
             return requiredPermissions;
         }

@@ -24,6 +24,8 @@ namespace Toolbox.Auth.UnitTests.Authorization.ResolverTests
 
             var requiredPermissions = resolver.ResolveFromAttributeProperties(context);
 
+            Assert.Equal(2, requiredPermissions.Count());
+            Assert.Contains("controllerpermission", requiredPermissions);
             Assert.Contains("custompermission", requiredPermissions);
         }
 
@@ -35,9 +37,22 @@ namespace Toolbox.Auth.UnitTests.Authorization.ResolverTests
 
             var requiredPermissions = resolver.ResolveFromAttributeProperties(context);
 
-            Assert.Equal(2, requiredPermissions.Count());
+            Assert.Equal(3, requiredPermissions.Count());
+            Assert.Contains("controllerpermission", requiredPermissions);
             Assert.Contains("permission1", requiredPermissions);
             Assert.Contains("permission2", requiredPermissions);
+        }
+
+        [Fact]
+        public void ResolveControllerPermission()
+        {
+            var resolver = new RequiredPermissionsResolver();
+            var context = CreateAuthorizationContext(typeof(CustomBasedResourceController), "Get");
+
+            var requiredPermissions = resolver.ResolveFromAttributeProperties(context);
+
+            Assert.Equal(1, requiredPermissions.Count());
+            Assert.Contains("controllerpermission", requiredPermissions);
         }
 
         private AuthorizationContext CreateAuthorizationContext(Type controllerType, string action)

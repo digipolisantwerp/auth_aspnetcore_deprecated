@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
+using Microsoft.AspNet.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -29,21 +30,41 @@ namespace SampleApp
         public void ConfigureServices(IServiceCollection services)
         {
             //Add authorization services with options and policies
-            services.AddAuth(options =>
+            #region Code Based configuration
+
+            //services.AddAuth(options =>
+            //{
+            //    options.ApplicationName = "SampleApp";
+            //    options.PdpUrl = "http://localhost:5000/pdp";
+            //    //options.ApplicationName = "JHUAT03";
+            //    //options.PdpUrl = "https://esb-app1-o.antwerpen.be/authz/v1";
+            //    options.PdpCacheDuration = 0; //No caching for the samples
+            //    options.JwtAudience = "SampleApp";
+            //    options.JwtIssuer = "5f75f0c6cf4d4c4f97dd0ab68ce534f4";
+            //    //options.JwtIssuer = "Online JWT Builder";
+            //    options.JwtSigningKeyProviderUrl = "http://localhost:5000/signingKey";
+            //    options.JwtSigningKeyCacheDuration = 0;
+            //    options.JwtSigningKeyProviderApikey = "yoursupersecretkey";         //don't do this in your code! just for demo purpose
+            //                                                                        //options.jwtSigningKeyProviderApikey = Configuration["apikey"];    //using the recomended way (see https://docs.asp.net/en/latest/security/app-secrets.html)
+
+            //    options.ApiAuthUrl = "http://devasu016.dev.digant.antwerpen.local/API-Engine-auth/v1/login/idp/redirect/proxied";
+            //    options.ApiAuthIdpUrl = "https://identityserver-o.antwerpen.be/samlsso";
+            //    options.ApiAuthSpName = "apiengine";
+            //    options.ApiAuthSpUrl = "https://api-engine-o.antwerpen.be/API-Engine-auth/v1/login/idp/callback";
+
+            //}, PolicyBuilder.Build());
+
+            #endregion
+
+            #region File based configuration
+
+            services.AddAuth(configFile =>
             {
-                options.ApplicationName = "SampleApp";
-                options.PdpUrl = "http://localhost:5000/pdp";
-                //options.ApplicationName = "JHUAT03";
-                //options.PdpUrl = "https://esb-app1-o.antwerpen.be/authz/v1";
-                options.PdpCacheDuration = 0; //No caching for the samples
-                options.JwtAudience = "SampleApp";
-                //options.JwtIssuer = "5f75f0c6cf4d4c4f97dd0ab68ce534f4";
-                options.JwtIssuer = "Online JWT Builder";
-                options.JwtSigningKeyProviderUrl = "http://localhost:5000/signingKey";
-                options.JwtSigningKeyCacheDuration = 0;
-                options.jwtSigningKeyProviderApikey = "yoursupersecretkey";         //don't do this in your code! just for demo purpose
-                //options.jwtSigningKeyProviderApikey = Configuration["apikey"];    //using the recomended way (see https://docs.asp.net/en/latest/security/app-secrets.html)
+                configFile.FileName = "authconfig.json";
+                configFile.Section = "Auth";
             }, PolicyBuilder.Build());
+
+            #endregion
 
             services.AddMvc();
 
@@ -69,10 +90,11 @@ namespace SampleApp
             app.UseDeveloperExceptionPage();
             app.UseIISPlatformHandler();
 
+            app.UseStaticFiles();
+
             //Add authorization middleware
             app.UseAuth();
-
-            app.UseStaticFiles();
+            //app.UseMvcAuth();
 
             app.UseSwaggerGen();
             app.UseSwaggerUi();

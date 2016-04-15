@@ -17,22 +17,13 @@ namespace Toolbox.Auth.Jwt
                 AutomaticAuthenticate = true
             };
 
-            jwtBearerOptions.TokenValidationParameters.ValidateAudience = false;
-            jwtBearerOptions.TokenValidationParameters.ValidAudience = authOptions.JwtAudience;
-            jwtBearerOptions.TokenValidationParameters.ValidateIssuer = true;
-            jwtBearerOptions.TokenValidationParameters.ValidIssuer = authOptions.JwtIssuer;
-            jwtBearerOptions.TokenValidationParameters.ValidateLifetime = true;
-            jwtBearerOptions.TokenValidationParameters.ValidateSignature = true;
-            jwtBearerOptions.TokenValidationParameters.SignatureValidator = signatureValidator.SignatureValidator;
-            jwtBearerOptions.TokenValidationParameters.ClockSkew = TimeSpan.FromMinutes(authOptions.JwtValidatorClockSkew);
-            jwtBearerOptions.TokenValidationParameters.NameClaimType = "sub";
+            jwtBearerOptions.TokenValidationParameters = TokenValidationParametersFactory.Create(authOptions, signatureValidator);
 
             jwtBearerOptions.Events = new JwtBearerEvents()
             {
                 OnAuthenticationFailed = context =>
                 {
-                    //ToDo what and how to log?
-                    logger.LogInformation(context.Exception.ToString());
+                    logger.LogInformation($"Jwt token validation failed. Exception: {context.Exception.ToString()}");
 
                     context.AuthenticationTicket = new Microsoft.AspNet.Authentication.AuthenticationTicket(new ClaimsPrincipal(), new Microsoft.AspNet.Http.Authentication.AuthenticationProperties(), string.Empty);
                     context.HandleResponse();
@@ -46,7 +37,8 @@ namespace Toolbox.Auth.Jwt
                 OnReceivedToken = async context =>
                 {
                     //the signingKey is resolved on this event because we can make the call async here, in the signatureValidator async is not possible
-                    context.Options.TokenValidationParameters.IssuerSigningKey = await signingKeyProvider.ResolveSigningKeyAsync(true);
+                    if (jwtBearerOptions.TokenValidationParameters.ValidateSignature)
+                        context.Options.TokenValidationParameters.IssuerSigningKey = await signingKeyProvider.ResolveSigningKeyAsync(true);
                 },
                 OnValidatedToken = context =>
                 {

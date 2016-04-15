@@ -36,7 +36,7 @@
         /// <summary>
         /// The api key for the signing key provider authentication.
         /// </summary>
-        public string jwtSigningKeyProviderApikey { get; set; }
+        public string JwtSigningKeyProviderApikey { get; set; }
         
         /// <summary>
         /// The duration in minutes the Jwt signing key is cached.
@@ -49,5 +49,15 @@
         /// Default = 0 minutes.
         /// </summary>
         public int JwtValidatorClockSkew { get; set; } = 0;
+
+        public string ApiAuthUrl { get; set; }
+
+        public string ApiAuthIdpUrl { get; set; }
+
+        public string ApiAuthSpName { get; set; }
+
+        public string ApiAuthSpUrl { get; set; }
+
+        
     }
 }

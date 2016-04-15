@@ -15,8 +15,8 @@
     "System.Net.Http": "4.0.0",
     "System.Net.Http.Formatting.Extension": "5.2.3.0",
     "Microsoft.Extensions.Configuration": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final"
-
+    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
+    "Microsoft.AspNet.Authentication.Cookies": "1.0.0-rc1-final"
   },
   "frameworks": {
     "dnx451": {

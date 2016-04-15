@@ -1,0 +1,20 @@
+﻿{
+  "Auth": {
+    "ApplicationName": "SampleApp",
+    "PdpUrl": "http://localhost:5000/pdp",
+    "PdpCacheDuration": 0,
+    "JwtAudience": "SampleApp",
+    "JwtIssuer": "5f75f0c6cf4d4c4f97dd0ab68ce534f4",
+    "_JwtSigningKeyProviderUrl": "http://localhost:5000/signingKey",
+    "JwtSigningKeyProviderUrl": "",
+    "jwtSigningKeyProviderApikey": "yoursupersecretkey",
+    "JwtSigningKeyCacheDuration": 0,
+    "ApiAuthUrl": "http://devasu016.dev.digant.antwerpen.local/API-Engine-auth/v1/login/idp/redirect/proxied",
+    "a_ApiAuthUrl": "http://rasu073.rte.antwerpen.local/API-Engine-auth/v1/login/idp/redirect/proxied",
+    "ApiAuthIdpUrl": "https://identityserver-o.antwerpen.be/samlsso",
+    "a_ApiAuthIdpUrl": "https://identityserver-a.antwerpen.be/samlsso",
+    "ApiAuthSpName": "apiengine",
+    "ApiAuthSpUrl": "https://api-engine-o.antwerpen.be/API-Engine-auth/v1/login/idp/callback",
+    "a_ApiAuthSpUrl": "https://api-engine-a.antwerpen.be/API-Engine-auth/v1/login/idp/callback"
+  }
+}

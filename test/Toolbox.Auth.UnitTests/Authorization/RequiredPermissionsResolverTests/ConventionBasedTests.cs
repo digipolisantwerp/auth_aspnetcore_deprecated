@@ -17,48 +17,92 @@ namespace Toolbox.Auth.UnitTests.Authorization.ResolverTests
         private readonly string _userId = "user123";
 
         [Fact]
-        public void GetRequest()
+        public void ActionLevelGetRequest()
         {
             var resolver = new RequiredPermissionsResolver();
             var context = CreateAuthorizationContext(typeof(ConventionsBasedResourceController), "Get", HttpMethod.Get);
 
             var requiredPermissions = resolver.ResolveFromConvention(context);
 
-            Assert.Contains("read-conventionsbasedresource", requiredPermissions);
+            Assert.Equal("read-conventionsbasedresource", requiredPermissions);
         }
 
         [Fact]
-        public void PostRequest()
+        public void ActionLevelPostRequest()
         {
             var resolver = new RequiredPermissionsResolver();
             var context = CreateAuthorizationContext(typeof(ConventionsBasedResourceController), "Post", HttpMethod.Post);
 
             var requiredPermissions = resolver.ResolveFromConvention(context);
 
-            Assert.Contains("create-conventionsbasedresource", requiredPermissions);
+            Assert.Equal("create-conventionsbasedresource", requiredPermissions);
         }
 
         [Fact]
-        public void PutRequest()
+        public void ActionLevelPutRequest()
         {
             var resolver = new RequiredPermissionsResolver();
             var context = CreateAuthorizationContext(typeof(ConventionsBasedResourceController), "Put", HttpMethod.Put);
 
             var requiredPermissions = resolver.ResolveFromConvention(context);
 
-            Assert.Contains("update-conventionsbasedresource", requiredPermissions);
+            Assert.Equal("update-conventionsbasedresource", requiredPermissions);
         }
 
         [Fact]
-        public void DeleteRequest()
+        public void ActionLevelDeleteRequest()
         {
             var resolver = new RequiredPermissionsResolver();
             var context = CreateAuthorizationContext(typeof(ConventionsBasedResourceController), "Delete", HttpMethod.Delete);
 
             var requiredPermissions = resolver.ResolveFromConvention(context);
 
-            Assert.Contains("delete-conventionsbasedresource", requiredPermissions);
+            Assert.Equal("delete-conventionsbasedresource", requiredPermissions);
         }
+
+        //[Fact]
+        //public void ControllerLevelGetRequest()
+        //{
+        //    var resolver = new RequiredPermissionsResolver();
+        //    var context = CreateAuthorizationContext(typeof(ConventionsBasedResourceController2), "Get", HttpMethod.Get);
+
+        //    var requiredPermissions = resolver.ResolveFromConvention(context);
+
+        //    Assert.Equal("read-conventionsbasedresource2", requiredPermissions);
+        //}
+
+        //[Fact]
+        //public void ControllerLevelPostRequest()
+        //{
+        //    var resolver = new RequiredPermissionsResolver();
+        //    var context = CreateAuthorizationContext(typeof(ConventionsBasedResourceController2), "Post", HttpMethod.Post);
+
+        //    var requiredPermissions = resolver.ResolveFromConvention(context);
+
+        //    Assert.Equal("create-conventionsbasedresource2", requiredPermissions);
+        //}
+
+        //[Fact]
+        //public void ControllerLevelPutRequest()
+        //{
+        //    var resolver = new RequiredPermissionsResolver();
+        //    var context = CreateAuthorizationContext(typeof(ConventionsBasedResourceController2), "Put", HttpMethod.Put);
+
+        //    var requiredPermissions = resolver.ResolveFromConvention(context);
+
+        //    Assert.Equal("update-conventionsbasedresource2", requiredPermissions);
+        //}
+
+        //[Fact]
+        //public void ControllerLevelDeleteRequest()
+        //{
+        //    var resolver = new RequiredPermissionsResolver();
+        //    var context = CreateAuthorizationContext(typeof(ConventionsBasedResourceController2), "Delete", HttpMethod.Delete);
+
+        //    var requiredPermissions = resolver.ResolveFromConvention(context);
+
+        //    Assert.Equal("delete-conventionsbasedresource2", requiredPermissions);
+        //}
 
         private AuthorizationContext CreateAuthorizationContext(Type controllerType, string action, HttpMethod httpMethod)
         {
