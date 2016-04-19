@@ -10,7 +10,7 @@ using Toolbox.Auth;
 
 namespace SampleApp.Controllers
 {
-    //[AuthorizeWith(ActiveAuthenticationSchemes = AuthSchemes.TokenInCookie, Permission = Constants.ApplicationLoginPermission)]
+    [AuthorizeWith(ActiveAuthenticationSchemes = AuthSchemes.TokenInCookie, Permission = Constants.ApplicationLoginPermission)]
     public class HomeController : Controller
     {
         public IActionResult Index()
@@ -18,7 +18,7 @@ namespace SampleApp.Controllers
             return View();
         }
 
-        [AuthorizeWith(ActiveAuthenticationSchemes = AuthSchemes.TokenInCookie, Permission = Constants.ApplicationLoginPermission)]
+        //[AuthorizeWith(ActiveAuthenticationSchemes = AuthSchemes.TokenInCookie, Permission = Constants.ApplicationLoginPermission)]
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";

@@ -27,7 +27,9 @@ namespace Toolbox.Auth.PDP
             if (principal?.Identity?.Name == null ||principal?.Identities?.FirstOrDefault()?.HasClaim(c => c.Type == Claims.PermissionsType) == true)
                 return principal;
 
-            var pdpResponse = await _pdpProvider.GetPermissions(principal.Identity.Name, _authOptions.ApplicationName);
+            var userId = principal.Identities.FirstOrDefault()?.Claims.SingleOrDefault(c => c.Type == Claims.Name)?.Value;
+
+            var pdpResponse = await _pdpProvider.GetPermissionsAsync(userId, _authOptions.ApplicationName);
 
             pdpResponse?.permissions?.ToList().ForEach(permission =>
             {

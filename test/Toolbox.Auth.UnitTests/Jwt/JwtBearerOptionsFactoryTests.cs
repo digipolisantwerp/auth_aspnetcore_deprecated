@@ -34,7 +34,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
             Assert.Equal(authOptions.JwtAudience, options.TokenValidationParameters.ValidAudience);
 
             Assert.True(options.TokenValidationParameters.ValidateLifetime);
-            Assert.True(options.TokenValidationParameters.ValidateSignature);
+            Assert.False(options.TokenValidationParameters.ValidateSignature);
 
             Assert.Equal(TimeSpan.FromMinutes(authOptions.JwtValidatorClockSkew), options.TokenValidationParameters.ClockSkew);
             Assert.Equal(Claims.Sub, options.TokenValidationParameters.NameClaimType);
@@ -56,7 +56,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
         public async Task SigningKeyIsSetWhenTokenReceived()
         {
             var keyBytes = Encoding.UTF8.GetBytes("secret");
-            var authOptions = new AuthOptions();
+            var authOptions = new AuthOptions { JwtSigningKeyProviderUrl = "jwtSigningKeyProviderUrl" };
             var signingKeyProviderMock = new Mock<IJwtSigningKeyProvider>();
             signingKeyProviderMock.Setup(v => v.ResolveSigningKeyAsync(true))
                 .ReturnsAsync(new SymmetricSecurityKey(keyBytes));

@@ -55,7 +55,7 @@ namespace Toolbox.Auth.UnitTests.PDP
             var pdpProvider = CreateMockPolicyDescisionProvider(pdpResponse);
 
             var transformer = new PermissionsClaimsTransformer(Options.Create(_authOptions), pdpProvider);
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.Name, _userId) }, "Bearer"));
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(Claims.Name, _userId), new Claim(ClaimTypes.Name, _userId) }, "Bearer"));
             var result = await transformer.TransformAsync(user);
 
             Assert.NotNull(result);
@@ -70,13 +70,12 @@ namespace Toolbox.Auth.UnitTests.PDP
             {
                 applicationId = _authOptions.ApplicationName,
                 userId = _userId,
-                //permissions = new List<String>(new string[] { "permission1", "permission2" })
             };
 
             var pdpProvider = CreateMockPolicyDescisionProvider(pdpResponse);
 
             var transformer = new PermissionsClaimsTransformer(Options.Create(_authOptions), pdpProvider);
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.Name, _userId) }, "Bearer"));
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(Claims.Name, _userId), new Claim(ClaimTypes.Name, _userId) }, "Bearer"));
             var result = await transformer.TransformAsync(user);
 
             Assert.NotNull(result);
@@ -86,7 +85,7 @@ namespace Toolbox.Auth.UnitTests.PDP
         private IPolicyDescisionProvider CreateMockPolicyDescisionProvider(PdpResponse pdpResponse)
         {
             var mockPdpProvider = new Mock<IPolicyDescisionProvider>();
-            mockPdpProvider.Setup(p => p.GetPermissions(_userId, _authOptions.ApplicationName))
+            mockPdpProvider.Setup(p => p.GetPermissionsAsync(_userId, _authOptions.ApplicationName))
                 .ReturnsAsync(pdpResponse);
 
             return mockPdpProvider.Object;

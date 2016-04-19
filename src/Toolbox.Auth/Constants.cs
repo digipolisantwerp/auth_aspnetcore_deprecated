@@ -33,6 +33,7 @@
     {
         public const string PermissionsType = "permissions";
         public const string Sub = "sub";
+        public const string Name = "name";
     };
 
     internal static class HeaderKeys

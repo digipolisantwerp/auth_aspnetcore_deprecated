@@ -19,6 +19,7 @@ using Toolbox.Auth.Options;
 using Toolbox.Auth.PDP;
 using System.Linq;
 using System.Net;
+using Toolbox.Auth.Middleware;
 
 namespace Toolbox.Auth
 {
@@ -66,7 +67,7 @@ namespace Toolbox.Auth
 
                     OnRedirectToLogin = context =>
                     {
-                        var url = $"{authOptions.ApiAuthUrl}?idp_url={authOptions.ApiAuthIdpUrl}&sp_name={authOptions.ApiAuthSpName}&sp_url={authOptions.ApiAuthSpUrl}&client_redirect=http://localhost:51020/token?returnUrl=";
+                        var url = $"{authOptions.ApiAuthUrl}?idp_url={authOptions.ApiAuthIdpUrl}&sp_name={authOptions.ApiAuthSpName}&sp_url={authOptions.ApiAuthSpUrl}&client_redirect=http://{context.Request.Host.Value}/token?returnUrl=";
 
                         context.RedirectUri = Uri.EscapeUriString(url + context.Request.Path);
                         context.Response.Redirect(context.RedirectUri);
@@ -76,45 +77,10 @@ namespace Toolbox.Auth
             });
 
             //Add middleware that handles the token endpoint
-            app.Map(new PathString("/token"), appBuilder =>
-            {
-                appBuilder.Run(async context =>
-                {
-                    var returnUrl = context.Request.Query["returnUrl"];
-
-                    var jwt = Regex.Replace(returnUrl, @"(.+)(\?jwt=)(.+)", "$3");
-                    returnUrl = Regex.Replace(returnUrl, @"(.+)(\?jwt=)(.+)", "$1");
-
-                    var validationParameters = TokenValidationParametersFactory.Create(authOptions, signatureValidator);
-                    if(validationParameters.ValidateSignature)
-                        validationParameters.IssuerSigningKey = await signingKeyProvider.ResolveSigningKeyAsync(false);
-
-                    var jwtValidator = new JwtSecurityTokenHandler();
-
-                    try
-                    {
-                        SecurityToken jwtToken;
-                        var userPrincipal = jwtValidator.ValidateToken(jwt, validationParameters, out jwtToken);
-
-                        await context.Authentication.SignInAsync(AuthSchemes.TokenInCookie, userPrincipal,
-                            new AuthenticationProperties
-                            {
-                                ExpiresUtc = DateTime.UtcNow.AddMinutes(20),
-                                IsPersistent = false,
-                                AllowRefresh = false
-                            });
-
-                        context.Response.Cookies.Append("jwt", jwt);
-                        context.Response.Redirect(returnUrl);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogInformation($"Jwt token validation failed. Exception: {ex.ToString()}");
-
-                        context.Response.Redirect("Home/AccessDenied");
-                    }
-                });
-            });
+            //app.Map(new PathString("/api/auth/token"), appBuilder =>
+            //{
+            //    appBuilder.UseMiddleware<TokenEndpointMiddleware>();
+            //});
 
             //Add middleware to set permissions in user claims
             var claimsTransformer = app.ApplicationServices.GetService<PermissionsClaimsTransformer>();

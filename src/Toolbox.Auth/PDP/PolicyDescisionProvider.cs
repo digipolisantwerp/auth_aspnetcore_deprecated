@@ -37,7 +37,7 @@ namespace Toolbox.Auth.PDP
             }
         }
 
-        public async Task<PdpResponse> GetPermissions(string user, string application)
+        public async Task<PdpResponse> GetPermissionsAsync(string user, string application)
         {
             PdpResponse pdpResponse = null;
 

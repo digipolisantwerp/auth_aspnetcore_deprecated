@@ -1,20 +1,23 @@
 ﻿{
   "Auth": {
-    "ApplicationName": "SampleApp",
-    "PdpUrl": "http://localhost:5000/pdp",
+    "ApplicationName": "JHSAMPLEAPP",
+    "_PdpUrl": "http://localhost:5000/pdp",
+    "PdpUrl": "https://esb-app1-a.antwerpen.be/authz/v1",
     "PdpCacheDuration": 0,
     "JwtAudience": "SampleApp",
-    "JwtIssuer": "5f75f0c6cf4d4c4f97dd0ab68ce534f4",
+    "o_JwtIssuer": "5f75f0c6cf4d4c4f97dd0ab68ce534f4",
+    "a_JwtIssuer": "775a67bf982546f59856fa3bdf1fe2c4",
+    "JwtIssuer": "5fbfdd394d2e4a72ba75343bfda31e48",
     "_JwtSigningKeyProviderUrl": "http://localhost:5000/signingKey",
     "JwtSigningKeyProviderUrl": "",
     "jwtSigningKeyProviderApikey": "yoursupersecretkey",
     "JwtSigningKeyCacheDuration": 0,
-    "ApiAuthUrl": "http://devasu016.dev.digant.antwerpen.local/API-Engine-auth/v1/login/idp/redirect/proxied",
-    "a_ApiAuthUrl": "http://rasu073.rte.antwerpen.local/API-Engine-auth/v1/login/idp/redirect/proxied",
-    "ApiAuthIdpUrl": "https://identityserver-o.antwerpen.be/samlsso",
-    "a_ApiAuthIdpUrl": "https://identityserver-a.antwerpen.be/samlsso",
+    "o_ApiAuthUrl": "http://devasu016.dev.digant.antwerpen.local/API-Engine-auth/v1/login/idp/redirect/proxied",
+    "ApiAuthUrl": "http://rasu073.rte.antwerpen.local/API-Engine-auth/v1/login/idp/redirect/proxied",
+    "o_ApiAuthIdpUrl": "https://identityserver-o.antwerpen.be/samlsso",
+    "ApiAuthIdpUrl": "https://identityserver-a.antwerpen.be/samlsso",
     "ApiAuthSpName": "apiengine",
-    "ApiAuthSpUrl": "https://api-engine-o.antwerpen.be/API-Engine-auth/v1/login/idp/callback",
-    "a_ApiAuthSpUrl": "https://api-engine-a.antwerpen.be/API-Engine-auth/v1/login/idp/callback"
+    "o_ApiAuthSpUrl": "https://api-engine-o.antwerpen.be/API-Engine-auth/v1/login/idp/callback",
+    "ApiAuthSpUrl": "https://api-engine-a.antwerpen.be/API-Engine-auth/v1/login/idp/callback"
   }
 }

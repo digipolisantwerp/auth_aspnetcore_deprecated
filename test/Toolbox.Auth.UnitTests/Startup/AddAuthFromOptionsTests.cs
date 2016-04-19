@@ -25,6 +25,10 @@ namespace Toolbox.Auth.UnitTests.Startup
                     options.JwtSigningKeyProviderApikey = "singinKeyProviderApiKey";
                     options.JwtSigningKeyCacheDuration = 8;
                     options.JwtValidatorClockSkew = 3;
+                    options.ApiAuthUrl = "apiauthurl";
+                    options.ApiAuthIdpUrl = "apiauthidpurl";
+                    options.ApiAuthSpName = "authspname";
+                    options.ApiAuthSpUrl = "apiauthspurl";
                 });
             };
         }

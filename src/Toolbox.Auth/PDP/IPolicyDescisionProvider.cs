@@ -5,6 +5,6 @@ namespace Toolbox.Auth.PDP
 {
     public interface IPolicyDescisionProvider
     {
-        Task<PdpResponse> GetPermissions(string user, string application);
+        Task<PdpResponse> GetPermissionsAsync(string user, string application);
     }
 }

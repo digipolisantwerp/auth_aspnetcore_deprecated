@@ -9,7 +9,10 @@
     "JwtSigningKeyProviderUrl": "singingKeyProviderUrl",
     "jwtSigningKeyProviderApikey": "singinKeyProviderApiKey",
     "JwtSigningKeyCacheDuration": 8,
-    "JwtValidatorClockSkew": 3
-
+    "JwtValidatorClockSkew": 3,
+    "ApiAuthUrl": "apiauthurl",
+    "ApiAuthIdpUrl": "apiauthidpurl",
+    "ApiAuthSpName": "authspname",
+    "ApiAuthSpUrl": "apiauthspurl"
   }
 }

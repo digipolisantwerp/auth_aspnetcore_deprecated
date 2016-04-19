@@ -16,7 +16,7 @@
             <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
         </environment>
     </head>
-    <body>
+    <body ng-app="theApp">
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
@@ -33,7 +33,7 @@
                     <ul class="nav navbar-nav">
                         <li><a asp-controller="Home" asp-action="Index">Home</a></li>
                         <li><a asp-controller="Home" asp-action="About">About</a></li>
-                        <li><a href="swagger/ui" >Swagger</a></li>
+                        @*<li><a href="swagger/ui" >Swagger</a></li>*@
                     </ul>
                 </div>
             </div>
@@ -62,7 +62,8 @@
             </script>
             <script src="~/js/site.min.js" asp-append-version="true"></script>
         </environment>
-
+        <script src="~/lib/angular/angular.js"></script>
+        <script src="~/js/app.js"></script>
         @RenderSection("scripts", required: false)
     </body>
 </html>

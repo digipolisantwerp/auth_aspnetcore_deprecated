@@ -133,6 +133,10 @@ namespace Toolbox.Auth.UnitTests.Startup
             Assert.Equal("singinKeyProviderApiKey", authOptions.JwtSigningKeyProviderApikey);
             Assert.Equal(8, authOptions.JwtSigningKeyCacheDuration);
             Assert.Equal(3, authOptions.JwtValidatorClockSkew);
+            Assert.Equal("apiauthurl", authOptions.ApiAuthUrl);
+            Assert.Equal("apiauthidpurl", authOptions.ApiAuthIdpUrl);
+            Assert.Equal("authspname", authOptions.ApiAuthSpName);
+            Assert.Equal("apiauthspurl", authOptions.ApiAuthSpUrl);
         }
 
         [Fact]
@@ -147,6 +151,7 @@ namespace Toolbox.Auth.UnitTests.Startup
             var conventionBasedPolicy = authorizationOptions?.GetPolicy(Policies.ConventionBased);
 
             Assert.NotNull(conventionBasedPolicy);
+            Assert.Equal(AuthSchemes.TokenInHeader, conventionBasedPolicy.AuthenticationSchemes.First());
             Assert.NotEmpty(conventionBasedPolicy.Requirements.Where(r => r.GetType() == typeof(ConventionBasedRequirement)));
         }
 
@@ -162,6 +167,7 @@ namespace Toolbox.Auth.UnitTests.Startup
             var customBasedPolicy = authorizationOptions?.GetPolicy(Policies.CustomBased);
 
             Assert.NotNull(customBasedPolicy);
+            Assert.Equal(AuthSchemes.TokenInHeader, customBasedPolicy.AuthenticationSchemes.First());
             Assert.NotEmpty(customBasedPolicy.Requirements.Where(r => r.GetType() == typeof(CustomBasedRequirement)));
         }
 
