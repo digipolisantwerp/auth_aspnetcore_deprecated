@@ -10,6 +10,7 @@ using Toolbox.Auth.Authorization;
 using Toolbox.Auth.Jwt;
 using Toolbox.Auth.Options;
 using Toolbox.Auth.PDP;
+using System.IdentityModel.Tokens;
 
 namespace Toolbox.Auth
 {
@@ -99,6 +100,7 @@ namespace Toolbox.Auth
             services.AddSingleton<IJwtSigningKeyProvider, JwtSigningKeyProvider>();
             services.AddSingleton<HttpMessageHandler, HttpClientHandler>();
             services.AddSingleton<IJwtTokenSignatureValidator, JwtTokenSignatureValidator>();
+            services.AddSingleton<ISecurityTokenValidator, JwtSecurityTokenHandler>();
         }
     }
 }

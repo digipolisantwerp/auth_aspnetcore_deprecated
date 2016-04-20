@@ -8,6 +8,16 @@
         public string ApplicationName { get; set; }
 
         /// <summary>
+        /// Set to true to enable the cookie authentication handling. Default = false.
+        /// </summary>
+        public bool EnableCookieAuth { get; set; } = false;
+
+        /// <summary>
+        /// Set to true to enable the Jwt in header authentication handling. Default = true.
+        /// </summary>
+        public bool EnableJwtHeaderAuth { get; set; } = true;
+
+        /// <summary>
         /// The url to the PDP endpoint.
         /// </summary>
         public string PdpUrl { get; set; }
@@ -50,14 +60,25 @@
         /// </summary>
         public int JwtValidatorClockSkew { get; set; } = 0;
 
+        /// <summary>
+        /// The url for the Api Engine authentication endpoint.
+        /// </summary>
         public string ApiAuthUrl { get; set; }
 
+        /// <summary>
+        /// The url of the Idp the Api Engine will redirect the saml request to.
+        /// </summary>
         public string ApiAuthIdpUrl { get; set; }
 
+        /// <summary>
+        /// The  service provider name of the Api Engine.
+        /// </summary>
         public string ApiAuthSpName { get; set; }
 
+        /// <summary>
+        /// The Api Engine callback url where the idp must redirect to.
+        /// </summary>
         public string ApiAuthSpUrl { get; set; }
-
         
     }
 }

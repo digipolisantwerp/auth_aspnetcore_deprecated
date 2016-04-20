@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.OptionsModel;
 using System;
+using System.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
 using Toolbox.Auth.Authorization;
@@ -195,6 +197,21 @@ namespace Toolbox.Auth.UnitTests.Startup
 
             var registrations = services.Where(sd => sd.ServiceType == typeof(IJwtTokenSignatureValidator) &&
                                                      sd.ImplementationType == typeof(JwtTokenSignatureValidator))
+                                        .ToArray();
+
+            Assert.Equal(1, registrations.Count());
+            Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
+        }
+
+        [Fact]
+        public void JwtSecurityTokenHandlerIsRegistratedAsSingleton()
+        {
+            var services = new ServiceCollection();
+
+            Act(services);
+
+            var registrations = services.Where(sd => sd.ServiceType == typeof(ISecurityTokenValidator) &&
+                                                     sd.ImplementationType == typeof(JwtSecurityTokenHandler))
                                         .ToArray();
 
             Assert.Equal(1, registrations.Count());

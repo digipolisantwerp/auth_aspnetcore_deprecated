@@ -1,6 +1,8 @@
 ﻿{
   "Auth": {
     "ApplicationName": "JHSAMPLEAPP",
+    "EnableJwtHeaderAuth": true,
+    "EnableCookieAuth": true,
     "_PdpUrl": "http://localhost:5000/pdp",
     "PdpUrl": "https://esb-app1-a.antwerpen.be/authz/v1",
     "PdpCacheDuration": 0,

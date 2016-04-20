@@ -19,7 +19,6 @@ using Toolbox.Auth.Options;
 using Toolbox.Auth.PDP;
 using System.Linq;
 using System.Net;
-using Toolbox.Auth.Middleware;
 
 namespace Toolbox.Auth
 {
@@ -40,47 +39,47 @@ namespace Toolbox.Auth
             var jwtBearerOptions = JwtBearerOptionsFactory.Create(authOptions, signingKeyProvider, signatureValidator, logger);
             jwtBearerOptions.AuthenticationScheme = AuthSchemes.TokenInHeader;
 
-            //Add middleware that handles jwt tokens present in Authentication Header
-            app.UseJwtBearerAuthentication(jwtBearerOptions);
-
-            //Add middleware that handles authentication cookie
-            app.UseCookieAuthentication(options =>
+            if (authOptions.EnableJwtHeaderAuth)
             {
-                options.AuthenticationScheme = AuthSchemes.TokenInCookie;
+                //Add middleware that handles jwt tokens present in Authentication Header
+                app.UseJwtBearerAuthentication(jwtBearerOptions);
+            }
 
-                options.AccessDeniedPath = new PathString("/Home/AccessDenied/");
-                options.AutomaticAuthenticate = true;
-                options.AutomaticChallenge = true;
-
-                options.Events = new CookieAuthenticationEvents
+            if (authOptions.EnableCookieAuth)
+            {
+                //Add middleware that handles authentication cookie
+                app.UseCookieAuthentication(options =>
                 {
-                    OnValidatePrincipal = context =>
+                    options.AuthenticationScheme = AuthSchemes.TokenInCookie;
+
+                    options.AccessDeniedPath = new PathString("/Home/AccessDenied/");
+                    options.AutomaticAuthenticate = true;
+                    options.AutomaticChallenge = true;
+
+                    options.Events = new CookieAuthenticationEvents
                     {
-                        return Task.FromResult<object>(null);
-                    },
+                        OnValidatePrincipal = context =>
+                        {
+                            return Task.FromResult<object>(null);
+                        },
 
-                    OnRedirectToAccessDenied = context =>
-                    {
-                        context.Response.Redirect(options.AccessDeniedPath);
-                        return Task.FromResult<object>(null);
-                    },
+                        OnRedirectToAccessDenied = context =>
+                        {
+                            context.Response.Redirect(options.AccessDeniedPath);
+                            return Task.FromResult<object>(null);
+                        },
 
-                    OnRedirectToLogin = context =>
-                    {
-                        var url = $"{authOptions.ApiAuthUrl}?idp_url={authOptions.ApiAuthIdpUrl}&sp_name={authOptions.ApiAuthSpName}&sp_url={authOptions.ApiAuthSpUrl}&client_redirect=http://{context.Request.Host.Value}/token?returnUrl=";
+                        OnRedirectToLogin = context =>
+                        {
+                            var url = $"{authOptions.ApiAuthUrl}?idp_url={authOptions.ApiAuthIdpUrl}&sp_name={authOptions.ApiAuthSpName}&sp_url={authOptions.ApiAuthSpUrl}&client_redirect=http://{context.Request.Host.Value}/token?returnUrl=";
 
-                        context.RedirectUri = Uri.EscapeUriString(url + context.Request.Path);
-                        context.Response.Redirect(context.RedirectUri);
-                        return Task.FromResult<object>(null);
-                    },
-                };
-            });
-
-            //Add middleware that handles the token endpoint
-            //app.Map(new PathString("/api/auth/token"), appBuilder =>
-            //{
-            //    appBuilder.UseMiddleware<TokenEndpointMiddleware>();
-            //});
+                            context.RedirectUri = Uri.EscapeUriString(url + context.Request.Path);
+                            context.Response.Redirect(context.RedirectUri);
+                            return Task.FromResult<object>(null);
+                        },
+                    };
+                });
+            }
 
             //Add middleware to set permissions in user claims
             var claimsTransformer = app.ApplicationServices.GetService<PermissionsClaimsTransformer>();

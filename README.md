@@ -1,9 +1,14 @@
 # Auth Toolbox
 
-The Auth toolbox handles both Authentication and Authorization that can be used in ASP.NET Core 1.0 Web API Projects.
+The Auth toolbox handles both Authentication and Authorization that can be used in ASP.NET Core Web API Projects and Web MVC Projects.
 
-The Auth toolbox supports authentication using a bearer Jwt token. The Jwt token identifies the user making the request.
-When a valid token is present in the request authorization header the middleware will request the permissions for the user from a Policy Desision Point (PDP) and enforce these permissions.
+The Auth toolbox supports two types of authentication flows.
+The first is a "jwt in header" based authentication called **JwtHeaderAuth** and can be used for authentication and authorization in Web API projects.
+The second is a cookie based authentication called **CookieAuth** and can be used for authentication and authorization in Web MVC projects.
+
+In both cases the authentication is done using a bearer Jwt token issued by an external party. The Jwt token identifies the user making the request.
+
+When the user is authenticated, the middleware will request the permissions for the user from a Policy Desision Point (PDP) and enforce these permissions.
 The Auth toolbox acts as a Policy Enforcement Point (PEP).
 
 All the permissions received from the PDP (Policy Decision Point) will be added to the claims of the User's principal and are available in the application.
@@ -17,7 +22,6 @@ The toolbox also provides Authorization attributes that can be used in the contr
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-- [Auth flow](#auth-flow)
 - [Installation](#installation)
 - [Configuration in Startup.ConfigureServices](#configuration-in-startupconfigureservices)
   - [Json config file](#json-config-file)
@@ -27,30 +31,16 @@ The toolbox also provides Authorization attributes that can be used in the contr
 - [Authorization usage](#authorization-usage)
   - [AuthorizeByConvention attribute](#authorizebyconvention-attribute)
   - [AuthorizeWith attribute](#authorizewith-attribute)
-- [Jwt token](#jwt-token)
+- [How it works](#how-it-works)
+  - [Basic auth flow](#basic-auth-flow)
+  - [Request flow](#request-flow)
+  - [CookieAuth scheme](#cookieauth-scheme)
+  - [JwtHeaderAuth scheme](#jwtheaderauth-scheme)
+  - [Jwt token](#jwt-token)
+    - [Structure](#structure)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Auth flow
-
-![alt text](docs/authflow.png "Flow")
-
-The above picture visualizes the authentication and authorization flow.
-
-Assuming that a request contains a Jwt token in the authorization header, the first step is to read and validate the token (1).
-A part of the validation is the check of the token signature. To validate the signature a singing key is required. The toolbox aquires that singing key from the token issuer (1a) and can be cached.
-
-After validation, which authenticates the user, the permissions for the user are set as claims on the user principal. This is done in a claims transformation step (2). 
-The permissions for the user are requested to a Policy Desision Point (2a) and can be cached. 
-
-The final step is the authorization for the requested resource. In this step the required permissions for the resource are checked against the permissions from the user.
-If the user is not authorized to acces the resource the request will return with an Http status code of 401 (UnAuthorized). 
-
-It is still possible to allow resources to anonymous users using the **AllowAnonymous** attribute.
-
-If no token is present or if the token is invalid this will result in an empty user principal containing no claims, thus authorization will fail for resouces that requires permissions.
-That will finaly result in a response with status code 401 (UnAuthorized).
-The reason for the 401 can be viewed in the logs.
 
 ## Installation
 
@@ -85,6 +75,8 @@ The Auth framework will read the given section of the json file with the followi
 {
   "Auth": {
     "ApplicationName": "TestApp",
+    "EnableCookieAuth": false,
+    "EnableJwtHeaderAuth": true,
     "PdpUrl": "http://pdp.somewhere.com/",
     "PdpCacheDuration": 240,
     "JwtAudience": "audience",
@@ -100,6 +92,7 @@ You can also call the AddAuth method, passing in the needed options directly:
     services.AddAuth(options =>
     {
         options.ApplicationName = "SampleApp";
+        options.EnableCookieAuth = true;
         options.PdpUrl = "http://pdp.somewhere.com/";
         options.PdpCacheDuration = 240;
         options.JwtAudience = "audience";
@@ -109,9 +102,11 @@ You can also call the AddAuth method, passing in the needed options directly:
 
 Following options can be set :
 
+General options:
+
 Option              | Description                                                | Default
 ------------------ | ----------------------------------------------------------- | --------------------------------------
-ApplicationName              | The name of the application. Required in order to request permissions to the PDP.| 
+ApplicationName              | The name of the application. Required in order to request permissions to the PDP.|
 PdpUrl | The url for the policy decision provider (PDP). |
 PdpCacheDuration | The duration in minutes the responses from the PDP are cached. Set to zero to disable caching.| 60  
 JwtIssuer | The issuer value used to validate the Jwt token.| 
@@ -119,6 +114,23 @@ JwtAudience | The audience url used to validate the Jwt token.|
 JwtSigningKeyProviderUrl | The url to the Jwt signing key endpoint.|
 jwtSigningKeyProviderApikey | The api key for the signing key provider authentication.|
 JwtSigningKeyCacheDuration | The duration in minutes the Jwt signing key is cached.| 10
+
+
+Options used for JwtHeaderAuth
+
+Option              | Description                                                | Default
+------------------ | ----------------------------------------------------------- | --------------------------------------
+EnableJwtHeaderAuth              | Set to true to enable Jwt in header authentication handling. (Backend authentication)| True  
+
+Options used for CookieAuth
+
+Option              | Description                                                | Default
+------------------ | ----------------------------------------------------------- | --------------------------------------
+EnableCookieAuth              | Set to true to enable cookie authentication handling. (Frontend authentication)| False 
+ApiAuthUrl | The url for the Api Engine authentication endpoint.| 
+ApiAuthIdpUrl | The url of the Idp the Api Engine will redirect the saml request to.|
+ApiAuthSpName | The  service provider name of the Api Engine.|
+ApiAuthSpUrl | The Api Engine callback url where the idp must redirect to.|
 
 ### Aditional claims
 
@@ -222,13 +234,77 @@ Alternatively a list of permissions can be set on the **Permissions** property t
 
 Both **AuthorizeByConvention** and **AuthorizeWith** attributes are derived from the default **Microsoft.AspNet.Authorization.Authorize** attribute. This means that the way these attributes can be combined is still the same as for the default **Authorize** attribute.
 
-## Jwt token
+## How it works
+
+
+### Basic auth flow
+
+![alt text](docs/basicauthflow.png "Flow")
+
+The above picture visualizes the basic authentication and authorization flow.
+
+The first step is to authenticate the user (1).
+Depending on the enabled schemes this is done using a jwt token or a cookie.
+After authentication, the permissions for the user are set as claims on the user principal. This is done in a claims transformation step (2). 
+The permissions for the user are requested to a Policy Desision Point (2a) and can be cached. 
+The final step is the authorization for the requested resource. In this step the required permissions for the resource are checked against the permissions from the user.
+If the user is not authorized to acces the resource the request will return with an Http status code of 401 (UnAuthorized). 
+It is still possible to allow resources to anonymous users using the **AllowAnonymous** attribute.
+If the user is not authenticated it will result in an empty user principal containing no claims, thus authorization will fail for resouces that requires permissions.
+
+### Request flow
+
+![alt text](docs/middleware.png "Flow")
+
+The above picture visualizes the request flow and the middleware's in action.
+
+1. JwtBearerAuthentication middleware (only active when the jwtHeaderAuth scheme is anabled) checks if a jwt token is present in the Authorization header  
+	If the token is present, it is validated.
+	If the token is valid, the user is authenticated.  
+
+2. CookieAuthentication middleware (only active when the CookieAuth scheme is enabled) checks if a valid user cookie is present  
+	If the cookie is present, the user is authenticated.
+
+3. ClaimsTransformation middleware  
+	If a user is authenticated, the permissions of the user are added as claims on the User's identity.
+
+4. If an Authorize... attribute is present on a controller or action, the filter checks the required permission for the action.
+
+5. If the user doesn't have the required permission, the request pipeline is interrupted  
+	An http status code 403 is set on the response object.
+
+6. If the user has the requested permission, the action is invoked  
+
+7. CookieAuthentication middleware checks if a 401 or 403 status code is set on the response object  
+	If it is set and in combination of the authorization schema "CookieAuth" the response is transformed in a redirect response.
+
+### CookieAuth scheme
+
+The **CookieAuth** scheme can be used to secure your Web MVC projects.
+
+All controllers serving html as content can use this scheme. It is also a way to acquire a jwt token needed for the **JwtHeaderAuth** scheme.
+
+The scheme relies on an authentication cookie to authenticate the user. If no cookie is present in the request a redirect based flow is initiated to aquire a jwt token from an external token issuer.
+Once the token is received and validated, the user is signed in and two cookies are set. The first is an authentication cookie and is the default asp.net cookie. The second is a cookie containing the jwt token.
+This cookie named **jwt** can be used on the client side to extract the jwt token needed for Api calls (see jwtHeaderAuth flow).
+
+### JwtHeaderAuth scheme
+
+The **JwtHeaderAuth** scheme can be used to secure your Web Api projects.
+
+All api controllers serving data can use this scheme.
+
+The scheme relies on a jwt token present in the authorization header. When a jwt token is present it is validated. 
+If the user is not authenticated it will result in a response with http status code 401.
+If the user us authenticated but the authorization failed due to missing permissions it wil result in a response with http status code 403.
+
+### Jwt token
  
- The toolbox uses a Jwt (JSON Web Token) to perform its authentication. The token must be present in the request as a authorization header.
+ The toolbox uses a Jwt (JSON Web Token) to perform its authentication.
  For more details on how a Jwt is structured see https://jwt.io/introduction.  
  For development you can generate a jwt using an online tool like http://jwtbuilder.jamiekurtz.com.
  
-### Structure
+#### Structure
 
  Here is an example of a Jwt (without signature) after base64 decoding:
  
@@ -253,17 +329,17 @@ In order to validate the token the toolbox performs these checks:
  * Token expiration
  * Signature validation
 
-### Issuer validation
+#### Issuer validation
 
 This checks if the token is originating from the expected issuer.
 The check compares the issuer value ("iss" claim) against a known value from toolbox configuration.
 If the values don't match the token is considered invalid.
     
-### Token expiration
+#### Token expiration
 
 The value from the expiration claim ("exp") is compared against the current server time. If the value is expired the token is considered invalid.
 
-### Signature validation
+#### Signature validation
 
 In order to check the token origin and integrity, the token signature must be validated. 
 The signature from the token is considered to be an H-MAC SHA256 (HS256) encrypted with a symmetric key.

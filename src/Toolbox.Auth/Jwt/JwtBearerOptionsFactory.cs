@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNet.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Toolbox.Auth.Options;
