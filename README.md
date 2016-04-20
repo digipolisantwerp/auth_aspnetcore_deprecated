@@ -8,7 +8,7 @@ The second is a cookie based authentication called **CookieAuth** and can be use
 
 In both cases the authentication is done using a bearer Jwt token issued by an external party. The Jwt token identifies the user making the request.
 
-When the user is authenticated, the middleware will request the permissions for the user from a Policy Desision Point (PDP) and enforce these permissions.
+When the user is authenticated, the middleware will request the permissions for the user from a Policy Decision Point (PDP) and enforce these permissions.
 The Auth toolbox acts as a Policy Enforcement Point (PEP).
 
 All the permissions received from the PDP (Policy Decision Point) will be added to the claims of the User's principal and are available in the application.
@@ -44,7 +44,7 @@ The toolbox also provides Authorization attributes that can be used in the contr
 
 ## Installation
 
-To add the toolbox to a project, you add the package to the project.json :
+To add the toolbox to a project, you add the package to the project.json:
 
 ``` json 
 "dependencies": {
@@ -60,7 +60,7 @@ In Visual Studio you can also use the NuGet Package Manager to do this.
 
 The Auth framework is registered in the ConfigureServices method of the Startup class.
 
-There are 2 ways to configure the DataAccess framework : using a json config file or using code
+There are 2 ways to configure the DataAccess framework: using a json config file or using code
 
 ### Json config file
 The path to the Json config file has to be given as argument to the AddAuth method, together with the section name where the options are defined:
@@ -102,7 +102,7 @@ You can also call the AddAuth method, passing in the needed options directly:
     });
 ```
 
-Following options can be set :
+Following options can be set:
 
 General options:
 
@@ -134,7 +134,7 @@ ApiAuthIdpUrl | The url of the Idp the Api Engine will redirect the saml request
 ApiAuthSpName | The service provider name of the Api Engine.|
 ApiAuthSpUrl | The Api Engine callback url where the idp must redirect to.|
 
-### Aditional claims
+### Additional claims
 
 An optional parameter of type **Dictionary&lt;string, AuthorizePolicy&gt;** is available on both **AddAuth** methods. With this parameter it is possible to add a collection of (Microsoft.AspNet) authorization policies.
 
@@ -264,11 +264,11 @@ The above picture visualizes the basic authentication and authorization flow.
 The first step is to authenticate the user (1).
 Depending on the enabled schemes this is done using a jwt token or a cookie.
 After authentication, the permissions for the user are set as claims on the user principal. This is done in a claims transformation step (2). 
-The permissions for the user are requested to a Policy Desision Point (2a) and can be cached. 
+The permissions for the user are requested to a Policy Decision Point (2a) and can be cached. 
 The final step is the authorization for the requested resource. In this step the required permissions for the resource are checked against the permissions from the user.
-If the user is not authorized to acces the resource the request will return with an Http status code of 401 (UnAuthorized). 
+If the user is not authorized to access the resource the request will return with an Http status code of 401 (UnAuthorized). 
 It is still possible to allow resources to anonymous users using the **AllowAnonymous** attribute.
-If the user is not authenticated it will result in an empty user principal containing no claims, thus authorization will fail for resouces that requires permissions.
+If the user is not authenticated it will result in an empty user principal containing no claims, thus authorization will fail for resources that requires permissions.
 
 ### Request flow
 
@@ -302,7 +302,7 @@ The **CookieAuth** scheme can be used to secure your Web MVC projects.
 
 All controllers serving html as content can use this scheme. It is also a way to acquire a jwt token needed for the **JwtHeaderAuth** scheme.
 
-The scheme relies on an authentication cookie to authenticate the user. If no cookie is present in the request a redirect based flow is initiated to aquire a jwt token from an external token issuer.
+The scheme relies on an authentication cookie to authenticate the user. If no cookie is present in the request a redirect based flow is initiated to acquire a jwt token from an external token issuer.
 Once the token is received and validated, the user is signed in and two cookies are set. The first is an authentication cookie and is the default asp.net cookie. The second is a cookie containing the jwt token.
 This cookie named **jwt** can be used on the client side to extract the jwt token needed for Api calls (see jwtHeaderAuth flow).
 
@@ -314,7 +314,7 @@ All api controllers serving data can use this scheme.
 
 The scheme relies on a jwt token present in the authorization header. When a jwt token is present it is validated. 
 If the user is not authenticated it will result in a response with http status code 401.
-If the user us authenticated but the authorization failed due to missing permissions it wil result in a response with http status code 403.
+If the user us authenticated but the authorization failed due to missing permissions it will result in a response with http status code 403.
 
 ### Jwt token
  
@@ -362,7 +362,7 @@ The value from the expiration claim ("exp") is compared against the current serv
 In order to check the token origin and integrity, the token signature must be validated. 
 The signature from the token is considered to be an H-MAC SHA256 (HS256) encrypted with a symmetric key.
 
-The signing key used to validate the signature will be aquired from the instance that issued the token.
+The signing key used to validate the signature will be acquired from the instance that issued the token.
 This is done through a call to an endpoint on the issuer service. The url from that endpoint must be set in configuration in the **JwtSigningKeyProviderUrl** property.
 The authentication on the endpoint requires an api key which must also be set in configuration using the **jwtSigningKeyProviderApikey** property.
 
