@@ -94,7 +94,6 @@ namespace SampleApp
 
             //Add authorization middleware
             app.UseAuth();
-            //app.UseMvcAuth();
 
             app.UseSwaggerGen();
             app.UseSwaggerUi();

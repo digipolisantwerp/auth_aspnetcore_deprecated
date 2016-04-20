@@ -163,6 +163,8 @@ Additional all existing authorization attributes defined in the asp.net framewor
 
 When placing the **AuthorizeByConvention** attribute on an api controller or action some conventions are applied to determine which permission the user must have to access the resource.
 
+This attribute can only be used with the JwtHeaderAuth scheme (Web Api projects / api controllers).
+
 The convention is that the user must have a permission with following structure: {action}-{resource}.
 
 The {action} part is translated to the http method used for the controller action.
@@ -174,8 +176,6 @@ These are the possible mappings from the http methods to the {action} part:
 - DELETE -> delete
 
 The {resource} part is mapped to the controller name (without the word controller).
-
-This attribute can only be used with the JwtHeaderAuth scheme (Web Api projects / api controllers).
 
 For example when the **AuthorizeByConvention** attribute is placed on an http GET method inside a controller named "TicketsController" then the user must have a permission "read-tickets".
 
@@ -237,11 +237,6 @@ Alternatively a list of permissions can be set on the **Permissions** property t
     }
 ```
 
-Both **AuthorizeByConvention** and **AuthorizeWith** attributes are derived from the default **Microsoft.AspNet.Authorization.Authorize** attribute. This means that the way these attributes can be combined is still the same as for the default **Authorize** attribute.
-
-This attribute can be used with both the JwtHeaderAuth and the CookieAuth schemes.
-Please note that the default scheme for this attribute is the **JwtHeaderAuth** scheme.
-
 If you want to use this attribute with the **CookieAuth** scheme, the scheme name must be supplied using the **ActiveAuthenticationSchemes** parameter.
 
 ``` csharp
@@ -251,6 +246,13 @@ If you want to use this attribute with the **CookieAuth** scheme, the scheme nam
         //...
     }
 ```
+
+Both **AuthorizeByConvention** and **AuthorizeWith** attributes are derived from the default **Microsoft.AspNet.Authorization.Authorize** attribute. This means that the way these attributes can be combined is still the same as for the default **Authorize** attribute.
+
+This attribute can be used with both the JwtHeaderAuth and the CookieAuth schemes.
+Please note that the default scheme for this attribute is the **JwtHeaderAuth** scheme.
+
+
 
 ## How it works
 
