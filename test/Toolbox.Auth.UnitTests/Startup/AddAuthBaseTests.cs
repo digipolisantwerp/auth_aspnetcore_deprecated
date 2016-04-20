@@ -153,7 +153,7 @@ namespace Toolbox.Auth.UnitTests.Startup
             var conventionBasedPolicy = authorizationOptions?.GetPolicy(Policies.ConventionBased);
 
             Assert.NotNull(conventionBasedPolicy);
-            Assert.Equal(AuthSchemes.TokenInHeader, conventionBasedPolicy.AuthenticationSchemes.First());
+            Assert.Equal(AuthSchemes.JwtHeaderAuth, conventionBasedPolicy.AuthenticationSchemes.First());
             Assert.NotEmpty(conventionBasedPolicy.Requirements.Where(r => r.GetType() == typeof(ConventionBasedRequirement)));
         }
 
@@ -169,7 +169,7 @@ namespace Toolbox.Auth.UnitTests.Startup
             var customBasedPolicy = authorizationOptions?.GetPolicy(Policies.CustomBased);
 
             Assert.NotNull(customBasedPolicy);
-            Assert.Equal(AuthSchemes.TokenInHeader, customBasedPolicy.AuthenticationSchemes.First());
+            Assert.Equal(AuthSchemes.JwtHeaderAuth, customBasedPolicy.AuthenticationSchemes.First());
             Assert.NotEmpty(customBasedPolicy.Requirements.Where(r => r.GetType() == typeof(CustomBasedRequirement)));
         }
 

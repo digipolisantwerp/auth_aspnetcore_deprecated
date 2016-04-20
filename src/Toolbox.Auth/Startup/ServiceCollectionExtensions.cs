@@ -70,13 +70,13 @@ namespace Toolbox.Auth
                 options.AddPolicy(Policies.ConventionBased,
                                   policy =>
                                   {
-                                      policy.AuthenticationSchemes.Add(AuthSchemes.TokenInHeader);
+                                      policy.AuthenticationSchemes.Add(AuthSchemes.JwtHeaderAuth);
                                       policy.Requirements.Add(new ConventionBasedRequirement());
                                   });
                 options.AddPolicy(Policies.CustomBased,
                                   policy =>
                                   {
-                                      policy.AuthenticationSchemes.Add(AuthSchemes.TokenInHeader);
+                                      policy.AuthenticationSchemes.Add(AuthSchemes.JwtHeaderAuth);
                                       policy.Requirements.Add(new CustomBasedRequirement());
                                   });
 

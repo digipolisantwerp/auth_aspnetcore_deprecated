@@ -8,8 +8,8 @@
 
     public static class AuthSchemes
     {
-        public const string TokenInCookie = "CookieAuth";
-        public const string TokenInHeader = "JwtHeaderAuth";
+        public const string CookieAuth = "CookieAuth";
+        public const string JwtHeaderAuth = "JwtHeaderAuth";
     }
 
     internal static class HttpMethods

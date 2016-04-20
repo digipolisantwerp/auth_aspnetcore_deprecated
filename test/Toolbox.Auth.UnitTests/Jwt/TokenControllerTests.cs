@@ -120,7 +120,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
             Assert.IsType<RedirectResult>(result);
             Assert.Equal(_redirectUrl, ((RedirectResult)result).Url);
 
-            _mockAuthenticationManager.Verify(a => a.SignInAsync(AuthSchemes.TokenInCookie, _claimsPrincipal, It.IsAny<AuthenticationProperties>()));
+            _mockAuthenticationManager.Verify(a => a.SignInAsync(AuthSchemes.CookieAuth, _claimsPrincipal, It.IsAny<AuthenticationProperties>()));
             _mockCookies.Verify(c => c.Append("jwt", _jwtToken), Times.Once);
         }
 
@@ -129,7 +129,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
         {
             var tokenController = CreateTokenController(true);
 
-            _mockAuthenticationManager.Setup(m => m.SignInAsync(AuthSchemes.TokenInCookie, _claimsPrincipal, It.IsAny<AuthenticationProperties>()))
+            _mockAuthenticationManager.Setup(m => m.SignInAsync(AuthSchemes.CookieAuth, _claimsPrincipal, It.IsAny<AuthenticationProperties>()))
                 .Throws<Exception>();
 
             var result = await tokenController.Index($"{_redirectUrl}?jwt={_jwtToken}");

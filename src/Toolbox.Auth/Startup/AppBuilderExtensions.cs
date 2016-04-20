@@ -37,7 +37,7 @@ namespace Toolbox.Auth
             var logger = app.ApplicationServices.GetService<ILogger<JwtBearerMiddleware>>();
 
             var jwtBearerOptions = JwtBearerOptionsFactory.Create(authOptions, signingKeyProvider, signatureValidator, logger);
-            jwtBearerOptions.AuthenticationScheme = AuthSchemes.TokenInHeader;
+            jwtBearerOptions.AuthenticationScheme = AuthSchemes.JwtHeaderAuth;
 
             if (authOptions.EnableJwtHeaderAuth)
             {
@@ -50,7 +50,7 @@ namespace Toolbox.Auth
                 //Add middleware that handles authentication cookie
                 app.UseCookieAuthentication(options =>
                 {
-                    options.AuthenticationScheme = AuthSchemes.TokenInCookie;
+                    options.AuthenticationScheme = AuthSchemes.CookieAuth;
 
                     options.AccessDeniedPath = new PathString("/Home/AccessDenied/");
                     options.AutomaticAuthenticate = true;

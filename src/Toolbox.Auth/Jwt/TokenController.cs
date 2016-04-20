@@ -52,7 +52,7 @@ namespace Toolbox.Auth.Jwt
                 SecurityToken jwtToken;
                 var userPrincipal = _jwtTokenValidator.ValidateToken(jwt, validationParameters, out jwtToken);
 
-                await HttpContext.Authentication.SignInAsync(AuthSchemes.TokenInCookie, userPrincipal,
+                await HttpContext.Authentication.SignInAsync(AuthSchemes.CookieAuth, userPrincipal,
                             new AuthenticationProperties
                             {
                                 ExpiresUtc = DateTime.UtcNow.AddMinutes(20),

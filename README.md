@@ -1,6 +1,6 @@
 # Auth Toolbox
 
-The Auth toolbox handles both Authentication and Authorization that can be used in ASP.NET Core Web API Projects and Web MVC Projects.
+The Auth toolbox handles both Authentication and Authorization that can be used in ASP.NET Core Web API and Web MVC Projects.
 
 The Auth toolbox supports two types of authentication flows.
 The first is a "jwt in header" based authentication called **JwtHeaderAuth** and can be used for authentication and authorization in Web API projects.
@@ -51,6 +51,8 @@ To add the toolbox to a project, you add the package to the project.json :
     "Toolbox.Auth":  "1.0.0"
  }
 ``` 
+
+ALWAYS check the latest version [here](https://github.com/digipolisantwerp/auth_aspnetcore/blob/master/src/Toolbox.Auth/project.json) before adding the above line !
 
 In Visual Studio you can also use the NuGet Package Manager to do this.
 
@@ -111,7 +113,7 @@ PdpUrl | The url for the policy decision provider (PDP). |
 PdpCacheDuration | The duration in minutes the responses from the PDP are cached. Set to zero to disable caching.| 60  
 JwtIssuer | The issuer value used to validate the Jwt token.| 
 JwtAudience | The audience url used to validate the Jwt token.| 
-JwtSigningKeyProviderUrl | The url to the Jwt signing key endpoint.|
+JwtSigningKeyProviderUrl | The url to the Jwt signing key provider endpoint.|
 jwtSigningKeyProviderApikey | The api key for the signing key provider authentication.|
 JwtSigningKeyCacheDuration | The duration in minutes the Jwt signing key is cached.| 10
 
@@ -120,16 +122,16 @@ Options used for JwtHeaderAuth
 
 Option              | Description                                                | Default
 ------------------ | ----------------------------------------------------------- | --------------------------------------
-EnableJwtHeaderAuth              | Set to true to enable Jwt in header authentication handling. (Backend authentication)| True  
+EnableJwtHeaderAuth              | Set to true to enable the JwtHeaderAuth scheme. (Web Api)| True  
 
 Options used for CookieAuth
 
 Option              | Description                                                | Default
 ------------------ | ----------------------------------------------------------- | --------------------------------------
-EnableCookieAuth              | Set to true to enable cookie authentication handling. (Frontend authentication)| False 
-ApiAuthUrl | The url for the Api Engine authentication endpoint.| 
+EnableCookieAuth              | Set to true to enable the CookieAuth scheme. (Web MVC)| False 
+ApiAuthUrl | The url of the Api Engine authentication endpoint.| 
 ApiAuthIdpUrl | The url of the Idp the Api Engine will redirect the saml request to.|
-ApiAuthSpName | The  service provider name of the Api Engine.|
+ApiAuthSpName | The service provider name of the Api Engine.|
 ApiAuthSpUrl | The Api Engine callback url where the idp must redirect to.|
 
 ### Aditional claims
@@ -159,7 +161,7 @@ Additional all existing authorization attributes defined in the asp.net framewor
 
 ### AuthorizeByConvention attribute
 
-When placing the **AuthorizeByConvention** attribute on a controller or action some conventions are applied to determine which permission the user must have to access the resource.
+When placing the **AuthorizeByConvention** attribute on an api controller or action some conventions are applied to determine which permission the user must have to access the resource.
 
 The convention is that the user must have a permission with following structure: {action}-{resource}.
 
@@ -172,6 +174,8 @@ These are the possible mappings from the http methods to the {action} part:
 - DELETE -> delete
 
 The {resource} part is mapped to the controller name (without the word controller).
+
+This attribute can only be used with the JwtHeaderAuth scheme (Web Api projects / api controllers).
 
 For example when the **AuthorizeByConvention** attribute is placed on an http GET method inside a controller named "TicketsController" then the user must have a permission "read-tickets".
 
@@ -212,6 +216,7 @@ For example when the **AuthorizeByConvention** attribute is placed on an http GE
 
 When placing the **AuthorizeWith** attribute on a controller or action it is possible to define the permission the user must have to allow access to the resource.
 
+
 The attribute property **Permission** has to be set in order to define the permission.
 ``` csharp
     [HttpGet]
@@ -233,6 +238,19 @@ Alternatively a list of permissions can be set on the **Permissions** property t
 ```
 
 Both **AuthorizeByConvention** and **AuthorizeWith** attributes are derived from the default **Microsoft.AspNet.Authorization.Authorize** attribute. This means that the way these attributes can be combined is still the same as for the default **Authorize** attribute.
+
+This attribute can be used with both the JwtHeaderAuth and the CookieAuth schemes.
+Please note that the default scheme for this attribute is the **JwtHeaderAuth** scheme.
+
+If you want to use this attribute with the **CookieAuth** scheme, the scheme name must be supplied using the **ActiveAuthenticationSchemes** parameter.
+
+``` csharp
+    [AuthorizeWith(ActiveAuthenticationSchemes = AuthSchemes.CookieAuth, Permission = "permission-125")]
+    public class HomeController : Controller
+    {
+        //...
+    }
+```
 
 ## How it works
 
