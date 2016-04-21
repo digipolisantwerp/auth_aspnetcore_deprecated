@@ -20,6 +20,7 @@
     "ApiAuthIdpUrl": "https://identityserver-a.antwerpen.be/samlsso",
     "ApiAuthSpName": "apiengine",
     "o_ApiAuthSpUrl": "https://api-engine-o.antwerpen.be/API-Engine-auth/v1/login/idp/callback",
-    "ApiAuthSpUrl": "https://api-engine-a.antwerpen.be/API-Engine-auth/v1/login/idp/callback"
+    "ApiAuthSpUrl": "https://api-engine-a.antwerpen.be/API-Engine-auth/v1/login/idp/callback",
+    "TokenCallbackRoute":  "myroute/tokeninput"
   }
 }

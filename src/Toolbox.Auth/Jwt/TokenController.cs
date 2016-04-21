@@ -11,6 +11,7 @@ using Toolbox.Auth.Options;
 
 namespace Toolbox.Auth.Jwt
 {
+    [Route(AuthOptionsDefaults.TokenCallbackRoute)]
     public class TokenController : Controller
     {
         private readonly ILogger<TokenController> _logger;

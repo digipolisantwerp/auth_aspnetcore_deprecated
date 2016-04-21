@@ -133,6 +133,7 @@ ApiAuthUrl | The url of the Api Engine authentication endpoint.|
 ApiAuthIdpUrl | The url of the Idp the Api Engine will redirect the saml request to.|
 ApiAuthSpName | The service provider name of the Api Engine.|
 ApiAuthSpUrl | The Api Engine callback url where the idp must redirect to.|
+TokenCallbackRoute | The route used for the token callback url.| auth/token
 
 ### Additional claims
 

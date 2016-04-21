@@ -29,6 +29,7 @@ namespace Toolbox.Auth.UnitTests.Startup
                     options.ApiAuthIdpUrl = "apiauthidpurl";
                     options.ApiAuthSpName = "authspname";
                     options.ApiAuthSpUrl = "apiauthspurl";
+                    options.TokenCallbackRoute = "custom/tokenendpoint";
                 });
             };
         }

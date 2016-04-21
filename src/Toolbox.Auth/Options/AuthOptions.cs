@@ -79,6 +79,11 @@
         /// The Api Engine callback url where the idp must redirect to.
         /// </summary>
         public string ApiAuthSpUrl { get; set; }
-        
+
+        /// <summary>
+        /// The route used for the token callback url. Default = "token".
+        /// </summary>
+        public string TokenCallbackRoute { get; set; } = AuthOptionsDefaults.TokenCallbackRoute;
+
     }
 }

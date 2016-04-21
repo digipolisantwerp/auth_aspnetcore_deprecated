@@ -13,6 +13,7 @@
     "ApiAuthUrl": "apiauthurl",
     "ApiAuthIdpUrl": "apiauthidpurl",
     "ApiAuthSpName": "authspname",
-    "ApiAuthSpUrl": "apiauthspurl"
+    "ApiAuthSpUrl": "apiauthspurl",
+    "TokenCallbackRoute": "custom/tokenendpoint"
   }
 }

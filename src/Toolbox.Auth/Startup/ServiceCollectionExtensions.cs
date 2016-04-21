@@ -1,16 +1,19 @@
 ﻿using Microsoft.AspNet.Authorization;
+using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.OptionsModel;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
-using System.Linq;
 using Toolbox.Auth.Authorization;
 using Toolbox.Auth.Jwt;
 using Toolbox.Auth.Options;
 using Toolbox.Auth.PDP;
-using System.IdentityModel.Tokens;
+
 
 namespace Toolbox.Auth
 {
@@ -101,6 +104,8 @@ namespace Toolbox.Auth
             services.AddSingleton<HttpMessageHandler, HttpClientHandler>();
             services.AddSingleton<IJwtTokenSignatureValidator, JwtTokenSignatureValidator>();
             services.AddSingleton<ISecurityTokenValidator, JwtSecurityTokenHandler>();
+
+            services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, TokenControllerOptionsSetup>());
         }
     }
 }

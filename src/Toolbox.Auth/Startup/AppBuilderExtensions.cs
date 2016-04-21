@@ -71,7 +71,7 @@ namespace Toolbox.Auth
 
                         OnRedirectToLogin = context =>
                         {
-                            var url = $"{authOptions.ApiAuthUrl}?idp_url={authOptions.ApiAuthIdpUrl}&sp_name={authOptions.ApiAuthSpName}&sp_url={authOptions.ApiAuthSpUrl}&client_redirect=http://{context.Request.Host.Value}/token?returnUrl=";
+                            var url = $"{authOptions.ApiAuthUrl}?idp_url={authOptions.ApiAuthIdpUrl}&sp_name={authOptions.ApiAuthSpName}&sp_url={authOptions.ApiAuthSpUrl}&client_redirect=http://{context.Request.Host.Value}/{authOptions.TokenCallbackRoute}?returnUrl=";
 
                             context.RedirectUri = Uri.EscapeUriString(url + context.Request.Path);
                             context.Response.Redirect(context.RedirectUri);

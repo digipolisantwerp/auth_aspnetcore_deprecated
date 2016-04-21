@@ -4,5 +4,6 @@
     {
         public const string JwtUserIdClaimType = "sub";
         public const string OptionsFileName = "authconfig.json";
+        public const string TokenCallbackRoute = "auth/token";
     }
 }
