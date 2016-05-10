@@ -104,6 +104,8 @@ namespace Toolbox.Auth
             services.AddSingleton<HttpMessageHandler, HttpClientHandler>();
             services.AddSingleton<IJwtTokenSignatureValidator, JwtTokenSignatureValidator>();
             services.AddSingleton<ISecurityTokenValidator, JwtSecurityTokenHandler>();
+            services.AddSingleton<ITokenRefreshAgent, TokenRefreshAgent>();
+            services.AddSingleton<ITokenRefreshHandler, TokenRefreshHandler>();
 
             services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, TokenControllerOptionsSetup>());
         }

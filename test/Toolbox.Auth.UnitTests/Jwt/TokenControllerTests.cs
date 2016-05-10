@@ -32,7 +32,8 @@ namespace Toolbox.Auth.UnitTests.Jwt
                 Mock.Of<IJwtSigningKeyProvider>(),
                 Mock.Of<IJwtTokenSignatureValidator>(),
                 Mock.Of<ISecurityTokenValidator>(),
-                _logger));
+                _logger,
+                Mock.Of<ITokenRefreshAgent>()));
         }
 
         [Fact]
@@ -42,7 +43,8 @@ namespace Toolbox.Auth.UnitTests.Jwt
                 null,
                 Mock.Of<IJwtTokenSignatureValidator>(),
                 Mock.Of<ISecurityTokenValidator>(),
-                _logger));
+                _logger,
+                Mock.Of<ITokenRefreshAgent>()));
         }
 
         [Fact]
@@ -52,7 +54,8 @@ namespace Toolbox.Auth.UnitTests.Jwt
                 Mock.Of<IJwtSigningKeyProvider>(),
                 null,
                 Mock.Of<ISecurityTokenValidator>(),
-                _logger));
+                _logger,
+                Mock.Of<ITokenRefreshAgent>()));
         }
 
         [Fact]
@@ -62,7 +65,8 @@ namespace Toolbox.Auth.UnitTests.Jwt
                 Mock.Of<IJwtSigningKeyProvider>(),
                 Mock.Of<IJwtTokenSignatureValidator>(),
                 null,
-                _logger));
+                _logger,
+                Mock.Of<ITokenRefreshAgent>()));
         }
 
         [Fact]
@@ -72,6 +76,18 @@ namespace Toolbox.Auth.UnitTests.Jwt
                 Mock.Of<IJwtSigningKeyProvider>(),
                 Mock.Of<IJwtTokenSignatureValidator>(),
                 Mock.Of<ISecurityTokenValidator>(),
+                null,
+                Mock.Of<ITokenRefreshAgent>()));
+        }
+
+        [Fact]
+        public void ThrowsExceptionIfTokenRefreshAgentIsNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => new TokenController(Options.Create(new AuthOptions()),
+                Mock.Of<IJwtSigningKeyProvider>(),
+                Mock.Of<IJwtTokenSignatureValidator>(),
+                Mock.Of<ISecurityTokenValidator>(),
+                _logger,
                 null));
         }
 
@@ -85,9 +101,10 @@ namespace Toolbox.Auth.UnitTests.Jwt
                 jwtSigningKeyProvider.Object,
                 Mock.Of<IJwtTokenSignatureValidator>(),
                 Mock.Of<ISecurityTokenValidator>(),
-                _logger);
+                _logger,
+                Mock.Of<ITokenRefreshAgent>());
 
-            await tokenController.Index("abc?jwt=123");
+            await tokenController.Index("abc", "123");
 
             jwtSigningKeyProvider.Verify(p => p.ResolveSigningKeyAsync(false), Times.AtLeastOnce);
 
@@ -102,9 +119,10 @@ namespace Toolbox.Auth.UnitTests.Jwt
                 jwtSigningKeyProvider.Object,
                 Mock.Of<IJwtTokenSignatureValidator>(),
                 Mock.Of<ISecurityTokenValidator>(),
-                _logger);
+                _logger,
+                Mock.Of<ITokenRefreshAgent>());
 
-            await tokenController.Index("abc?jwt=123");
+            await tokenController.Index("abc", "123");
 
             jwtSigningKeyProvider.Verify(p => p.ResolveSigningKeyAsync(false), Times.Never);
 
@@ -115,7 +133,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
         {
             var tokenController = CreateTokenController(true);
 
-            var result = await tokenController.Index($"{_redirectUrl}?jwt={_jwtToken}");
+            var result = await tokenController.Index(_redirectUrl, _jwtToken);
 
             Assert.IsType<RedirectResult>(result);
             Assert.Equal(_redirectUrl, ((RedirectResult)result).Url);
@@ -132,7 +150,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
             _mockAuthenticationManager.Setup(m => m.SignInAsync(AuthSchemes.CookieAuth, _claimsPrincipal, It.IsAny<AuthenticationProperties>()))
                 .Throws<Exception>();
 
-            var result = await tokenController.Index($"{_redirectUrl}?jwt={_jwtToken}");
+            var result = await tokenController.Index(_redirectUrl, _jwtToken);
 
             Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("AccessDenied", ((RedirectToActionResult)result).ActionName);
@@ -147,7 +165,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
         {
             var tokenController = CreateTokenController(false);
 
-            var result = await tokenController.Index($"{_redirectUrl}?jwt={_jwtToken}");
+            var result = await tokenController.Index(_redirectUrl, _jwtToken);
 
             Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("Index", ((RedirectToActionResult)result).ActionName);
@@ -167,7 +185,8 @@ namespace Toolbox.Auth.UnitTests.Jwt
                 jwtSigningKeyProvider.Object,
                 Mock.Of<IJwtTokenSignatureValidator>(),
                 jwtTokenValidator.Object,
-                _logger);
+                _logger,
+                Mock.Of<ITokenRefreshAgent>());
 
             var mockHttpContext = new Mock<HttpContext>();
             _mockAuthenticationManager = new Mock<AuthenticationManager>();

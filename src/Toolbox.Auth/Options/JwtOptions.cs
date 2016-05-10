@@ -1,32 +1,12 @@
-﻿namespace Toolbox.Auth.Options
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Toolbox.Auth.Options
 {
-    public class AuthOptions
+    public class JwtOptions
     {
-        /// <summary>
-        /// The name of the application in which context the user is requesting a resource.
-        /// </summary>
-        public string ApplicationName { get; set; }
-
-        /// <summary>
-        /// Set to true to enable the cookie authentication handling. Default = false.
-        /// </summary>
-        public bool EnableCookieAuth { get; set; } = false;
-
-        /// <summary>
-        /// Set to true to enable the Jwt in header authentication handling. Default = true.
-        /// </summary>
-        public bool EnableJwtHeaderAuth { get; set; } = true;
-
-        /// <summary>
-        /// The url to the PDP endpoint.
-        /// </summary>
-        public string PdpUrl { get; set; }
-
-        /// <summary>
-        /// The duration in minutes the responses from the PDP are cached.
-        /// Set to zero to disable caching. Default = 60.
-        /// </summary>
-        public int PdpCacheDuration { get; set; } = 60;
         /// <summary>
         /// The audience url used to validate the Jwt token.
         /// </summary>
@@ -99,6 +79,5 @@
         /// The route used for the token callback url. Default = "token".
         /// </summary>
         public string TokenCallbackRoute { get; set; } = AuthOptionsDefaults.TokenCallbackRoute;
-
     }
 }

@@ -11,6 +11,6 @@ namespace SampleApp
         public const string UserWithCustomClaimOnly = "UserWithCustomClaimOnly";
         public const string CustomClaim = "Custom";
 
-        public const string ApplicationLoginPermission = "login-sampleapp";
+        public const string ApplicationLoginPermission = "login-app";
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.Extensions.OptionsModel;
 using System;
 using System.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Toolbox.Auth.Options;
@@ -19,31 +20,32 @@ namespace Toolbox.Auth.Jwt
         private readonly AuthOptions _authOptions;
         private readonly IJwtTokenSignatureValidator _signatureValidator;
         private readonly ISecurityTokenValidator _jwtTokenValidator;
+        private readonly ITokenRefreshAgent _tokenRefreshAgent;
 
         public TokenController(IOptions<AuthOptions> options,
             IJwtSigningKeyProvider signingKeyProvider,
             IJwtTokenSignatureValidator signatureValidator,
             ISecurityTokenValidator jwtTokenValidator,
-            ILogger<TokenController> logger)
+            ILogger<TokenController> logger,
+            ITokenRefreshAgent tokenRefreshAgent)
         {
             if (options == null) throw new ArgumentNullException(nameof(options), $"{nameof(options)} cannot be null");
             if (signingKeyProvider == null) throw new ArgumentNullException(nameof(signingKeyProvider), $"{nameof(signingKeyProvider)} cannot be null");
             if (signatureValidator == null) throw new ArgumentNullException(nameof(signatureValidator), $"{nameof(signatureValidator)} cannot be null");
             if (jwtTokenValidator == null) throw new ArgumentNullException(nameof(jwtTokenValidator), $"{nameof(jwtTokenValidator)} cannot be null");
             if (logger == null) throw new ArgumentNullException(nameof(logger), $"{nameof(logger    )} cannot be null");
+            if (tokenRefreshAgent == null) throw new ArgumentNullException(nameof(tokenRefreshAgent), $"{nameof(tokenRefreshAgent)} cannot be null");
 
             _signingKeyProvider = signingKeyProvider;
             _authOptions = options.Value;
             _signatureValidator = signatureValidator;
             _jwtTokenValidator = jwtTokenValidator;
             _logger = logger;
+            _tokenRefreshAgent = tokenRefreshAgent;
         }
 
-        public async Task<IActionResult> Index(string returnUrl)
+        public async Task<IActionResult> Index(string returnUrl, string jwt)
         {
-            var jwt = Regex.Replace(returnUrl, @"(.+)(\?jwt=)(.+)", "$3");
-            returnUrl = Regex.Replace(returnUrl, @"(.+)(\?jwt=)(.+)", "$1");
-
             var validationParameters = TokenValidationParametersFactory.Create(_authOptions, _signatureValidator);
             if (validationParameters.ValidateSignature)
                 validationParameters.IssuerSigningKey = await _signingKeyProvider.ResolveSigningKeyAsync(false);
@@ -71,6 +73,18 @@ namespace Toolbox.Auth.Jwt
 
                 return RedirectToAction("AccessDenied", "Home");
             }
+        }
+
+        [Route("refresh")]
+        public async Task<IActionResult> RefreshAsync(string token)
+        {
+            var jwt = new JwtSecurityToken(token);
+
+            if (jwt.Audiences.FirstOrDefault() != _authOptions.JwtAudience)
+                return HttpBadRequest();
+
+            var newToken = await _tokenRefreshAgent.RefreshTokenAsync(token);
+            return Ok(newToken);
         }
 
         private IActionResult RedirectToLocal(string returnUrl)

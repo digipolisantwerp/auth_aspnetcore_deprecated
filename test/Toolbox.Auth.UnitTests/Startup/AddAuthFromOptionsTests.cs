@@ -30,6 +30,9 @@ namespace Toolbox.Auth.UnitTests.Startup
                     options.ApiAuthSpName = "authspname";
                     options.ApiAuthSpUrl = "apiauthspurl";
                     options.TokenCallbackRoute = "custom/tokenendpoint";
+                    options.ApiAuthTokenRefreshUrl = "apiauthtokenrefreshurl";
+                    options.TokenRefreshTime = 5;
+                    options.AutomaticTokenRefresh = true;
                 });
             };
         }

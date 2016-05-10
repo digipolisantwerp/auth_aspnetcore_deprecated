@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Authorization;
+﻿ using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.OptionsModel;
@@ -141,6 +141,9 @@ namespace Toolbox.Auth.UnitTests.Startup
             Assert.Equal("authspname", authOptions.ApiAuthSpName);
             Assert.Equal("apiauthspurl", authOptions.ApiAuthSpUrl);
             Assert.Equal("custom/tokenendpoint", authOptions.TokenCallbackRoute);
+            Assert.Equal("apiauthtokenrefreshurl", authOptions.ApiAuthTokenRefreshUrl);
+            Assert.Equal(5, authOptions.TokenRefreshTime);
+            Assert.True(authOptions.AutomaticTokenRefresh);
         }
 
         [Fact]
@@ -233,6 +236,36 @@ namespace Toolbox.Auth.UnitTests.Startup
 
             Assert.Equal(1, registrations.Count());
             Assert.Equal(ServiceLifetime.Transient, registrations[0].Lifetime);
+        }
+
+        [Fact]
+        public void TokenRefreshAgentIsRegistratedAsSingleton()
+        {
+            var services = new ServiceCollection();
+
+            Act(services);
+
+            var registrations = services.Where(sd => sd.ServiceType == typeof(ITokenRefreshAgent) &&
+                                                     sd.ImplementationType == typeof(TokenRefreshAgent))
+                                        .ToArray();
+
+            Assert.Equal(1, registrations.Count());
+            Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
+        }
+
+        [Fact]
+        public void TokenRefreshHandlerIsRegistratedAsSingleton()
+        {
+            var services = new ServiceCollection();
+
+            Act(services);
+
+            var registrations = services.Where(sd => sd.ServiceType == typeof(ITokenRefreshHandler) &&
+                                                     sd.ImplementationType == typeof(TokenRefreshHandler))
+                                        .ToArray();
+
+            Assert.Equal(1, registrations.Count());
+            Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
         }
     }
 }

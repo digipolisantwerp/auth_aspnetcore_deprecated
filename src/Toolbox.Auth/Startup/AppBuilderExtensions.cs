@@ -2,23 +2,16 @@
 using Microsoft.AspNet.Authentication.JwtBearer;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Http.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using System.Text.RegularExpressions;
+using System.Linq;
 using System.Threading.Tasks;
 using Toolbox.Auth.Jwt;
 using Toolbox.Auth.Options;
 using Toolbox.Auth.PDP;
-using System.Linq;
-using System.Net;
 
 namespace Toolbox.Auth
 {
@@ -35,6 +28,7 @@ namespace Toolbox.Auth
             var signingKeyProvider = app.ApplicationServices.GetService<IJwtSigningKeyProvider>();
             var signatureValidator = app.ApplicationServices.GetService<IJwtTokenSignatureValidator>();
             var logger = app.ApplicationServices.GetService<ILogger<JwtBearerMiddleware>>();
+            var tokenRefreshHandler = app.ApplicationServices.GetService<ITokenRefreshHandler>();
 
             var jwtBearerOptions = JwtBearerOptionsFactory.Create(authOptions, signingKeyProvider, signatureValidator, logger);
             jwtBearerOptions.AuthenticationScheme = AuthSchemes.JwtHeaderAuth;
@@ -58,9 +52,14 @@ namespace Toolbox.Auth
 
                     options.Events = new CookieAuthenticationEvents
                     {
-                        OnValidatePrincipal = context =>
+                        OnValidatePrincipal = async context =>
                         {
-                            return Task.FromResult<object>(null);
+                            var token = context.Request.Cookies["jwt"];
+
+                            var response = await tokenRefreshHandler.HandleRefreshAsync(token);
+                          
+                            if (response != null)
+                                context.Response.Cookies.Append("jwt", response);
                         },
 
                         OnRedirectToAccessDenied = context =>
