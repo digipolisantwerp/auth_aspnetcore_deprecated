@@ -39,7 +39,8 @@ namespace Toolbox.Auth.Jwt
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogInformation($"Token refresh failed. Response status code: {response.StatusCode}");    
+                _logger.LogInformation($"Token refresh failed. Response status code: {response.StatusCode}");
+                return null;  
             }
 
             var tokenRefreshResponse = await response.Content.ReadAsAsync<TokenRefreshResponse>();

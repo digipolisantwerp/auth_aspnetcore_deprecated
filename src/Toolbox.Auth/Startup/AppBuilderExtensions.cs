@@ -46,7 +46,7 @@ namespace Toolbox.Auth
                 {
                     options.AuthenticationScheme = AuthSchemes.CookieAuth;
 
-                    options.AccessDeniedPath = new PathString("/Home/AccessDenied/");
+                    options.AccessDeniedPath = new PathString($"/{authOptions.AccessDeniedPath}");
                     options.AutomaticAuthenticate = true;
                     options.AutomaticChallenge = true;
 
@@ -54,12 +54,15 @@ namespace Toolbox.Auth
                     {
                         OnValidatePrincipal = async context =>
                         {
-                            var token = context.Request.Cookies["jwt"];
+                            if (authOptions.AutomaticTokenRefresh)
+                            {
+                                var token = context.Request.Cookies["jwt"];
 
-                            var response = await tokenRefreshHandler.HandleRefreshAsync(token);
-                          
-                            if (response != null)
-                                context.Response.Cookies.Append("jwt", response);
+                                var response = await tokenRefreshHandler.HandleRefreshAsync(token);
+
+                                if (response != null)
+                                    context.Response.Cookies.Append("jwt", response);
+                            }
                         },
 
                         OnRedirectToAccessDenied = context =>

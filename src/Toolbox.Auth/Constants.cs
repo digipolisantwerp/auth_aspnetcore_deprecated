@@ -29,7 +29,7 @@
         public const string DELETE = "delete";
     }
 
-    internal static class Claims
+    public static class Claims
     {
         public const string PermissionsType = "permissions";
         public const string Sub = "sub";

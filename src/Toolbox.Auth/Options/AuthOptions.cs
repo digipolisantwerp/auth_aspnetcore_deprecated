@@ -91,14 +91,29 @@
         public bool AutomaticTokenRefresh { get; set; } = false;
 
         /// <summary>
-        /// The amount of minutes left on a jwt token expiration time in order to refresh the token.
+        /// The amount of minutes before the jwt token expiration time at which to automatically refresh the token.
         /// </summary>
-        public int TokenRefreshTime { get; set; }
+        public int TokenRefreshTime { get; set; } = 5;
 
         /// <summary>
-        /// The route used for the token callback url. Default = "token".
+        /// The route used for the token callback url. Default = "auth/token".
         /// </summary>
         public string TokenCallbackRoute { get; set; } = AuthOptionsDefaults.TokenCallbackRoute;
+
+        /// <summary>
+        /// The route used for the token refresh endpoint. Default = "auth/token/refresh".
+        /// </summary>
+        public string TokenRefreshRoute { get; set; } = AuthOptionsDefaults.TokenRefreshRoute;
+
+        /// <summary>
+        /// The route used for the permissions endpoint. Default = "auth/user/permissions".
+        /// </summary>
+        public string PermissionsRoute { get; set; } = AuthOptionsDefaults.PermissionsRoute;
+
+        /// <summary>
+        /// The path to redirect when the access is denied.
+        /// </summary>
+        public string AccessDeniedPath { get; set; }
 
     }
 }

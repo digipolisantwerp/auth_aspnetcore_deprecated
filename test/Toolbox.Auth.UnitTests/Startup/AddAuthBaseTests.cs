@@ -1,4 +1,4 @@
-﻿ using Microsoft.AspNet.Authorization;
+﻿using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.OptionsModel;
@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net.Http;
 using Toolbox.Auth.Authorization;
 using Toolbox.Auth.Jwt;
+using Toolbox.Auth.Mvc;
 using Toolbox.Auth.Options;
 using Toolbox.Auth.PDP;
 using Xunit;
@@ -140,10 +141,13 @@ namespace Toolbox.Auth.UnitTests.Startup
             Assert.Equal("apiauthidpurl", authOptions.ApiAuthIdpUrl);
             Assert.Equal("authspname", authOptions.ApiAuthSpName);
             Assert.Equal("apiauthspurl", authOptions.ApiAuthSpUrl);
-            Assert.Equal("custom/tokenendpoint", authOptions.TokenCallbackRoute);
             Assert.Equal("apiauthtokenrefreshurl", authOptions.ApiAuthTokenRefreshUrl);
             Assert.Equal(5, authOptions.TokenRefreshTime);
             Assert.True(authOptions.AutomaticTokenRefresh);
+            Assert.Equal("custom/tokenendpoint", authOptions.TokenCallbackRoute);
+            Assert.Equal("custom/tokenrefresh", authOptions.TokenRefreshRoute);
+            Assert.Equal("custom/permissions", authOptions.PermissionsRoute);
+            Assert.Equal("accessdenied", authOptions.AccessDeniedPath); 
         }
 
         [Fact]
@@ -232,6 +236,21 @@ namespace Toolbox.Auth.UnitTests.Startup
 
             var registrations = services.Where(sd => sd.ServiceType == typeof(IConfigureOptions<MvcOptions>) &&
                                                      sd.ImplementationType == typeof(TokenControllerOptionsSetup))
+                                        .ToArray();
+
+            Assert.Equal(1, registrations.Count());
+            Assert.Equal(ServiceLifetime.Transient, registrations[0].Lifetime);
+        }
+
+        [Fact]
+        public void PermissionsControllerOptionsSetupIsRegistratedAsSingleton()
+        {
+            var services = new ServiceCollection();
+
+            Act(services);
+
+            var registrations = services.Where(sd => sd.ServiceType == typeof(IConfigureOptions<MvcOptions>) &&
+                                                     sd.ImplementationType == typeof(PermissionsControllerOptionsSetup))
                                         .ToArray();
 
             Assert.Equal(1, registrations.Count());

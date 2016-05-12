@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Toolbox.Auth;
+using Toolbox.Auth.PDP;
 
 namespace SampleApp.Policies
 {
@@ -16,11 +18,18 @@ namespace SampleApp.Policies
         {
             var policies = new Dictionary<string, AuthorizationPolicy>();
 
-            var firstPolicy = new AuthorizationPolicyBuilder()
+            var appUserPolicy = new AuthorizationPolicyBuilder()
+                                .RequireClaim(Claims.PermissionsType, Constants.ApplicationLoginPermission)
+                                .Build();
+
+            policies.Add(Constants.ApplicationUser, appUserPolicy);
+
+            var customPolicy = new AuthorizationPolicyBuilder()
+                                .AddAuthenticationSchemes(AuthSchemes.JwtHeaderAuth)
                                 .RequireClaim(Constants.CustomClaim)
                                 .Build();
 
-            policies.Add(Constants.UserWithCustomClaimOnly, firstPolicy);
+            policies.Add(Constants.UserWithCustomClaimOnly, customPolicy);
 
             return policies;
         }

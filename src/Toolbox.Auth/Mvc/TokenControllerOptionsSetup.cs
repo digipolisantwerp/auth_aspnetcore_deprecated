@@ -1,15 +1,10 @@
 ﻿using Microsoft.AspNet.Mvc;
-using Microsoft.Extensions.OptionsModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Extensions.OptionsModel;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.OptionsModel;
+using System;
 using Toolbox.Auth.Options;
 
-namespace Toolbox.Auth.Jwt
+namespace Toolbox.Auth.Mvc
 {
     public class TokenControllerOptionsSetup : IConfigureOptions<MvcOptions>
     {
@@ -22,8 +17,9 @@ namespace Toolbox.Auth.Jwt
 
         public void Configure(MvcOptions options)
         {
-            var authOptions = OptionsServices.GetService<IOptions<AuthOptions>>();
+            var authOptions = OptionsServices.GetService<IOptions<AuthOptions>>().Value;
             options.Conventions.Add(new TokenControllerConvention(authOptions));
+            options.Conventions.Add(new AuthActionsConvention(authOptions));
         }
     }
 }

@@ -14,9 +14,12 @@
     "ApiAuthIdpUrl": "apiauthidpurl",
     "ApiAuthSpName": "authspname",
     "ApiAuthSpUrl": "apiauthspurl",
-    "TokenCallbackRoute": "custom/tokenendpoint",
     "ApiAuthTokenRefreshUrl": "apiauthtokenrefreshurl",
     "TokenRefreshTime": 5,
-    "AutomaticTokenRefresh": "true"
+    "AutomaticTokenRefresh": "true",
+    "TokenCallbackRoute": "custom/tokenendpoint",
+    "TokenRefreshRoute": "custom/tokenrefresh",
+    "PermissionsRoute": "custom/permissions",
+    "AccessDeniedPath":  "accessdenied"
   }
 }

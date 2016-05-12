@@ -8,11 +8,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Toolbox.Auth.Jwt;
 using Toolbox.Auth.Options;
 
-namespace Toolbox.Auth.Jwt
+namespace Toolbox.Auth.Controllers
 {
-    [Route(AuthOptionsDefaults.TokenCallbackRoute)]
     public class TokenController : Controller
     {
         private readonly ILogger<TokenController> _logger;
@@ -21,7 +21,7 @@ namespace Toolbox.Auth.Jwt
         private readonly IJwtTokenSignatureValidator _signatureValidator;
         private readonly ISecurityTokenValidator _jwtTokenValidator;
         private readonly ITokenRefreshAgent _tokenRefreshAgent;
-
+        
         public TokenController(IOptions<AuthOptions> options,
             IJwtSigningKeyProvider signingKeyProvider,
             IJwtTokenSignatureValidator signatureValidator,
@@ -44,7 +44,8 @@ namespace Toolbox.Auth.Jwt
             _tokenRefreshAgent = tokenRefreshAgent;
         }
 
-        public async Task<IActionResult> Index(string returnUrl, string jwt)
+        
+        public async Task<IActionResult> Callback(string returnUrl, string jwt)
         {
             var validationParameters = TokenValidationParametersFactory.Create(_authOptions, _signatureValidator);
             if (validationParameters.ValidateSignature)
@@ -71,12 +72,11 @@ namespace Toolbox.Auth.Jwt
             {
                 _logger.LogInformation($"Jwt token validation failed. Exception: {ex.ToString()}");
 
-                return RedirectToAction("AccessDenied", "Home");
+                return Redirect(_authOptions.AccessDeniedPath);
             }
         }
 
-        [Route("refresh")]
-        public async Task<IActionResult> RefreshAsync(string token)
+        public async Task<IActionResult> Refresh(string token)
         {
             var jwt = new JwtSecurityToken(token);
 
@@ -84,6 +84,10 @@ namespace Toolbox.Auth.Jwt
                 return HttpBadRequest();
 
             var newToken = await _tokenRefreshAgent.RefreshTokenAsync(token);
+
+            if (newToken == null)
+                return HttpBadRequest();
+
             return Ok(newToken);
         }
 

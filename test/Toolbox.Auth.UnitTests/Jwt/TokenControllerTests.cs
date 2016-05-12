@@ -10,6 +10,7 @@ using System.IdentityModel.Tokens;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Toolbox.Auth.Controllers;
 using Toolbox.Auth.Jwt;
 using Toolbox.Auth.Options;
 using Xunit;
@@ -95,7 +96,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
         public async Task ResolveSigningKeyIfValidateSignatureIsTrue()
         {
             var jwtSigningKeyProvider = new Mock<IJwtSigningKeyProvider>();
-            var authOptions = new AuthOptions { JwtSigningKeyProviderUrl = "someurl" };
+            var authOptions = new AuthOptions { JwtSigningKeyProviderUrl = "someurl" , AccessDeniedPath = "/"};
 
             var tokenController = new TokenController(Options.Create(authOptions),
                 jwtSigningKeyProvider.Object,
@@ -104,7 +105,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
                 _logger,
                 Mock.Of<ITokenRefreshAgent>());
 
-            await tokenController.Index("abc", "123");
+            await tokenController.Callback("abc", "123");
 
             jwtSigningKeyProvider.Verify(p => p.ResolveSigningKeyAsync(false), Times.AtLeastOnce);
 
@@ -115,14 +116,14 @@ namespace Toolbox.Auth.UnitTests.Jwt
         {
             var jwtSigningKeyProvider = new Mock<IJwtSigningKeyProvider>();
 
-            var tokenController = new TokenController(Options.Create(new AuthOptions()),
+            var tokenController = new TokenController(Options.Create(new AuthOptions { AccessDeniedPath = "/" }),
                 jwtSigningKeyProvider.Object,
                 Mock.Of<IJwtTokenSignatureValidator>(),
                 Mock.Of<ISecurityTokenValidator>(),
                 _logger,
                 Mock.Of<ITokenRefreshAgent>());
 
-            await tokenController.Index("abc", "123");
+            await tokenController.Callback("abc", "123");
 
             jwtSigningKeyProvider.Verify(p => p.ResolveSigningKeyAsync(false), Times.Never);
 
@@ -133,7 +134,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
         {
             var tokenController = CreateTokenController(true);
 
-            var result = await tokenController.Index(_redirectUrl, _jwtToken);
+            var result = await tokenController.Callback(_redirectUrl, _jwtToken);
 
             Assert.IsType<RedirectResult>(result);
             Assert.Equal(_redirectUrl, ((RedirectResult)result).Url);
@@ -150,11 +151,11 @@ namespace Toolbox.Auth.UnitTests.Jwt
             _mockAuthenticationManager.Setup(m => m.SignInAsync(AuthSchemes.CookieAuth, _claimsPrincipal, It.IsAny<AuthenticationProperties>()))
                 .Throws<Exception>();
 
-            var result = await tokenController.Index(_redirectUrl, _jwtToken);
+            var result = await tokenController.Callback(_redirectUrl, _jwtToken);
 
-            Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("AccessDenied", ((RedirectToActionResult)result).ActionName);
-            Assert.Equal("Home", ((RedirectToActionResult)result).ControllerName);
+            Assert.IsType<RedirectResult>(result);
+            Assert.Equal("Home/AccessDenied", ((RedirectResult)result).Url);
+            //Assert.Equal("Home", ((RedirectToActionResult)result).ControllerName);
 
             Assert.NotEmpty(_logger.LoggedMessages);
             Assert.StartsWith($"Information, Jwt token validation failed. Exception: System.Exception", _logger.LoggedMessages.First());
@@ -165,7 +166,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
         {
             var tokenController = CreateTokenController(false);
 
-            var result = await tokenController.Index(_redirectUrl, _jwtToken);
+            var result = await tokenController.Callback(_redirectUrl, _jwtToken);
 
             Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("Index", ((RedirectToActionResult)result).ActionName);
@@ -181,7 +182,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
             jwtTokenValidator.Setup(v => v.ValidateToken(_jwtToken, It.IsAny<TokenValidationParameters>(), out securityToken))
                 .Returns(_claimsPrincipal);
 
-            var tokenController = new TokenController(Options.Create(new AuthOptions()),
+            var tokenController = new TokenController(Options.Create(new AuthOptions { AccessDeniedPath = "Home/AccessDenied" }),
                 jwtSigningKeyProvider.Object,
                 Mock.Of<IJwtTokenSignatureValidator>(),
                 jwtTokenValidator.Object,

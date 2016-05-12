@@ -8,6 +8,7 @@
         <environment names="Development">
             <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
             <link rel="stylesheet" href="~/css/site.css" />
+            <script src="~/lib/angular/angular.js"></script>
         </environment>
         <environment names="Staging,Production">
             <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/css/bootstrap.min.css"
@@ -49,6 +50,17 @@
         <environment names="Development">
             <script src="~/lib/jquery/dist/jquery.js"></script>
             <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+            
+            <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.6/angular-cookies.js"></script>
+
+            <script src="~/app/app.js"></script>
+            <script src="~/app/utilsservice.js"></script>
+            <script src="~/app/auth/authinterceptor.js"></script>
+            <script src="~/app/auth/authservice.js"></script>
+            <script src="~/app/viewcontroller.js"></script>
+            <script src="~/app/ticketsservice.js"></script>
+            <script src="~/app/personsservice.js"></script>
+            
         </environment>
         <environment names="Staging,Production">
             <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"

@@ -10,7 +10,8 @@ using Toolbox.Auth;
 
 namespace SampleApp.Controllers
 {
-    [AuthorizeWith(ActiveAuthenticationSchemes = AuthSchemes.CookieAuth, Permission = Constants.ApplicationLoginPermission)]
+    //[AuthorizeWith(ActiveAuthenticationSchemes = AuthSchemes.CookieAuth, Permission = Constants.ApplicationLoginPermission)]
+    [Authorize(Policy = Constants.ApplicationUser)]
     public class HomeController : Controller
     {
         public IActionResult Index()
@@ -32,6 +33,7 @@ namespace SampleApp.Controllers
         }
 
         [AllowAnonymous]
+        //[Route("noaccess")]
         public IActionResult AccessDenied()
         {
             return View();

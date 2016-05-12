@@ -12,7 +12,7 @@ namespace SampleApp.Controllers.Api
     //The purpose of this controller is to demonstrate the use of the default Microsoft.AspNet Authorization attributes
 
 
-    [Authorize] // => Only authenticated users are allowed to access the resources on this controller
+    [Authorize(ActiveAuthenticationSchemes = AuthSchemes.JwtHeaderAuth)] // => Only authenticated users are allowed to access the resources on this controller
     [Route("api/[Controller]")]
     public class PersonsController
     {
@@ -25,7 +25,7 @@ namespace SampleApp.Controllers.Api
         // User with role "PersonAdministrator" is allowed. 
         // To test this you can add a claim with value: PersonAdministrator and claimtype: http://schemas.microsoft.com/ws/2008/06/identity/claims/role to the jwt token.
         [HttpPost]
-        [Authorize(Roles = Constants.PersonAdministrator)] 
+        [Authorize(Roles = Constants.PersonAdministrator, ActiveAuthenticationSchemes = AuthSchemes.JwtHeaderAuth)] 
         public IActionResult PostAction()
         {
             return new ObjectResult("Authorized: response from persons PostAction()");

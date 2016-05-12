@@ -11,6 +11,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using Toolbox.Auth.Authorization;
 using Toolbox.Auth.Jwt;
+using Toolbox.Auth.Mvc;
 using Toolbox.Auth.Options;
 using Toolbox.Auth.PDP;
 
@@ -108,6 +109,7 @@ namespace Toolbox.Auth
             services.AddSingleton<ITokenRefreshHandler, TokenRefreshHandler>();
 
             services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, TokenControllerOptionsSetup>());
+            services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, PermissionsControllerOptionsSetup>());
         }
     }
 }

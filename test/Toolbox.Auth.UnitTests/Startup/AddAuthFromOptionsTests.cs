@@ -29,10 +29,13 @@ namespace Toolbox.Auth.UnitTests.Startup
                     options.ApiAuthIdpUrl = "apiauthidpurl";
                     options.ApiAuthSpName = "authspname";
                     options.ApiAuthSpUrl = "apiauthspurl";
-                    options.TokenCallbackRoute = "custom/tokenendpoint";
                     options.ApiAuthTokenRefreshUrl = "apiauthtokenrefreshurl";
                     options.TokenRefreshTime = 5;
                     options.AutomaticTokenRefresh = true;
+                    options.TokenCallbackRoute = "custom/tokenendpoint";
+                    options.TokenRefreshRoute = "custom/tokenrefresh";
+                    options.PermissionsRoute = "custom/permissions";
+                    options.AccessDeniedPath = "accessdenied";
                 });
             };
         }

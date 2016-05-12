@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Toolbox.Auth.Controllers;
 using Toolbox.Auth.Jwt;
+using Toolbox.Auth.Mvc;
 using Toolbox.Auth.Options;
 using Toolbox.Auth.UnitTests.Utilities;
 using Xunit;
@@ -19,39 +21,37 @@ namespace Toolbox.Auth.UnitTests.Jwt
         private void OptionsIsSet()
         {
             var options = new AuthOptions() { TokenCallbackRoute = "myroute" };
-            var optionsMock = new Mock<IOptions<AuthOptions>>();
-            optionsMock.Setup(o => o.Value).Returns(options);
 
-            var convention = new TokenControllerConvention(optionsMock.Object);
+            var convention = new TokenControllerConvention(options);
 
             Assert.Same(options, convention.Options);
         }
 
         [Fact]
-        private void RouteIsSetForTokenControllerModel()
+        private void RoutesAreSetForTokenControllerModel()
         {
-            var options = new AuthOptions() { TokenCallbackRoute = "myroute" };
-            var optionsMock = new Mock<IOptions<AuthOptions>>();
-            optionsMock.Setup(o => o.Value).Returns(options);
+            var options = new AuthOptions() { TokenCallbackRoute = "token/callback", TokenRefreshRoute = "token/refresh" };
 
-            var convention = new TokenControllerConvention(optionsMock.Object);
+            var convention = new TokenControllerConvention(options);
             var model = new ControllerModel(typeof(TokenController).GetTypeInfo(), new List<object>());
+            model.Actions.Add(new ActionModel(typeof(TokenController).GetMethod("Callback"), new List<object>()) { ActionName = "Callback" });
+            model.Actions.Add(new ActionModel(typeof(TokenController).GetMethod("Refresh"), new List<object>()) { ActionName = "Refresh" });
 
             convention.Apply(model);
 
-            Assert.Equal(1, model.AttributeRoutes.Count);
-            Assert.Equal("myroute", model.AttributeRoutes.First().Template);
-            Assert.Equal("TokenCallbackRoute", model.AttributeRoutes.First().Name);
+            Assert.Equal("token/callback", model.Actions.Single(a => a.ActionName == "Callback").AttributeRouteModel.Template);
+            Assert.Equal("TokenCallbackRoute", model.Actions.Single(a => a.ActionName == "Callback").AttributeRouteModel.Name);
+
+            Assert.Equal("token/refresh", model.Actions.Single(a => a.ActionName == "Refresh").AttributeRouteModel.Template);
+            Assert.Equal("TokenRefreshRoute", model.Actions.Single(a => a.ActionName == "Refresh").AttributeRouteModel.Name);
         }
 
         [Fact]
         private void RouteIsNotSetForNonTokenControllerModel()
         {
             var options = new AuthOptions() { TokenCallbackRoute = "myroute" };
-            var optionsMock = new Mock<IOptions<AuthOptions>>();
-            optionsMock.Setup(o => o.Value).Returns(options);
 
-            var convention = new TokenControllerConvention(optionsMock.Object);
+            var convention = new TokenControllerConvention(options);
             var model = new ControllerModel(typeof(TestController).GetTypeInfo(), new List<object>());
 
             convention.Apply(model);
@@ -63,10 +63,8 @@ namespace Toolbox.Auth.UnitTests.Jwt
         private void RouteNullIsNotSetForTokenController()
         {
             var options = new AuthOptions() { TokenCallbackRoute = null };
-            var optionsMock = new Mock<IOptions<AuthOptions>>();
-            optionsMock.Setup(o => o.Value).Returns(options);
 
-            var convention = new TokenControllerConvention(optionsMock.Object);
+            var convention = new TokenControllerConvention(options);
             var model = new ControllerModel(typeof(TokenController).GetTypeInfo(), new List<object>());
 
             convention.Apply(model);
@@ -78,10 +76,8 @@ namespace Toolbox.Auth.UnitTests.Jwt
         private void RouteEmptyIsNotSetForTokenController()
         {
             var options = new AuthOptions() { TokenCallbackRoute = "" };
-            var optionsMock = new Mock<IOptions<AuthOptions>>();
-            optionsMock.Setup(o => o.Value).Returns(options);
 
-            var convention = new TokenControllerConvention(optionsMock.Object);
+            var convention = new TokenControllerConvention(options);
             var model = new ControllerModel(typeof(TokenController).GetTypeInfo(), new List<object>());
 
             convention.Apply(model);
@@ -93,10 +89,8 @@ namespace Toolbox.Auth.UnitTests.Jwt
         private void RouteWhitespaceIsNotSetForTokenController()
         {
             var options = new AuthOptions() { TokenCallbackRoute = "   " };
-            var optionsMock = new Mock<IOptions<AuthOptions>>();
-            optionsMock.Setup(o => o.Value).Returns(options);
 
-            var convention = new TokenControllerConvention(optionsMock.Object);
+            var convention = new TokenControllerConvention(options);
             var model = new ControllerModel(typeof(TokenController).GetTypeInfo(), new List<object>());
 
             convention.Apply(model);
