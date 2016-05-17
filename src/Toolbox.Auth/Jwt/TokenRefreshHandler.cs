@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -40,7 +40,7 @@ namespace Toolbox.Auth.Jwt
             {
                 if (jwt.Audiences.FirstOrDefault() == _authOptions.JwtAudience)
                 {
-                    _logger.LogVerbose($"Jwt refreshed, token: {token}");
+                    _logger.LogDebug($"Jwt refreshed, token: {token}");
                     return _tokenRefreshAgent.RefreshTokenAsync(token);
                 }
             }

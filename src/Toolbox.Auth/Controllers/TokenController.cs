@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNet.Http.Authentication;
-using Microsoft.AspNet.Mvc;
+﻿using Microsoft.AspNetCore.Http.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System;
-using System.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Toolbox.Auth.Jwt;
 using Toolbox.Auth.Options;
@@ -48,7 +47,7 @@ namespace Toolbox.Auth.Controllers
         public async Task<IActionResult> Callback(string returnUrl, string jwt)
         {
             var validationParameters = TokenValidationParametersFactory.Create(_authOptions, _signatureValidator);
-            if (validationParameters.ValidateSignature)
+            if (!String.IsNullOrWhiteSpace(_authOptions.JwtSigningKeyProviderUrl))
                 validationParameters.IssuerSigningKey = await _signingKeyProvider.ResolveSigningKeyAsync(false);
 
             try
@@ -81,12 +80,12 @@ namespace Toolbox.Auth.Controllers
             var jwt = new JwtSecurityToken(token);
 
             if (jwt.Audiences.FirstOrDefault() != _authOptions.JwtAudience)
-                return HttpBadRequest();
+                return BadRequest();
 
             var newToken = await _tokenRefreshAgent.RefreshTokenAsync(token);
 
             if (newToken == null)
-                return HttpBadRequest();
+                return BadRequest();
 
             return Ok(newToken);
         }

@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNet.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Toolbox.Auth.Options;
+using Microsoft.AspNetCore.Builder;
+using System;
 
 namespace Toolbox.Auth.Jwt
 {
@@ -24,7 +26,7 @@ namespace Toolbox.Auth.Jwt
                 {
                     logger.LogInformation($"Jwt token validation failed. Exception: {context.Exception.ToString()}");
 
-                    context.AuthenticationTicket = new Microsoft.AspNet.Authentication.AuthenticationTicket(new ClaimsPrincipal(), new Microsoft.AspNet.Http.Authentication.AuthenticationProperties(), string.Empty);
+                    context.Ticket = new Microsoft.AspNetCore.Authentication.AuthenticationTicket(new ClaimsPrincipal(), new Microsoft.AspNetCore.Http.Authentication.AuthenticationProperties(), string.Empty);
                     context.HandleResponse();
 
                     return Task.FromResult<object>(null);
@@ -33,19 +35,11 @@ namespace Toolbox.Auth.Jwt
                 {
                     return Task.FromResult<object>(null);
                 },
-                OnReceivedToken = async context =>
+                OnMessageReceived = async context =>
                 {
                     //the signingKey is resolved on this event because we can make the call async here, in the signatureValidator async is not possible
-                    if (jwtBearerOptions.TokenValidationParameters.ValidateSignature)
+                    if (!String.IsNullOrWhiteSpace(authOptions.JwtSigningKeyProviderUrl))
                         context.Options.TokenValidationParameters.IssuerSigningKey = await signingKeyProvider.ResolveSigningKeyAsync(true);
-                },
-                OnValidatedToken = context =>
-                {
-                    return Task.FromResult<object>(null);
-                },
-                OnReceivingToken = context =>
-                {
-                    return Task.FromResult<object>(null);
                 }
             };
 

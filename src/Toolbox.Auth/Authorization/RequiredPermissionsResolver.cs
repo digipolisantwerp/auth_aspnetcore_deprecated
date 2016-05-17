@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc.Controllers;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -13,7 +13,7 @@ namespace Toolbox.Auth.Authorization
     {
         public IEnumerable<string> ResolveFromAttributeProperties(AuthorizationContext context)
         {
-            var authContext = context.Resource as Microsoft.AspNet.Mvc.Filters.AuthorizationContext;
+            var authContext = context.Resource as Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext;
             var actionDescriptor = authContext.ActionDescriptor as ControllerActionDescriptor;
 
             var requiredPermissions = new List<string>();
@@ -45,7 +45,7 @@ namespace Toolbox.Auth.Authorization
 
         public string ResolveFromConvention(AuthorizationContext context)
         {
-            var authContext = context.Resource as Microsoft.AspNet.Mvc.Filters.AuthorizationContext;
+            var authContext = context.Resource as Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext;
             var actionDescriptor = authContext.ActionDescriptor as ControllerActionDescriptor;
 
             var actionPart = "";

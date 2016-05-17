@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNet.Authentication.Cookies;
-using Microsoft.AspNet.Authentication.JwtBearer;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Http;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
+using Microsoft.Extensions.Options;
 using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Threading.Tasks;
 using Toolbox.Auth.Jwt;
 using Toolbox.Auth.Options;
@@ -18,7 +16,7 @@ namespace Toolbox.Auth
     public static class AppBuilderExtensions
     {
         /// <summary>
-        /// Adds Authentication and Authorization to the Microsoft.AspNet.Builder.IApplicationBuilder request execution pipeline.
+        /// Adds Authentication and Authorization to the Microsoft.AspNetCore.Builder.IApplicationBuilder request execution pipeline.
         /// </summary>
         /// <param name="app"></param>
         /// <returns></returns>
@@ -42,15 +40,15 @@ namespace Toolbox.Auth
             if (authOptions.EnableCookieAuth)
             {
                 //Add middleware that handles authentication cookie
-                app.UseCookieAuthentication(options =>
+                app.UseCookieAuthentication(new CookieAuthenticationOptions
                 {
-                    options.AuthenticationScheme = AuthSchemes.CookieAuth;
+                    AuthenticationScheme = AuthSchemes.CookieAuth,
 
-                    options.AccessDeniedPath = new PathString($"/{authOptions.AccessDeniedPath}");
-                    options.AutomaticAuthenticate = true;
-                    options.AutomaticChallenge = true;
+                    AccessDeniedPath = new PathString($"/{authOptions.AccessDeniedPath}"),
+                    AutomaticAuthenticate = true,
+                    AutomaticChallenge = true,
 
-                    options.Events = new CookieAuthenticationEvents
+                    Events = new CookieAuthenticationEvents
                     {
                         OnValidatePrincipal = async context =>
                         {
@@ -67,7 +65,7 @@ namespace Toolbox.Auth
 
                         OnRedirectToAccessDenied = context =>
                         {
-                            context.Response.Redirect(options.AccessDeniedPath);
+                            context.Response.Redirect(new PathString($"/{authOptions.AccessDeniedPath}"));
                             return Task.FromResult<object>(null);
                         },
 
@@ -79,15 +77,15 @@ namespace Toolbox.Auth
                             context.Response.Redirect(context.RedirectUri);
                             return Task.FromResult<object>(null);
                         },
-                    };
+                    }
                 });
             }
 
             //Add middleware to set permissions in user claims
             var claimsTransformer = app.ApplicationServices.GetService<PermissionsClaimsTransformer>();
-            app.UseClaimsTransformation(options =>
+            app.UseClaimsTransformation(new ClaimsTransformationOptions
             {
-                options.Transformer = claimsTransformer;
+                Transformer = claimsTransformer
             });
 
             return app;

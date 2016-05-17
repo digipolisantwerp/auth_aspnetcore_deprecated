@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Mvc.ActionConstraints;
+﻿using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using System;
 using Toolbox.Auth.Options;
 

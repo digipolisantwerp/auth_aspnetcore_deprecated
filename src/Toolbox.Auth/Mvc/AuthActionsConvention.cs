@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Mvc.ApplicationModels;
+﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Toolbox.Auth.Controllers;
 using Toolbox.Auth.Options;
 
@@ -17,7 +17,8 @@ namespace Toolbox.Auth.Mvc
         {
             if (action.Controller.ControllerType.FullName == typeof(TokenController).FullName || action.Controller.ControllerType.FullName == typeof(PermissionsController).FullName)
             {
-                action.ActionConstraints.Add(new AuthActionsConstraint(_authOptions));
+                var selectorModel = new SelectorModel();
+                selectorModel.ActionConstraints.Add(new AuthActionsConstraint(_authOptions));
             }
         }
     }

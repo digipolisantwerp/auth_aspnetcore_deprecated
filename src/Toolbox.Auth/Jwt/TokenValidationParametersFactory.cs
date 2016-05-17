@@ -1,5 +1,5 @@
-﻿using System;
-using System.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
+using System;
 using Toolbox.Auth.Options;
 
 namespace Toolbox.Auth.Jwt
@@ -15,7 +15,6 @@ namespace Toolbox.Auth.Jwt
                 ValidateIssuer = true,
                 ValidIssuer = authOptions.JwtIssuer,
                 ValidateLifetime = true,
-                ValidateSignature = String.IsNullOrWhiteSpace(authOptions.JwtSigningKeyProviderUrl) ? false : true,
                 SignatureValidator = signatureValidator.SignatureValidator,
                 ClockSkew = TimeSpan.FromMinutes(authOptions.JwtValidatorClockSkew),
                 NameClaimType = "sub"

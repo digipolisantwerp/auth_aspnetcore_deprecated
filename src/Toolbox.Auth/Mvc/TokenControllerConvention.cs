@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNet.Mvc.ApplicationModels;
-using Microsoft.Extensions.OptionsModel;
+﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using System;
 using System.Linq;
 using Toolbox.Auth.Controllers;
@@ -20,19 +19,25 @@ namespace Toolbox.Auth.Mvc
         {
             if (controller.ControllerType.FullName == typeof(TokenController).FullName && !String.IsNullOrWhiteSpace(Options.TokenCallbackRoute))
             {
-                controller.Actions.Single(a => a.ActionName == "Callback").AttributeRouteModel = new AttributeRouteModel()
+                controller.Actions.Single(a => a.ActionName == "Callback").Selectors.Add(new SelectorModel()
                 {
-                    Name = "TokenCallbackRoute",
-                    Order = 0,
-                    Template = Options.TokenCallbackRoute
-                };
+                    AttributeRouteModel = new AttributeRouteModel()
+                    {
+                        Name = "TokenCallbackRoute",
+                        Order = 0,
+                        Template = Options.TokenCallbackRoute
+                    }
+                });
 
-                controller.Actions.Single(a => a.ActionName == "Refresh").AttributeRouteModel = new AttributeRouteModel()
+                controller.Actions.Single(a => a.ActionName == "Refresh").Selectors.Add(new SelectorModel()
                 {
-                    Name = "TokenRefreshRoute",
-                    Order = 0,
-                    Template = Options.TokenRefreshRoute
-                };
+                    AttributeRouteModel = new AttributeRouteModel()
+                    {
+                        Name = "TokenRefreshRoute",
+                        Order = 0,
+                        Template = Options.TokenRefreshRoute
+                    }
+                });
             }
         }
     }

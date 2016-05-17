@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNet.Authentication;
-using Microsoft.Extensions.OptionsModel;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -22,21 +22,21 @@ namespace Toolbox.Auth.PDP
             _pdpProvider = pdpProvider;
         }
 
-        public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
+        public async Task<ClaimsPrincipal> TransformAsync(ClaimsTransformationContext context)
         {
-            if (principal?.Identity?.Name == null ||principal?.Identities?.FirstOrDefault()?.HasClaim(c => c.Type == Claims.PermissionsType) == true)
-                return principal;
+            if (context.Principal?.Identity?.Name == null || context.Principal?.Identities?.FirstOrDefault()?.HasClaim(c => c.Type == Claims.PermissionsType) == true)
+                return context.Principal;
 
-            var userId = principal.Identities.FirstOrDefault()?.Claims.SingleOrDefault(c => c.Type == Claims.Name)?.Value;
+            var userId = context.Principal.Identities.FirstOrDefault()?.Claims.SingleOrDefault(c => c.Type == Claims.Name)?.Value;
 
             var pdpResponse = await _pdpProvider.GetPermissionsAsync(userId, _authOptions.ApplicationName);
 
             pdpResponse?.permissions?.ToList().ForEach(permission =>
             {
-                principal.Identities.First().AddClaim(new Claim(Claims.PermissionsType, permission));
+                context.Principal.Identities.First().AddClaim(new Claim(Claims.PermissionsType, permission));
             });
 
-            return principal;
+            return context.Principal;
         }
     }
 }

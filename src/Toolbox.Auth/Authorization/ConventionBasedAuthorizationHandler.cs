@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using System;
 
 namespace Toolbox.Auth.Authorization

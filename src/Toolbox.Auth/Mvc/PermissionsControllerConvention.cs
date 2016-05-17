@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNet.Mvc.ApplicationModels;
-using Microsoft.Extensions.OptionsModel;
+﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 using Toolbox.Auth.Controllers;
@@ -20,12 +20,15 @@ namespace Toolbox.Auth.Mvc
         {
             if (controller.ControllerType.FullName == typeof(PermissionsController).FullName && !String.IsNullOrWhiteSpace(Options.PermissionsRoute))
             {
-                controller.Actions.Single(a => a.ActionName == "GetPermissions").AttributeRouteModel = new AttributeRouteModel()
+                controller.Actions.Single(a => a.ActionName == "GetPermissions").Selectors.Add(new SelectorModel()
                 {
-                    Name = "PermissionsRoute",
-                    Order = 0,
-                    Template = Options.PermissionsRoute
-                };
+                    AttributeRouteModel = new AttributeRouteModel()
+                    {
+                        Name = "PermissionsRoute",
+                        Order = 0,
+                        Template = Options.PermissionsRoute
+                    }
+                });
             }
         }
     }
