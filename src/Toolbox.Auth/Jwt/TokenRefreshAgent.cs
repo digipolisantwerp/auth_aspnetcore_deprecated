@@ -18,10 +18,10 @@ namespace Toolbox.Auth.Jwt
         private readonly JsonMediaTypeFormatter _formatter;
         private readonly ILogger<TokenRefreshAgent> _logger;
 
-        public TokenRefreshAgent(IOptions<AuthOptions> options, ILogger<TokenRefreshAgent> logger)
+        public TokenRefreshAgent(IOptions<AuthOptions> options, ILogger<TokenRefreshAgent> logger, HttpMessageHandler handler)
         {
             _authOptions = options.Value;
-            _client = new HttpClient();
+            _client = new HttpClient(handler);
             _logger = logger;
 
             _formatter = new JsonMediaTypeFormatter();

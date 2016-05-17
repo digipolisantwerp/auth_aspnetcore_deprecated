@@ -31,6 +31,10 @@ The toolbox also provides Authorization attributes that can be used in the contr
 - [Authorization usage](#authorization-usage)
   - [AuthorizeByConvention attribute](#authorizebyconvention-attribute)
   - [AuthorizeWith attribute](#authorizewith-attribute)
+- [Additional functionality](#additional-functionality)
+  - [Token refresh](#token-refresh)
+  - [Automatic token refresh](#automatic-token-refresh)
+  - [Permissions endpoint](#permissions-endpoint)
 - [How it works](#how-it-works)
   - [Basic auth flow](#basic-auth-flow)
   - [Request flow](#request-flow)
@@ -63,6 +67,7 @@ The Auth framework is registered in the ConfigureServices method of the Startup 
 There are 2 ways to configure the DataAccess framework: using a json config file or using code
 
 ### Json config file
+
 The path to the Json config file has to be given as argument to the AddAuth method, together with the section name where the options are defined:
 ``` csharp
     services.AddAuth(options =>
@@ -89,6 +94,7 @@ The Auth framework will read the given section of the json file with the followi
 ```
 
 ### Code
+
 You can also call the AddAuth method, passing in the needed options directly:
 ``` csharp
     services.AddAuth(options =>
@@ -258,7 +264,44 @@ Both **AuthorizeByConvention** and **AuthorizeWith** attributes are derived from
 This attribute can be used with both the JwtHeaderAuth and the CookieAuth schemes.
 Please note that the default scheme for this attribute is the **JwtHeaderAuth** scheme.
 
+## Additional functionality
 
+### Token refresh
+
+When using the **CookieAuth** scheme, the toolbox provides an endpoint where a token can be refreshed. The token must not be expired in order to be able to be refreshed.
+The default route for the token refresh endpoint is "auth/token/refresh". The route can be modified by changing the value of the **TokenRefreshRoute** options value.
+
+When calling the endpoint using a GET request, the current token must be passed as query parameter with name "token".
+
+GET auth/token/refresh?token=xxxxx
+
+### Automatic token refresh
+
+When using the **CookieAuth** scheme it is possible to enable automatic token refresh.
+When enabled, the middleware will check if the token is about to expire and refresh the token when the expiration time is within a certain timespan.
+That timespan is 5 minutes by default but can be modified by changing the value of the **TokenRefreshTime** options value.
+
+Automatic token refresh is disabled by default. To enable it, set the **AutomaticTokenRefresh** options value to true.
+
+
+### Permissions endpoint
+
+When using the **CookieAuth** scheme an endpoint is available to request the users permissions.
+The default route for the permissions endpoint is "auth/user/permissions". The route can be modified by changing the value of the **PermissionsRoute** options value.
+
+GET auth/user/permissions
+
+This api endpoint uses the **JwtHeaderAuth** scheme. This requires that you send a valid jwt token in the authorization header for the request.
+
+The response is an array of permissions.
+
+``` json
+[
+    "login-app",
+    "permission-123",
+    "permission-456"
+]
+```
 
 ## How it works
 
@@ -378,40 +421,5 @@ For the api key it is advised not to set the value in code or in a config file b
 
 The signing key can also be cached. The duration of the cache can be set using the **JwtSigningKeyCacheDuration** property in configuration. The default is 10 minutes. Use 0 to disable the cache.
 
-#### Token refresh
-
-When using the **CookieAuth** scheme, the toolbox provides an endpoint where a token can be refreshed. The token must not be expired in order to be able to be refreshed.
-The default route for the token refresh endpoint is "auth/token/refresh". The route can be modified by changing the value of the **TokenRefreshRoute** options value.
-
-When calling the endpoint using a GET request, the current token must be passed as query parameter with name "token".
-
-GET auth/token/refresh?token=xxxxx
-
-#### Automatic token refresh
-
-When using the **CookieAuth** scheme it is possible to enable automatic token refresh.
-When enabled, the middleware will check if the token is about to expire and refresh the token when the expiration time is within a certain timespan.
-That timespan is 5 minutes by default but can be modified by changing the value of the **TokenRefreshTime** options value.
-
-Automatic token refresh is disabled by default. To enable it, set the **AutomaticTokenRefresh** options value to true.
-
-### Permissions endpoint
-
-When using the **CookieAuth** scheme an endpoint is available to request the users permissions.
-The default route for the permissions endpoint is "auth/user/permissions". The route can be modified by changing the value of the **PermissionsRoute** options value.
-
-GET auth/user/permissions
-
-This api endpoint uses the **JwtHeaderAuth** scheme. This requires that you send a valid jwt token in the authorization header for the request.
-
-The response is an array of permissions.
-
- ``` json
-[
-    "login-app",
-    "permission-123",
-    "permission-456"
-]
-```
 
 

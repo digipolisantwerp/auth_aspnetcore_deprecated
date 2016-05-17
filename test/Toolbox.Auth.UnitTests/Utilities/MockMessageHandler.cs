@@ -37,10 +37,8 @@ namespace Toolbox.Auth.UnitTests
                     }
 
                     break;
-                case HttpStatusCode.NotFound:
-                    response = new HttpResponseMessage(HttpStatusCode.NotFound);
-                    break;
                 default:
+                    response = new HttpResponseMessage(_responseCode);
                     break;
             }
 
