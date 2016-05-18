@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Toolbox.Auth.Options
+﻿namespace Toolbox.Auth.Options
 {
     public class PdpOptions
     {

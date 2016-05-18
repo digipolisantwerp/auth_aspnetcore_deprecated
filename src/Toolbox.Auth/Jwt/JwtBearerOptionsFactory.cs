@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Toolbox.Auth.Options;
-using Microsoft.AspNetCore.Builder;
-using System;
 
 namespace Toolbox.Auth.Jwt
 {

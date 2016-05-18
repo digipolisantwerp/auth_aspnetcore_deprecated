@@ -37,6 +37,7 @@ namespace Toolbox.Auth.UnitTests.Startup
                     options.PermissionsRoute = "custom/permissions";
                     options.AccessDeniedPath = "accessdenied";
                 });
+                services.AddOptions();
             };
         }
 
@@ -60,6 +61,7 @@ namespace Toolbox.Auth.UnitTests.Startup
             {
                 options.ApplicationName = "AppName";
             }, policiesDictionary);
+            services.AddOptions();
 
             var authorizationOptions = services.BuildServiceProvider().GetRequiredService<IOptions<AuthorizationOptions>>()?.Value;
 

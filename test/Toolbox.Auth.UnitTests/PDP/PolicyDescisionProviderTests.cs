@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Toolbox.Auth.Options;
 using Toolbox.Auth.PDP;
+using Toolbox.Auth.UnitTests.Utilities;
 using Xunit;
 
 namespace Toolbox.Auth.UnitTests.PDP
@@ -22,7 +23,7 @@ namespace Toolbox.Auth.UnitTests.PDP
 
         public PolicyDescisionProviderTests()
         {
-            _options = new AuthOptions { PdpUrl = _pdpUrl, PdpCacheDuration = 60 };
+            _options = new AuthOptions { PdpUrl = _pdpUrl, PdpCacheDuration = 0 };
         }
 
         [Fact]
@@ -85,7 +86,9 @@ namespace Toolbox.Auth.UnitTests.PDP
             var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
             var result = await provider.GetPermissionsAsync(_userId, _application);
 
-            Assert.Equal(pdpResponse, result);
+            Assert.Equal(pdpResponse.applicationId, result.applicationId);
+            Assert.Equal(pdpResponse.userId, result.userId);
+            Assert.Equal(pdpResponse.permissions, result.permissions);
         }
 
         [Fact]
@@ -111,6 +114,7 @@ namespace Toolbox.Auth.UnitTests.PDP
         [Fact]
         public async Task GetCachedPdpResponse()
         {
+            _options.PdpCacheDuration = 60;
             var pdpResponse = new PdpResponse
             {
                 applicationId = _application,
@@ -130,7 +134,11 @@ namespace Toolbox.Auth.UnitTests.PDP
         [Fact]
         public async Task SetResponseToCache()
         {
+            _options.PdpCacheDuration = 60;
+            var cacheEntry = new TestCacheEntry();
             var mockedCache = CreateEmptyMockedCache();
+            mockedCache.Setup(c => c.CreateEntry(BuildCacheKey(_userId)))
+                .Returns(cacheEntry);
 
             var pdpResponse = new PdpResponse
             {
@@ -144,18 +152,19 @@ namespace Toolbox.Auth.UnitTests.PDP
 
             var result = await provider.GetPermissionsAsync(_userId, _application);
 
-            mockedCache.Verify(m => m.Set((object)BuildCacheKey(_userId), (object)pdpResponse, It.IsAny<MemoryCacheEntryOptions>()), Times.Once);
+            Assert.Equal(pdpResponse.applicationId, ((PdpResponse)cacheEntry.Value).applicationId);
+            Assert.Equal(pdpResponse.userId, ((PdpResponse)cacheEntry.Value).userId);
+            Assert.Equal(pdpResponse.permissions, ((PdpResponse)cacheEntry.Value).permissions);
         }
 
         [Fact]
         public async Task CacheDurationFromOptionsIsUsed()
         {
-            MemoryCacheEntryOptions memoryCacheEntryOptions = null;
-
+            _options.PdpCacheDuration = 60;
+            var cacheEntry = new TestCacheEntry();
             var mockedCache = CreateEmptyMockedCache();
-            mockedCache.Setup(c => c.Set(It.IsAny<object>(), It.IsAny<object>(), It.IsAny<MemoryCacheEntryOptions>()))
-                .Callback<object, object, MemoryCacheEntryOptions>((a, b, options) => memoryCacheEntryOptions = options);
-
+            mockedCache.Setup(c => c.CreateEntry(BuildCacheKey(_userId)))
+                .Returns(cacheEntry);
 
             var pdpResponse = new PdpResponse
             {
@@ -169,7 +178,7 @@ namespace Toolbox.Auth.UnitTests.PDP
 
             var result = await provider.GetPermissionsAsync(_userId, _application);
 
-            Assert.True(memoryCacheEntryOptions.AbsoluteExpirationRelativeToNow.Value == new TimeSpan(0, _options.PdpCacheDuration, 0));
+            Assert.True(cacheEntry.AbsoluteExpirationRelativeToNow.Value == new TimeSpan(0, _options.PdpCacheDuration, 0));
         }
 
         private string BuildCacheKey(string userId) => $"pdpResponse-{userId}";

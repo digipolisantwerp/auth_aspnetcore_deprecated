@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.IdentityModel.Tokens;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;

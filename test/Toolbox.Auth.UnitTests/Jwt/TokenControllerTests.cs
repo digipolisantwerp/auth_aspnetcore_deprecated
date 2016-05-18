@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
@@ -199,7 +200,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
             _mockCookies = new Mock<IResponseCookies>();
             mockHttpResponse.SetupGet(r => r.Cookies).Returns(_mockCookies.Object);
 
-            var actionContext = new ActionContext(mockHttpContext.Object, new RouteData(), new ActionDescriptor());
+            var actionContext = new ActionContext(mockHttpContext.Object, new RouteData(), new ControllerActionDescriptor());
             tokenController.ControllerContext = new ControllerContext(actionContext);
 
             var mockUrlHelper = new Mock<IUrlHelper>();

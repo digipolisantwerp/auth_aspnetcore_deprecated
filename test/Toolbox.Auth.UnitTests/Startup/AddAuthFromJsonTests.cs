@@ -1,4 +1,6 @@
-﻿namespace Toolbox.Auth.UnitTests.Startup
+﻿using Microsoft.Extensions.DependencyInjection;
+
+namespace Toolbox.Auth.UnitTests.Startup
 {
     public class AddAuthFromJsonTests : AddAuthBaseTests
     {
@@ -11,6 +13,7 @@
                     options.FileName = @"_TestData/authconfig.json";
                     options.Section = "Auth";
                 });
+                services.AddOptions();
             };
         }
     }

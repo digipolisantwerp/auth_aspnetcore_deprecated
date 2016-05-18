@@ -97,10 +97,12 @@ namespace Toolbox.Auth.UnitTests.PDP
 
         private ClaimsTransformationContext CreateClaimsTransformationContext(ClaimsPrincipal user)
         {
-            var mockHttpContext = new Mock<Microsoft.AspNetCore.Http.HttpContext>();
-            mockHttpContext.SetupGet(c => c.User == user);
+            var claimsTransformationContext = new ClaimsTransformationContext(Mock.Of<HttpContext>())
+            {
+                Principal = user
+            };
 
-            return new ClaimsTransformationContext(mockHttpContext.Object);
+            return claimsTransformationContext;
         }
 
     }

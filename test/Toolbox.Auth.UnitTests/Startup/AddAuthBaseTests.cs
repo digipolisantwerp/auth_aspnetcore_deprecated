@@ -7,6 +7,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Toolbox.Auth.Authorization;
 using Toolbox.Auth.Jwt;
 using Toolbox.Auth.Mvc;
@@ -152,7 +153,7 @@ namespace Toolbox.Auth.UnitTests.Startup
         }
 
         [Fact]
-        public void ConventionBasedPolicyIsAdded()
+        public async Task ConventionBasedPolicyIsAdded()
         {
             var services = new ServiceCollection();
 

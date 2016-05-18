@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Toolbox.Auth.Jwt;
 using Toolbox.Auth.Options;
+using Toolbox.Auth.UnitTests.Utilities;
 using Xunit;
 
 namespace Toolbox.Auth.UnitTests.Jwt
@@ -21,7 +22,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
 
         public JwtSigningKeyProviderTests()
         {
-            _options = new AuthOptions { JwtSigningKeyProviderUrl = _jwtKeyProviderUrl, JwtSigningKeyCacheDuration = 5 };
+            _options = new AuthOptions { JwtSigningKeyProviderUrl = _jwtKeyProviderUrl, JwtSigningKeyCacheDuration = 0 };
         }
 
         [Fact]
@@ -98,6 +99,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
         [Fact]
         public async Task GetCachedKey()
         {
+            _options.JwtSigningKeyCacheDuration = 5;
             string key = "signingkey";
 
             var mockedCache = CreateMockedCache(CACHE_KEY, key);
@@ -112,10 +114,15 @@ namespace Toolbox.Auth.UnitTests.Jwt
         [Fact]
         public async Task IgnoreCachedKey()
         {
+            _options.JwtSigningKeyCacheDuration = 5;
             string cachedKey = "cachedkey";
             string nonCachedKey = "nonCachedKey";
 
-            var mockedCache = CreateMockedCache(CACHE_KEY, cachedKey);
+            var cacheEntry = new TestCacheEntry();
+            var mockedCache = CreateEmptyMockedCache();
+            mockedCache.Setup(c => c.CreateEntry("JwtSigningKey"))
+                .Returns(cacheEntry);
+
             var mockHandler = new MockMessageHandler<string>(HttpStatusCode.OK, nonCachedKey);
             var provider = new JwtSigningKeyProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
             var securityKey = await provider.ResolveSigningKeyAsync(false) as SymmetricSecurityKey;
@@ -127,7 +134,12 @@ namespace Toolbox.Auth.UnitTests.Jwt
         [Fact]
         public async Task SetResponseToCache()
         {
+            _options.JwtSigningKeyCacheDuration = 5;
+            var cacheEntry = new TestCacheEntry();
             var mockedCache = CreateEmptyMockedCache();
+            mockedCache.Setup(c => c.CreateEntry("JwtSigningKey"))
+                .Returns(cacheEntry);
+
             string key = "signingkey";
 
             var mockHandler = new MockMessageHandler<string>(HttpStatusCode.OK, key);
@@ -135,18 +147,17 @@ namespace Toolbox.Auth.UnitTests.Jwt
 
             await provider.ResolveSigningKeyAsync(false);
 
-            //Should set object twice to cache: once in the constructor when preloading the cache and once when the call is made
-            mockedCache.Verify(m => m.Set((object)CACHE_KEY, It.IsAny<object>(), It.IsAny<MemoryCacheEntryOptions>()), Times.Exactly(2));
+            Assert.Equal(key, Encoding.UTF8.GetString(((SymmetricSecurityKey)cacheEntry.Value).Key));
         }
 
         [Fact]
         public async Task CacheDurationFromOptionsIsUsed()
         {
-            MemoryCacheEntryOptions memoryCacheEntryOptions = null;
-
+            _options.JwtSigningKeyCacheDuration = 5;
+            var cacheEntry = new TestCacheEntry();
             var mockedCache = CreateEmptyMockedCache();
-            mockedCache.Setup(c => c.Set(It.IsAny<object>(), It.IsAny<object>(), It.IsAny<MemoryCacheEntryOptions>()))
-                .Callback<object, object, MemoryCacheEntryOptions>((a, b, options) => memoryCacheEntryOptions = options);
+            mockedCache.Setup(c => c.CreateEntry("JwtSigningKey"))
+                .Returns(cacheEntry);
 
             string key = "signingkey";
 
@@ -155,7 +166,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
 
             await provider.ResolveSigningKeyAsync(false);
 
-            Assert.True(memoryCacheEntryOptions.AbsoluteExpirationRelativeToNow.Value == new TimeSpan(0, _options.JwtSigningKeyCacheDuration, 0));
+            Assert.True(cacheEntry.AbsoluteExpirationRelativeToNow.Value == new TimeSpan(0, _options.JwtSigningKeyCacheDuration, 0));
         }
                
 

@@ -33,7 +33,7 @@ namespace Toolbox.Auth.UnitTests
                     }
                     else
                     {
-                        response.Content = new StringContent(JsonConvert.SerializeObject(_responseCode));
+                        response.Content = new StringContent(JsonConvert.SerializeObject(_responseContent));
                     }
 
                     break;
