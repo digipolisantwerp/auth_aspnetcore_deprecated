@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Toolbox.Auth.UnitTests.Utilities
 {
@@ -6,7 +6,7 @@ namespace Toolbox.Auth.UnitTests.Utilities
     {
         public IActionResult Get()
         {
-            return new HttpOkResult();
+            return new OkResult();
         }
     }
 }

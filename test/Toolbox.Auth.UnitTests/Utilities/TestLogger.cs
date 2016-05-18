@@ -18,7 +18,17 @@ namespace Toolbox.Auth.UnitTests
             LoggedMessages = loggedMessages;
         }
 
-        public IDisposable BeginScopeImpl(object state)
+        public static TestLogger<T> CreateLogger()
+        {
+            return new TestLogger<T>();
+        }
+
+        public static TestLogger<T> CreateLogger(List<string> loggedMessages)
+        {
+            return new TestLogger<T>(loggedMessages);
+        }
+
+        public IDisposable BeginScope<TState>(TState state)
         {
             throw new NotImplementedException();
         }
@@ -28,19 +38,9 @@ namespace Toolbox.Auth.UnitTests
             return true;
         }
 
-        public void Log(LogLevel logLevel, int eventId, object state, Exception exception, Func<object, Exception, string> formatter)
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
             LoggedMessages.Add($"{logLevel}, {state}");
-        }
-
-        public static TestLogger<T> CreateLogger()
-        {
-            return new TestLogger<T>();
-        }
-
-        public static TestLogger<T> CreateLogger(List<string> loggedMessages)
-        {
-            return new TestLogger<T>(loggedMessages);
         }
     }
 }

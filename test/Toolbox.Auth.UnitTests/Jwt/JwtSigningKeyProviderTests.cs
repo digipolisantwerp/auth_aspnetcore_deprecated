@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.IdentityModel.Tokens;
 using Moq;
 using System;
-using System.IdentityModel.Tokens;
 using System.Net;
 using System.Net.Http;
 using System.Text;

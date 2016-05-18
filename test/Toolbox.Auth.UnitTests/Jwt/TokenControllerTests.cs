@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Http.Authentication;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Abstractions;
-using Microsoft.AspNet.Routing;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Authentication;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.IdentityModel.Tokens;
 using Moq;
 using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -40,12 +39,15 @@ namespace Toolbox.Auth.UnitTests.Jwt
         [Fact]
         public void ThrowsExceptionIfIJwtSigningKeyProviderIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new TokenController(Options.Create(new AuthOptions()),
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var ctrl = new TokenController(Options.Create(new AuthOptions()),
                 null,
                 Mock.Of<IJwtTokenSignatureValidator>(),
                 Mock.Of<ISecurityTokenValidator>(),
                 _logger,
-                Mock.Of<ITokenRefreshAgent>()));
+                Mock.Of<ITokenRefreshAgent>());
+            }); 
         }
 
         [Fact]
@@ -196,7 +198,9 @@ namespace Toolbox.Auth.UnitTests.Jwt
             mockHttpContext.SetupGet(c => c.Response).Returns(mockHttpResponse.Object);
             _mockCookies = new Mock<IResponseCookies>();
             mockHttpResponse.SetupGet(r => r.Cookies).Returns(_mockCookies.Object);
-            tokenController.ActionContext = new ActionContext(mockHttpContext.Object, new RouteData(), new ActionDescriptor());
+
+            var actionContext = new ActionContext(mockHttpContext.Object, new RouteData(), new ActionDescriptor());
+            tokenController.ControllerContext = new ControllerContext(actionContext);
 
             var mockUrlHelper = new Mock<IUrlHelper>();
             mockUrlHelper.Setup(h => h.IsLocalUrl(_redirectUrl)).Returns(returnUrlIsLocal);

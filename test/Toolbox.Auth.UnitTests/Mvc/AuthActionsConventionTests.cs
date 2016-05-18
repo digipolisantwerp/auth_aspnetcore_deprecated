@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNet.Mvc.ApplicationModels;
-using Microsoft.Extensions.OptionsModel;
+﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.Extensions.Options;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -29,7 +29,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
 
             convention.Apply(actionModel);
 
-            Assert.True(actionModel.ActionConstraints.First() is AuthActionsConstraint);
+            Assert.True(actionModel.Selectors.First().ActionConstraints.First() is AuthActionsConstraint);
         }
 
         [Fact]
@@ -44,7 +44,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
 
             convention.Apply(actionModel);
 
-            Assert.True(actionModel.ActionConstraints.First() is AuthActionsConstraint);
+            Assert.True(actionModel.Selectors.First().ActionConstraints.First() is AuthActionsConstraint);
         }
 
     }

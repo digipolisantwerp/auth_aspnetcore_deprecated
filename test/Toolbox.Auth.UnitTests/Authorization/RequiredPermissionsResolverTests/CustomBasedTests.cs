@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc.Controllers;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Routing;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -57,14 +60,14 @@ namespace Toolbox.Auth.UnitTests.Authorization.ResolverTests
 
         private AuthorizationContext CreateAuthorizationContext(Type controllerType, string action)
         {
-            var actionContext = new Microsoft.AspNet.Mvc.ActionContext();
+            var actionContext = new ActionContext();
 
             var mockHttpContext = new Mock<HttpContext>();
             mockHttpContext.Setup(c => c.Request)
                 .Returns(Mock.Of<HttpRequest>());
 
             actionContext.HttpContext = mockHttpContext.Object;
-            actionContext.RouteData = new Microsoft.AspNet.Routing.RouteData();
+            actionContext.RouteData = new RouteData();
 
             var actionDescriptor = new ControllerActionDescriptor
             {
@@ -73,7 +76,7 @@ namespace Toolbox.Auth.UnitTests.Authorization.ResolverTests
             };
             actionContext.ActionDescriptor = actionDescriptor;
 
-            var resource = new Microsoft.AspNet.Mvc.Filters.AuthorizationContext(actionContext, new List<Microsoft.AspNet.Mvc.Filters.IFilterMetadata>());
+            var resource = new Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext(actionContext, new List<IFilterMetadata>());
 
             var requirements = new IAuthorizationRequirement[] { new ConventionBasedRequirement() };
 

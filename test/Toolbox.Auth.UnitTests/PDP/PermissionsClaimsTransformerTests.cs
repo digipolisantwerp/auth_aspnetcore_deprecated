@@ -1,4 +1,6 @@
-﻿using Moq;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -56,7 +58,8 @@ namespace Toolbox.Auth.UnitTests.PDP
 
             var transformer = new PermissionsClaimsTransformer(Options.Create(_authOptions), pdpProvider);
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(Claims.Name, _userId), new Claim(ClaimTypes.Name, _userId) }, "Bearer"));
-            var result = await transformer.TransformAsync(user);
+
+            var result = await transformer.TransformAsync(CreateClaimsTransformationContext(user));
 
             Assert.NotNull(result);
             Assert.True(result.HasClaim(Claims.PermissionsType, "permission1"));
@@ -76,7 +79,8 @@ namespace Toolbox.Auth.UnitTests.PDP
 
             var transformer = new PermissionsClaimsTransformer(Options.Create(_authOptions), pdpProvider);
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(Claims.Name, _userId), new Claim(ClaimTypes.Name, _userId) }, "Bearer"));
-            var result = await transformer.TransformAsync(user);
+
+            var result = await transformer.TransformAsync(CreateClaimsTransformationContext(user));
 
             Assert.NotNull(result);
             Assert.False(result.HasClaim(c => c.Type == Claims.PermissionsType));
@@ -90,6 +94,14 @@ namespace Toolbox.Auth.UnitTests.PDP
 
             return mockPdpProvider.Object;
         }
-            
-}
+
+        private ClaimsTransformationContext CreateClaimsTransformationContext(ClaimsPrincipal user)
+        {
+            var mockHttpContext = new Mock<Microsoft.AspNetCore.Http.HttpContext>();
+            mockHttpContext.SetupGet(c => c.User == user);
+
+            return new ClaimsTransformationContext(mockHttpContext.Object);
+        }
+
+    }
 }

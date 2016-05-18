@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNet.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Moq;
 using System;
-using System.IdentityModel.Tokens;
 using System.Text;
 using System.Threading.Tasks;
 using Toolbox.Auth.Jwt;
@@ -34,7 +34,6 @@ namespace Toolbox.Auth.UnitTests.Jwt
             Assert.Equal(authOptions.JwtAudience, options.TokenValidationParameters.ValidAudience);
 
             Assert.True(options.TokenValidationParameters.ValidateLifetime);
-            Assert.False(options.TokenValidationParameters.ValidateSignature);
 
             Assert.Equal(TimeSpan.FromMinutes(authOptions.JwtValidatorClockSkew), options.TokenValidationParameters.ClockSkew);
             Assert.Equal(Claims.Sub, options.TokenValidationParameters.NameClaimType);
@@ -62,9 +61,9 @@ namespace Toolbox.Auth.UnitTests.Jwt
                 .ReturnsAsync(new SymmetricSecurityKey(keyBytes));
 
             var options = JwtBearerOptionsFactory.Create(authOptions, signingKeyProviderMock.Object, signatureValidatorMock, loggerMock);
-            var context = new ReceivedTokenContext(null, options);
+            var context = new MessageReceivedContext(null, options);
 
-            await options.Events.ReceivedToken(context);
+            await options.Events.MessageReceived(context);
 
             var securityKey = options.TokenValidationParameters.IssuerSigningKey as SymmetricSecurityKey;
 
@@ -98,7 +97,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
             await options.Events.AuthenticationFailed(context);
 
             Assert.True(context.HandledResponse);
-            Assert.NotNull(context.AuthenticationTicket);
+            Assert.NotNull(context.Ticket);
         }
     }
 }   

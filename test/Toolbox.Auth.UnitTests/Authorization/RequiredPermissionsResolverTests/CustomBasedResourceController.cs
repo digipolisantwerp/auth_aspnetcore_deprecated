@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Toolbox.Auth.Authorization;
 
 namespace Toolbox.Auth.UnitTests.Authorization.ResolverTests

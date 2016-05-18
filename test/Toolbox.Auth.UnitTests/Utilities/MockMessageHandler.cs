@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Formatting;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,7 +33,7 @@ namespace Toolbox.Auth.UnitTests
                     }
                     else
                     {
-                        response.Content = new ObjectContent<T>(_responseContent, new JsonMediaTypeFormatter());
+                        response.Content = new StringContent(JsonConvert.SerializeObject(_responseCode));
                     }
 
                     break;

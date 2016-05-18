@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -11,7 +12,8 @@ namespace Toolbox.Auth.Jwt
     {
         private readonly AuthOptions _authOptions;
         private readonly HttpClient _client;
-        private readonly JsonMediaTypeFormatter _formatter;
+        private readonly JsonSerializerSettings _jsonSettings;
+
         private readonly ILogger<TokenRefreshAgent> _logger;
 
         public TokenRefreshAgent(IOptions<AuthOptions> options, ILogger<TokenRefreshAgent> logger, HttpMessageHandler handler)
@@ -20,8 +22,10 @@ namespace Toolbox.Auth.Jwt
             _client = new HttpClient(handler);
             _logger = logger;
 
-            _formatter = new JsonMediaTypeFormatter();
-            _formatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            _jsonSettings = new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
         }
 
         public async Task<string> RefreshTokenAsync(string token)
@@ -31,7 +35,7 @@ namespace Toolbox.Auth.Jwt
                 OriginalJWT = token
             };
 
-            var response = await _client.PostAsync<TokenRefreshRequest>(_authOptions.ApiAuthTokenRefreshUrl, tokenRefreshRequest, _formatter);
+            var response = await _client.PostAsync<TokenRefreshRequest>(_authOptions.ApiAuthTokenRefreshUrl, tokenRefreshRequest, _jsonSettings);
 
             if (!response.IsSuccessStatusCode)
             {

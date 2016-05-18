@@ -1,6 +1,6 @@
-﻿using Moq;
+﻿using Microsoft.IdentityModel.Tokens;
+using Moq;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,7 +22,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
             var tokenRefreshHandler = new TokenRefreshHandler(options, tokenRefreshAgentMock.Object, logger);
 
             var jwtHandler = new JwtSecurityTokenHandler();
-            var jwt = jwtHandler.CreateJwt(new System.IdentityModel.Tokens.SecurityTokenDescriptor()
+            var jwt = jwtHandler.CreateEncodedJwt(new SecurityTokenDescriptor()
             {
                 Expires= DateTime.Now.AddMinutes(-1),
                 Audience = "audience"
@@ -43,7 +43,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
             var tokenRefreshHandler = new TokenRefreshHandler(options, tokenRefreshAgentMock.Object, logger);
 
             var jwtHandler = new JwtSecurityTokenHandler();
-            var jwt = jwtHandler.CreateJwt(new System.IdentityModel.Tokens.SecurityTokenDescriptor()
+            var jwt = jwtHandler.CreateEncodedJwt(new SecurityTokenDescriptor()
             {
                 Expires = DateTime.Now.AddMinutes(4)
             });
@@ -63,7 +63,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
             var tokenRefreshHandler = new TokenRefreshHandler(options, tokenRefreshAgentMock.Object, logger);
 
             var jwtHandler = new JwtSecurityTokenHandler();
-            var jwt = jwtHandler.CreateJwt(new System.IdentityModel.Tokens.SecurityTokenDescriptor()
+            var jwt = jwtHandler.CreateEncodedJwt(new SecurityTokenDescriptor()
             {
                 Expires = DateTime.Now.AddMinutes(6)
             });
@@ -83,7 +83,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
             var tokenRefreshHandler = new TokenRefreshHandler(options, tokenRefreshAgentMock.Object, logger);
 
             var jwtHandler = new JwtSecurityTokenHandler();
-            var jwt = jwtHandler.CreateJwt(new System.IdentityModel.Tokens.SecurityTokenDescriptor()
+            var jwt = jwtHandler.CreateEncodedJwt(new SecurityTokenDescriptor()
             {
                 Expires = DateTime.Now.AddMinutes(-1)
             });

@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc.Controllers;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Routing;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -60,53 +63,9 @@ namespace Toolbox.Auth.UnitTests.Authorization.ResolverTests
             Assert.Equal("delete-conventionsbasedresource", requiredPermissions);
         }
 
-        //[Fact]
-        //public void ControllerLevelGetRequest()
-        //{
-        //    var resolver = new RequiredPermissionsResolver();
-        //    var context = CreateAuthorizationContext(typeof(ConventionsBasedResourceController2), "Get", HttpMethod.Get);
-
-        //    var requiredPermissions = resolver.ResolveFromConvention(context);
-
-        //    Assert.Equal("read-conventionsbasedresource2", requiredPermissions);
-        //}
-
-        //[Fact]
-        //public void ControllerLevelPostRequest()
-        //{
-        //    var resolver = new RequiredPermissionsResolver();
-        //    var context = CreateAuthorizationContext(typeof(ConventionsBasedResourceController2), "Post", HttpMethod.Post);
-
-        //    var requiredPermissions = resolver.ResolveFromConvention(context);
-
-        //    Assert.Equal("create-conventionsbasedresource2", requiredPermissions);
-        //}
-
-        //[Fact]
-        //public void ControllerLevelPutRequest()
-        //{
-        //    var resolver = new RequiredPermissionsResolver();
-        //    var context = CreateAuthorizationContext(typeof(ConventionsBasedResourceController2), "Put", HttpMethod.Put);
-
-        //    var requiredPermissions = resolver.ResolveFromConvention(context);
-
-        //    Assert.Equal("update-conventionsbasedresource2", requiredPermissions);
-        //}
-
-        //[Fact]
-        //public void ControllerLevelDeleteRequest()
-        //{
-        //    var resolver = new RequiredPermissionsResolver();
-        //    var context = CreateAuthorizationContext(typeof(ConventionsBasedResourceController2), "Delete", HttpMethod.Delete);
-
-        //    var requiredPermissions = resolver.ResolveFromConvention(context);
-
-        //    Assert.Equal("delete-conventionsbasedresource2", requiredPermissions);
-        //}
-
         private AuthorizationContext CreateAuthorizationContext(Type controllerType, string action, HttpMethod httpMethod)
         {
-            var actionContext = new Microsoft.AspNet.Mvc.ActionContext();
+            var actionContext = new ActionContext();
 
             var mockHttpRequest = new Mock<HttpRequest>();
             mockHttpRequest.Setup(r => r.Method)
@@ -117,7 +76,7 @@ namespace Toolbox.Auth.UnitTests.Authorization.ResolverTests
                 .Returns(mockHttpRequest.Object);
 
             actionContext.HttpContext = mockHttpContext.Object;
-            actionContext.RouteData = new Microsoft.AspNet.Routing.RouteData();
+            actionContext.RouteData = new RouteData();
 
             var actionDescriptor = new ControllerActionDescriptor
             {
@@ -127,7 +86,7 @@ namespace Toolbox.Auth.UnitTests.Authorization.ResolverTests
             };
             actionContext.ActionDescriptor = actionDescriptor;
 
-            var resource = new Microsoft.AspNet.Mvc.Filters.AuthorizationContext(actionContext, new List<Microsoft.AspNet.Mvc.Filters.IFilterMetadata>());
+            var resource = new Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext(actionContext, new List<IFilterMetadata>());
 
             var requirements = new IAuthorizationRequirement[] { new ConventionBasedRequirement() };
 

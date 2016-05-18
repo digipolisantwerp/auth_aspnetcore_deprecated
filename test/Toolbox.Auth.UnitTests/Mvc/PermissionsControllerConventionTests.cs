@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNet.Mvc.ApplicationModels;
-using Microsoft.Extensions.OptionsModel;
+﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.Extensions.Options;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -42,8 +42,8 @@ namespace Toolbox.Auth.UnitTests.Jwt
 
             convention.Apply(model);
 
-            Assert.Equal("myroute", model.Actions.Single(a => a.ActionName == "GetPermissions").AttributeRouteModel.Template);
-            Assert.Equal("PermissionsRoute", model.Actions.Single(a => a.ActionName == "GetPermissions").AttributeRouteModel.Name);
+            Assert.Equal("myroute", model.Actions.Single(a => a.ActionName == "GetPermissions").Selectors[0].AttributeRouteModel.Template);
+            Assert.Equal("PermissionsRoute", model.Actions.Single(a => a.ActionName == "GetPermissions").Selectors[0].AttributeRouteModel.Name);
         }
 
         [Fact]
@@ -58,7 +58,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
 
             convention.Apply(model);
 
-            Assert.Equal(0, model.AttributeRoutes.Count);
+            Assert.Equal(0, model.Selectors.Count);
         }
 
         [Fact]
@@ -73,7 +73,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
 
             convention.Apply(model);
 
-            Assert.Equal(0, model.AttributeRoutes.Count);
+            Assert.Equal(0, model.Selectors.Count);
         }
 
         [Fact]
@@ -88,7 +88,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
 
             convention.Apply(model);
 
-            Assert.Equal(0, model.AttributeRoutes.Count);
+            Assert.Equal(0, model.Selectors.Count);
         }
 
         [Fact]
@@ -103,7 +103,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
 
             convention.Apply(model);
 
-            Assert.Equal(0, model.AttributeRoutes.Count);
+            Assert.Equal(0, model.Selectors.Count);
         }
     }
 }

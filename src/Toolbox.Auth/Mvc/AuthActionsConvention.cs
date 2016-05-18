@@ -19,6 +19,7 @@ namespace Toolbox.Auth.Mvc
             {
                 var selectorModel = new SelectorModel();
                 selectorModel.ActionConstraints.Add(new AuthActionsConstraint(_authOptions));
+                action.Selectors.Add(selectorModel);
             }
         }
     }

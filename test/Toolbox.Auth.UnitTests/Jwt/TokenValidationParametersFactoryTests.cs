@@ -11,26 +11,6 @@ namespace Toolbox.Auth.UnitTests.Jwt
 {
     public class TokenValidationParametersFactoryTests
     {
-        [Fact]
-        public void SetValidateSignatureWhenJwtSigningKeyProviderUrlProvided()
-        {
-            var authOptions = new AuthOptions { JwtSigningKeyProviderUrl = "singingKeyUrl" };
-            var signinKeyValidator = Mock.Of<IJwtTokenSignatureValidator>();
 
-            var parameters = TokenValidationParametersFactory.Create(authOptions, signinKeyValidator);
-
-            Assert.True(parameters.ValidateSignature);
-        }
-
-        [Fact]
-        public void SetValidateSignatureToFalseWhenJwtSigningKeyProviderUrlNull()
-        {
-            var authOptions = new AuthOptions();
-            var signinKeyValidator = Mock.Of<IJwtTokenSignatureValidator>();
-
-            var parameters = TokenValidationParametersFactory.Create(authOptions, signinKeyValidator);
-
-            Assert.False(parameters.ValidateSignature);
-        }
     }
 }

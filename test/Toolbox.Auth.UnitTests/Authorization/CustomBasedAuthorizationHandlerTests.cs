@@ -1,5 +1,5 @@
 ﻿
-using Microsoft.AspNet.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Moq;
 using System;
 using System.Collections.Generic;
