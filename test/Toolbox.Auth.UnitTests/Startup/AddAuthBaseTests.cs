@@ -153,7 +153,7 @@ namespace Toolbox.Auth.UnitTests.Startup
         }
 
         [Fact]
-        public async Task ConventionBasedPolicyIsAdded()
+        public void ConventionBasedPolicyIsAdded()
         {
             var services = new ServiceCollection();
 
@@ -227,36 +227,6 @@ namespace Toolbox.Auth.UnitTests.Startup
 
             Assert.Equal(1, registrations.Count());
             Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
-        }
-
-        [Fact]
-        public void TokenControllerOptionsSetupIsRegistratedAsSingleton()
-        {
-            var services = new ServiceCollection();
-
-            Act(services);
-
-            var registrations = services.Where(sd => sd.ServiceType == typeof(IConfigureOptions<MvcOptions>) &&
-                                                     sd.ImplementationType == typeof(TokenControllerOptionsSetup))
-                                        .ToArray();
-
-            Assert.Equal(1, registrations.Count());
-            Assert.Equal(ServiceLifetime.Transient, registrations[0].Lifetime);
-        }
-
-        [Fact]
-        public void PermissionsControllerOptionsSetupIsRegistratedAsSingleton()
-        {
-            var services = new ServiceCollection();
-
-            Act(services);
-
-            var registrations = services.Where(sd => sd.ServiceType == typeof(IConfigureOptions<MvcOptions>) &&
-                                                     sd.ImplementationType == typeof(PermissionsControllerOptionsSetup))
-                                        .ToArray();
-
-            Assert.Equal(1, registrations.Count());
-            Assert.Equal(ServiceLifetime.Transient, registrations[0].Lifetime);
         }
 
         [Fact]

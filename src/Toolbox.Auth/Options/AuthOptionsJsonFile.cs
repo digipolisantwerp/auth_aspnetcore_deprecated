@@ -10,6 +10,7 @@
             FileName = fileName;
         }
 
+        public string BasePath { get; set; }
         public string FileName { get; set; }
         public string Section { get; set; }
     }

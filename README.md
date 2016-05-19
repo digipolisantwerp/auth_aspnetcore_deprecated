@@ -73,6 +73,7 @@ The path to the Json config file has to be given as argument to the AddAuth meth
 ``` csharp
     services.AddAuth(options =>
     {
+        options.BasePath = hostingEnvironment.ContentRootPath;
         options.FileName = @"configs/authconfig.json";
         options.Section = "Auth";
     });

@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -11,7 +8,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using Toolbox.Auth.Authorization;
 using Toolbox.Auth.Jwt;
-using Toolbox.Auth.Mvc;
 using Toolbox.Auth.Options;
 using Toolbox.Auth.PDP;
 using Toolbox.Auth.Services;
@@ -54,7 +50,10 @@ namespace Toolbox.Auth
             var options = new AuthOptionsJsonFile();
             setupAction.Invoke(options);
 
-            var builder = new ConfigurationBuilder().AddJsonFile(options.FileName);
+            //var basePath = Environment.GetEnvironmentVariable("ASPNETCORE_CONTENTROOT");
+
+            var builder = new ConfigurationBuilder().SetBasePath(options.BasePath)
+                                                    .AddJsonFile(options.FileName);
             var config = builder.Build();
             var section = config.GetSection(options.Section);
             services.Configure<AuthOptions>(section);
@@ -108,9 +107,6 @@ namespace Toolbox.Auth
             services.AddSingleton<ITokenRefreshAgent, TokenRefreshAgent>();
             services.AddSingleton<ITokenRefreshHandler, TokenRefreshHandler>();
             services.AddSingleton<IAuthService, AuthService>();
-
-            services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, TokenControllerOptionsSetup>());
-            services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, PermissionsControllerOptionsSetup>());
         }
     }
 }

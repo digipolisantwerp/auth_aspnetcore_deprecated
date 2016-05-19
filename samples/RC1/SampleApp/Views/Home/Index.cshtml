@@ -1,0 +1,93 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row" ng-app="app">
+    <div class="col-md-12" ng-controller="viewController as vm">
+        <br/>
+        @*<h4>Don't forget to launch the SamplePDP using dnx web!</h4>*@
+        <div class="form-group">
+            <label>Enter your Jwt token here:</label>
+            <button class="btn btn-default btn-xs" ng-click="vm.clearToken()">Clear</button>
+            <button class="btn btn-default btn-xs" ng-click="vm.refreshToken()">Refresh</button>
+            <a href="http://jwtbuilder.jamiekurtz.com/" target="_blank">Generate a jwt</a>
+            <textarea class="form-control" id="jwttoken" rows="10" ng-bind="vm.token"></textarea>
+        </div>
+
+        <h4>Resources on the tickets endpoints use AuthorizeByConvention and AuthorizeWith attributes.</h4>
+
+        <div class="form-group">
+            <button type="button" class="btn btn-default" ng-click="vm.readTicket()" data-toggle="tooltip" data-placement="top" title="Permission read-ticket is required">Read ticket</button>
+            <button type="button" class="btn btn-default" ng-click="vm.createTicket()" data-toggle="tooltip" data-placement="top" title="Permission create-ticket is required">Create ticket</button>
+            <button type="button" class="btn btn-default" ng-click="vm.updateTicket()" data-toggle="tooltip" data-placement="top" title="Permission update-ticket is required">Update ticket</button>
+            <button type="button" class="btn btn-default" ng-click="vm.deleteTicket()" data-toggle="tooltip" data-placement="top" title="Permission delete-ticket is required">Delete ticket</button>
+            <button type="button" class="btn btn-default" ng-click="vm.getActionWithCustomPermission()" data-toggle="tooltip" data-placement="top" title="Permission permission-125 is required">GetActionWithCustomPermission</button>
+            <button type="button" class="btn btn-default" ng-click="vm.allowAnonymous()" data-toggle="tooltip" data-placement="top" title="No permission is required">Anonymous</button>
+        </div>
+
+        <div ng-show="vm.showPersonActions" ng-cloak>
+            <h4>Resources on the persons endpoints use the default Microsoft.AspNet Authorization possibilities.</h4>
+
+            <div class="form-group">
+                <button class="btn btn-default" ng-click="vm.getPerson()">Read person</button>
+                <button class="btn btn-default" ng-click="vm.createPerson()">Create person</button>
+                <button class="btn btn-default" ng-click="vm.updatePerson()">Update person</button>
+                <button class="btn btn-default" ng-click="vm.deletePerson()">Delete person</button>
+                <button class="btn btn-default" ng-click="vm.allowAnonymousPerson()">Anonymous</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Result:</label>
+            <div ng-cloak>
+                <p class="bg-success" id="response">{{vm.success}}</p>
+                <p class="bg-danger" id="error">{{vm.error}}</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section scripts{
+<script>
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+
+    //function getCookie(name) {
+    //    var value = "; " + document.cookie;
+    //    var parts = value.split("; " + name + "=");
+    //    if (parts.length == 2) return parts.pop().split(";").shift();
+    //}
+    //$("#jwttoken").val(getCookie("jwt"));
+
+    //setResponse = function (response) {
+    //    $('#response').html(response);
+    //    $('#error').html('');
+    //};
+
+    //setError = function (error) {
+    //    $('#error').html(error.statusText);
+    //    $('#response').html('');
+    //};
+
+    //executeCustomBasedRequest = function (endpoint, httpMethod) {
+
+    //    var jwt = $("#jwttoken").val();
+
+    //    $.ajax("http://localhost:51020/api/" + endpoint, {
+    //        method: httpMethod,
+    //        beforeSend: function (xhr) {
+    //            xhr.setRequestHeader("Authorization", "Bearer " + jwt);
+    //        }
+    //    }).then(function (response) { setResponse(response); })
+    //      .fail(function (error) { setError(error); });
+    //};
+
+    //clearToken = function () {
+    //    $("#jwttoken").val('');
+    //};
+
+</script>
+}

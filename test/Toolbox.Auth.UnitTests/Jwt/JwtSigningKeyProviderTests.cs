@@ -115,7 +115,6 @@ namespace Toolbox.Auth.UnitTests.Jwt
         public async Task IgnoreCachedKey()
         {
             _options.JwtSigningKeyCacheDuration = 5;
-            string cachedKey = "cachedkey";
             string nonCachedKey = "nonCachedKey";
 
             var cacheEntry = new TestCacheEntry();

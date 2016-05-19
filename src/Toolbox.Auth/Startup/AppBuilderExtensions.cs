@@ -40,7 +40,7 @@ namespace Toolbox.Auth
             if (authOptions.EnableCookieAuth)
             {
                 //Add middleware that handles authentication cookie
-                app.UseCookieAuthentication(new CookieAuthenticationOptions
+                var cookieAuthOptions = new CookieAuthenticationOptions
                 {
                     AuthenticationScheme = AuthSchemes.CookieAuth,
 
@@ -78,7 +78,9 @@ namespace Toolbox.Auth
                             return Task.FromResult<object>(null);
                         },
                     }
-                });
+                };
+
+                app.UseCookieAuthentication(cookieAuthOptions);
             }
 
             //Add middleware to set permissions in user claims

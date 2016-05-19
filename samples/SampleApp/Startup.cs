@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Mvc.Formatters;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SampleApp.Policies;
 using Toolbox.Auth;
+using SampleApp.Policies;
 
 namespace SampleApp
 {
@@ -13,18 +16,17 @@ namespace SampleApp
     {
         public Startup(IHostingEnvironment env)
         {
-            // Set up configuration sources.
             var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
-
-            //Recomended way to store your secrets / passwords
-            //builder.AddUserSecrets();
-
             Configuration = builder.Build();
+            HostingEnvironment = env;
         }
 
-        public IConfigurationRoot Configuration { get; set; }
+        public IConfigurationRoot Configuration { get; }
+        public IHostingEnvironment HostingEnvironment { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -60,43 +62,37 @@ namespace SampleApp
 
             services.AddAuth(configFile =>
             {
+                configFile.BasePath = HostingEnvironment.ContentRootPath;
                 configFile.FileName = "authconfig.json";
                 configFile.Section = "Auth";
             }, PolicyBuilder.Build());
 
             #endregion
 
+            // Add framework services.
             services.AddMvc();
-
-            //If you want to require an authenticated user for all endpoints you can use the setup as below
-            //services.AddMvc(config =>
-            //{
-            //    var policy = new AuthorizationPolicyBuilder()
-            //                    .RequireAuthenticatedUser()
-            //                    .Build();
-            //    config.Filters.Add(new AuthorizeFilter(policy));
-            //});
-
-            services.AddSwaggerGen();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug(LogLevel.Verbose);
+            loggerFactory.AddDebug();
 
-            app.UseDeveloperExceptionPage();
-            app.UseIISPlatformHandler();
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseBrowserLink();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+            }
 
             app.UseStaticFiles();
 
             //Add authorization middleware
             app.UseAuth();
-
-            app.UseSwaggerGen();
-            app.UseSwaggerUi();
 
             app.UseMvc(routes =>
             {
@@ -105,8 +101,5 @@ namespace SampleApp
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
-
-        // Entry point for the application.
-        public static void Main(string[] args) => WebApplication.Run<Startup>(args);
     }
 }

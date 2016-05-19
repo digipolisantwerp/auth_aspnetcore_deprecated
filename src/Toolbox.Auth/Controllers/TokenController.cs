@@ -71,7 +71,7 @@ namespace Toolbox.Auth.Controllers
             {
                 _logger.LogInformation($"Jwt token validation failed. Exception: {ex.ToString()}");
 
-                return Redirect(_authOptions.AccessDeniedPath);
+                return Redirect($"/{_authOptions.AccessDeniedPath}");
             }
         }
 

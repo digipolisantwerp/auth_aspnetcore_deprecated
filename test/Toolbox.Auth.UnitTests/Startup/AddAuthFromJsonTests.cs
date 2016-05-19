@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using System.IO;
 
 namespace Toolbox.Auth.UnitTests.Startup
 {
@@ -6,11 +7,14 @@ namespace Toolbox.Auth.UnitTests.Startup
     {
         public AddAuthFromJsonTests()
         {
+            var basePath = $"{Directory.GetCurrentDirectory()}/_TestData";
+
             Act = services =>
             {
                 services.AddAuth(options =>
                 {
-                    options.FileName = @"_TestData/authconfig.json";
+                    options.BasePath = basePath;
+                    options.FileName = @"authconfig.json";
                     options.Section = "Auth";
                 });
                 services.AddOptions();

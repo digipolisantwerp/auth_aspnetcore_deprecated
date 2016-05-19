@@ -19,7 +19,6 @@ namespace Toolbox.Auth.Controllers
             _authOptions = options.Value;
         }
 
-        [HttpGet]
         public async Task<IActionResult> GetPermissions()
         {
             var permissions = await _policyDescisionProvider.GetPermissionsAsync(User.Identity.Name, _authOptions.ApplicationName);

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using System;
+using System.Linq;
 using Toolbox.Auth.Controllers;
 using Toolbox.Auth.Options;
 
@@ -17,10 +19,33 @@ namespace Toolbox.Auth.Mvc
         {
             if (action.Controller.ControllerType.FullName == typeof(TokenController).FullName || action.Controller.ControllerType.FullName == typeof(PermissionsController).FullName)
             {
-                var selectorModel = new SelectorModel();
+                var selectorModel = action.Selectors.First();
                 selectorModel.ActionConstraints.Add(new AuthActionsConstraint(_authOptions));
-                action.Selectors.Add(selectorModel);
+
+                var template = string.Empty;
+
+                if (action.ActionName == "Callback")
+                    template = _authOptions.TokenCallbackRoute;
+
+                if (action.ActionName == "Refresh")
+                    template = _authOptions.TokenRefreshRoute;
+
+                if (action.ActionName == "GetPermissions")
+                    template = _authOptions.PermissionsRoute;
+
+                if (!String.IsNullOrWhiteSpace(template))
+                {
+                    selectorModel.AttributeRouteModel = new AttributeRouteModel()
+                    {
+                        Name = template,
+                        Order = Int32.MaxValue,
+                        Template = template
+                    };
+                }
             }
         }
+        
+        
+            
     }
 }

@@ -157,7 +157,7 @@ namespace Toolbox.Auth.UnitTests.Jwt
             var result = await tokenController.Callback(_redirectUrl, _jwtToken);
 
             Assert.IsType<RedirectResult>(result);
-            Assert.Equal("Home/AccessDenied", ((RedirectResult)result).Url);
+            Assert.Equal("/Home/AccessDenied", ((RedirectResult)result).Url);
             //Assert.Equal("Home", ((RedirectToActionResult)result).ControllerName);
 
             Assert.NotEmpty(_logger.LoggedMessages);
