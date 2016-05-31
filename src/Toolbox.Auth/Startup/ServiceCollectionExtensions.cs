@@ -14,7 +14,7 @@ using Toolbox.Auth.Jwt;
 using Toolbox.Auth.Mvc;
 using Toolbox.Auth.Options;
 using Toolbox.Auth.PDP;
-
+using Toolbox.Auth.Services;
 
 namespace Toolbox.Auth
 {
@@ -107,6 +107,7 @@ namespace Toolbox.Auth
             services.AddSingleton<ISecurityTokenValidator, JwtSecurityTokenHandler>();
             services.AddSingleton<ITokenRefreshAgent, TokenRefreshAgent>();
             services.AddSingleton<ITokenRefreshHandler, TokenRefreshHandler>();
+            services.AddSingleton<IAuthService, AuthService>();
 
             services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, TokenControllerOptionsSetup>());
             services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, PermissionsControllerOptionsSetup>());

@@ -12,6 +12,7 @@ using Toolbox.Auth.Jwt;
 using Toolbox.Auth.Mvc;
 using Toolbox.Auth.Options;
 using Toolbox.Auth.PDP;
+using Toolbox.Auth.Services;
 using Xunit;
 
 namespace Toolbox.Auth.UnitTests.Startup
@@ -281,6 +282,21 @@ namespace Toolbox.Auth.UnitTests.Startup
 
             var registrations = services.Where(sd => sd.ServiceType == typeof(ITokenRefreshHandler) &&
                                                      sd.ImplementationType == typeof(TokenRefreshHandler))
+                                        .ToArray();
+
+            Assert.Equal(1, registrations.Count());
+            Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
+        }
+
+        [Fact]
+        public void AuthServiceIsRegistratedAsSingleton()
+        {
+            var services = new ServiceCollection();
+
+            Act(services);
+
+            var registrations = services.Where(sd => sd.ServiceType == typeof(IAuthService) &&
+                                                     sd.ImplementationType == typeof(AuthService))
                                         .ToArray();
 
             Assert.Equal(1, registrations.Count());

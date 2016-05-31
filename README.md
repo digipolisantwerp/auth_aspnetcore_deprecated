@@ -35,6 +35,7 @@ The toolbox also provides Authorization attributes that can be used in the contr
   - [Token refresh](#token-refresh)
   - [Automatic token refresh](#automatic-token-refresh)
   - [Permissions endpoint](#permissions-endpoint)
+  - [Auth service](#auth-service)
 - [How it works](#how-it-works)
   - [Basic auth flow](#basic-auth-flow)
   - [Request flow](#request-flow)
@@ -302,6 +303,28 @@ The response is an array of permissions.
     "permission-456"
 ]
 ```
+
+### Auth service
+
+An instance of the **IAuthService** is available through dependency injection.
+The **AuthService** allows you to access auth related information.
+
+You can access the **User** object through the **AuthService**.
+
+``` csharp
+    //request an instance of the IAuthService in your constructor
+    public YourClass(IAuthService authService)
+    {
+        _authService = authService;
+    }
+    
+    public void SomeMethod()
+    {
+        //Access the User
+        var user = _authService.User;
+    }
+```
+
 
 ## How it works
 
