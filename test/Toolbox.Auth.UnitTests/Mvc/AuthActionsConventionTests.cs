@@ -1,16 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Microsoft.Extensions.Options;
-using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Toolbox.Auth.Controllers;
-using Toolbox.Auth.Jwt;
 using Toolbox.Auth.Mvc;
 using Toolbox.Auth.Options;
-using Toolbox.Auth.UnitTests.Utilities;
 using Xunit;
 
 namespace Toolbox.Auth.UnitTests.Jwt
