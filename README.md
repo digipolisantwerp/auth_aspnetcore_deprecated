@@ -287,7 +287,7 @@ Automatic token refresh is disabled by default. To enable it, set the **Automati
 
 ### Permissions endpoint
 
-When using the **CookieAuth** scheme an endpoint is available to request the users permissions.
+When using the **JwtHeaderAuth** scheme an endpoint is available to request the users permissions.
 The default route for the permissions endpoint is "auth/user/permissions". The route can be modified by changing the value of the **PermissionsRoute** options value.
 
 GET auth/user/permissions

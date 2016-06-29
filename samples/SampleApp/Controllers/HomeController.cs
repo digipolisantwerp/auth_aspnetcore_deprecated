@@ -11,7 +11,8 @@ using Toolbox.Auth;
 namespace SampleApp.Controllers
 {
     //[AuthorizeWith(ActiveAuthenticationSchemes = AuthSchemes.CookieAuth, Permission = Constants.ApplicationLoginPermission)]
-    [Authorize(Policy = Constants.ApplicationUser)]
+    //[Authorize(Policy = Constants.ApplicationUser)]
+    [Authorize(ActiveAuthenticationSchemes = AuthSchemes.CookieAuth)]
     public class HomeController : Controller
     {
         public IActionResult Index()
