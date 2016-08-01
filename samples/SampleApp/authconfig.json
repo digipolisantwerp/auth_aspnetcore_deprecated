@@ -16,15 +16,29 @@
     "JwtSigningKeyProviderUrl": "",
     "jwtSigningKeyProviderApikey": "yoursupersecretkey",
     "JwtSigningKeyCacheDuration": 0,
-    //"ApiAuthUrl": "http://devasu016.dev.digant.antwerpen.local/API-Engine-auth/v1/login/idp/redirect/proxied",
-    "ApiAuthUrl": "http://rasu073.rte.antwerpen.local/API-Engine-auth/v1/login/idp/redirect/proxied",
+
+    //Api Engine Zandbak
+    //"ApiAuthUrl": "http://devasu1060.dev.digant.antwerpen.local/API-Engine-auth/v1/login/idp/redirect/proxied",
     //"ApiAuthIdpUrl": "https://identityserver-o.antwerpen.be/samlsso",
-    "ApiAuthIdpUrl": "https://identityserver-a.antwerpen.be/samlsso",
+    //"ApiAuthSpName": "apiengine",
+    //"ApiAuthSpUrl": "http://devasu1060.dev.digant.antwerpen.local/API-Engine-auth/v1/login/idp/callback",
+    //"ApiAuthTokenRefreshUrl": "http://devasu1060.dev.digant.antwerpen.local/API-Engine-auth/v1/login/idp/token/refresh",
+
+    //Api Engine DEV
+    "ApiAuthUrl": "https://api-engine-o.antwerpen.be/API-Engine-auth/v1/login/idp/redirect/proxied",
+    "ApiAuthIdpUrl": "https://identityserver-o.antwerpen.be/samlsso",
     "ApiAuthSpName": "apiengine",
-    //"ApiAuthSpUrl": "https://api-engine-o.antwerpen.be/API-Engine-auth/v1/login/idp/callback",
-    "ApiAuthSpUrl": "https://api-engine-a.antwerpen.be/API-Engine-auth/v1/login/idp/callback",
+    "ApiAuthSpUrl": "https://api-engine-o.antwerpen.be/API-Engine-auth/v1/login/idp/callback",
     "ApiAuthTokenRefreshUrl": "http://rasu073.rte.antwerpen.local/API-Engine-auth/v1/login/idp/token/refresh",
-    "TokenRefreshTime": 5 ,
+
+    //Api Engine ACC
+    //"ApiAuthUrl": "http://rasu073.rte.antwerpen.local/API-Engine-auth/v1/login/idp/redirect/proxied",
+    //"ApiAuthIdpUrl": "https://identityserver-a.antwerpen.be/samlsso",
+    //"ApiAuthSpName": "apiengine",
+    //"ApiAuthSpUrl": "https://api-engine-a.antwerpen.be/API-Engine-auth/v1/login/idp/callback",
+    //"ApiAuthTokenRefreshUrl": "http://rasu073.rte.antwerpen.local/API-Engine-auth/v1/login/idp/token/refresh",
+
+    "TokenRefreshTime": 5,
     "TokenCallbackRoute": "myroute/token",
     "TokenRefreshRoute": "myroute/token/refresh",
     "AutomaticTokenRefresh": "true",

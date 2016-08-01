@@ -1,25 +1,17 @@
 ﻿{
   "dependencies": {
     "Microsoft.NETCore.App": {
-      "version": "1.0.0-rc2-3002702",
-      "type": "platform"
+      "type": "platform",
+      "version": "1.0.0"
     },
-    "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0-rc2-final",
-    "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-final"
-  },
-
-  "tools": {
-    "Microsoft.AspNetCore.Server.IISIntegration.Tools": {
-      "version": "1.0.0-preview1-final",
-      "imports": "portable-net45+win8+dnxcore50"
-    }
+    "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
+    "Microsoft.AspNetCore.Server.Kestrel": "1.0.0"
   },
 
   "frameworks": {
     "netcoreapp1.0": {
       "imports": [
         "dotnet5.6",
-        "dnxcore50",
         "portable-net45+win8"
       ]
     }
@@ -31,17 +23,17 @@
   },
 
   "runtimeOptions": {
-    "gcServer": true
+    "configProperties": {
+      "System.GC.Server": true
+    }
   },
 
   "publishOptions": {
     "include": [
-      "wwwroot",
       "web.config"
     ]
   },
 
   "scripts": {
-    "postpublish": [ "dotnet publish-iis --publish-folder %publish:OutputPath% --framework %publish:FullTargetFramework%" ]
   }
 }

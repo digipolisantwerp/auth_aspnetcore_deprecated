@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Toolbox.Auth;
-using Toolbox.Auth.PDP;
+using Digipolis.Auth;
+using Digipolis.Auth.PDP;
 
 namespace SampleApp.Policies
 {

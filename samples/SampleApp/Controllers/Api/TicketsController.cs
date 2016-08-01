@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Toolbox.Auth;
-using Toolbox.Auth.Authorization;
-using Toolbox.Auth.Services;
+using Digipolis.Auth;
+using Digipolis.Auth.Authorization;
+using Digipolis.Auth.Services;
 
 namespace SampleApp.Controllers.Api
 {

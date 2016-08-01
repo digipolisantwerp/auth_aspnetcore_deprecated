@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Toolbox.Auth;
+using Digipolis.Auth;
 using SampleApp.Policies;
 
 namespace SampleApp
@@ -82,7 +82,6 @@ namespace SampleApp
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseBrowserLink();
             }
             else
             {

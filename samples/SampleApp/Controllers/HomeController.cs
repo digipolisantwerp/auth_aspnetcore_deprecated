@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Net;
-using Toolbox.Auth.Authorization;
-using Toolbox.Auth;
+using Digipolis.Auth.Authorization;
+using Digipolis.Auth;
 
 namespace SampleApp.Controllers
 {
