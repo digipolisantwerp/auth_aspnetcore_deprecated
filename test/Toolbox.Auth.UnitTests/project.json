@@ -3,7 +3,7 @@
 
   "dependencies": {
     "xunit": "2.1.0",
-    "Toolbox.Auth": "1.0.0-*",
+    "Toolbox.Auth": "*",
     "dotnet-test-xunit": "1.0.0-*",
     "moq.netcore": "4.4.0-beta8",
     "System.Diagnostics.TraceSource": "4.0.0-rc2-24027"
