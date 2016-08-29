@@ -13,179 +13,179 @@ using Xunit;
 
 namespace Digipolis.Auth.UnitTests.Jwt
 {
-    public class JwtSigningKeyProviderTests
-    {
-        private string _jwtKeyProviderUrl = "http://test.com";
-        private AuthOptions _options;
-        private const string CACHE_KEY = "JwtSigningKey";
-        private TestLogger<JwtSigningKeyProvider> _logger = TestLogger<JwtSigningKeyProvider>.CreateLogger();
+    //public class JwtSigningKeyProviderTests
+    //{
+    //    private string _jwtKeyProviderUrl = "http://test.com";
+    //    private AuthOptions _options;
+    //    private const string CACHE_KEY = "JwtSigningKey";
+    //    private TestLogger<JwtSigningCertificateProvider> _logger = TestLogger<JwtSigningCertificateProvider>.CreateLogger();
 
-        public JwtSigningKeyProviderTests()
-        {
-            _options = new AuthOptions { JwtSigningKeyProviderUrl = _jwtKeyProviderUrl, JwtSigningKeyCacheDuration = 0 };
-        }
+    //    public JwtSigningKeyProviderTests()
+    //    {
+    //        _options = new AuthOptions { JwtSigningCertificateCacheDuration = 0 };
+    //    }
 
-        [Fact]
-        public void ThrowsExceptionIfCacheIsNull()
-        {
-            Assert.Throws<ArgumentNullException>(() => new JwtSigningKeyProvider(null,
-                Options.Create(new AuthOptions()),
-                Mock.Of<HttpClientHandler>(),
-                _logger));
-        }
+    //    [Fact]
+    //    public void ThrowsExceptionIfCacheIsNull()
+    //    {
+    //        Assert.Throws<ArgumentNullException>(() => new JwtSigningCertificateProvider(null,
+    //            Options.Create(new AuthOptions()),
+    //            Mock.Of<HttpClientHandler>(),
+    //            _logger));
+    //    }
 
-        [Fact]
-        public void ThrowsExceptionIfOptionsWrapperIsNull()
-        {
-            Assert.Throws<ArgumentNullException>(() => new JwtSigningKeyProvider(Mock.Of<IMemoryCache>(), null,
-                Mock.Of<HttpClientHandler>(),
-                _logger));
-        }
+    //    [Fact]
+    //    public void ThrowsExceptionIfOptionsWrapperIsNull()
+    //    {
+    //        Assert.Throws<ArgumentNullException>(() => new JwtSigningCertificateProvider(Mock.Of<IMemoryCache>(), null,
+    //            Mock.Of<HttpClientHandler>(),
+    //            _logger));
+    //    }
 
-        [Fact]
-        public void ThrowsExceptionIfOptionsAreNull()
-        {
-            Assert.Throws<ArgumentNullException>(() => new JwtSigningKeyProvider(Mock.Of<IMemoryCache>(),
-                Options.Create<AuthOptions>(null),
-                Mock.Of<HttpClientHandler>(),
-                _logger));
-        }
+    //    [Fact]
+    //    public void ThrowsExceptionIfOptionsAreNull()
+    //    {
+    //        Assert.Throws<ArgumentNullException>(() => new JwtSigningCertificateProvider(Mock.Of<IMemoryCache>(),
+    //            Options.Create<AuthOptions>(null),
+    //            Mock.Of<HttpClientHandler>(),
+    //            _logger));
+    //    }
 
-        [Fact]
-        public void ThrowsExceptionIfClientIsNull()
-        {
-            Assert.Throws<ArgumentNullException>(() => new JwtSigningKeyProvider(Mock.Of<IMemoryCache>(),
-                Options.Create(new AuthOptions()),
-                null,
-                _logger));
-        }
+    //    [Fact]
+    //    public void ThrowsExceptionIfClientIsNull()
+    //    {
+    //        Assert.Throws<ArgumentNullException>(() => new JwtSigningCertificateProvider(Mock.Of<IMemoryCache>(),
+    //            Options.Create(new AuthOptions()),
+    //            null,
+    //            _logger));
+    //    }
 
-        [Fact]
-        public void ThrowsExceptionIfLoggerIsNull()
-        {
-            Assert.Throws<ArgumentNullException>(() => new JwtSigningKeyProvider(Mock.Of<IMemoryCache>(),
-                Options.Create(new AuthOptions()),
-                Mock.Of<HttpClientHandler>(),
-                null));
-        }
+    //    [Fact]
+    //    public void ThrowsExceptionIfLoggerIsNull()
+    //    {
+    //        Assert.Throws<ArgumentNullException>(() => new JwtSigningCertificateProvider(Mock.Of<IMemoryCache>(),
+    //            Options.Create(new AuthOptions()),
+    //            Mock.Of<HttpClientHandler>(),
+    //            null));
+    //    }
 
-        [Fact]
-        public async Task GetKey()
-        {
-            var mockedCache = CreateEmptyMockedCache();
-            string key = "signingkey";
+    //    [Fact]
+    //    public async Task GetKey()
+    //    {
+    //        var mockedCache = CreateEmptyMockedCache();
+    //        string key = "signingkey";
 
-            var mockHandler = new MockMessageHandler<string>(HttpStatusCode.OK, key);
-            var provider = new JwtSigningKeyProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
-            var securityKey = await provider.ResolveSigningKeyAsync(true) as SymmetricSecurityKey;
+    //        var mockHandler = new MockMessageHandler<string>(HttpStatusCode.OK, key);
+    //        var provider = new JwtSigningCertificateProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
+    //        var securityKey = await provider.ResolveSigningKeyAsync(true) as SymmetricSecurityKey;
 
-            Assert.NotNull(securityKey);
-            Assert.Equal(Encoding.UTF8.GetBytes(key), securityKey.Key);
-        }
+    //        Assert.NotNull(securityKey);
+    //        Assert.Equal(Encoding.UTF8.GetBytes(key), securityKey.Key);
+    //    }
 
-        [Fact]
-        public async Task ReturnsNullWhenNotFound()
-        {
-            var mockedCache = CreateEmptyMockedCache();
+    //    [Fact]
+    //    public async Task ReturnsNullWhenNotFound()
+    //    {
+    //        var mockedCache = CreateEmptyMockedCache();
 
-            var mockHandler = new MockMessageHandler<string>(HttpStatusCode.NotFound, null);
-            var provider = new JwtSigningKeyProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
-            var securityKey = await provider.ResolveSigningKeyAsync(true) as SymmetricSecurityKey;
+    //        var mockHandler = new MockMessageHandler<string>(HttpStatusCode.NotFound, null);
+    //        var provider = new JwtSigningCertificateProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
+    //        var securityKey = await provider.ResolveSigningKeyAsync(true) as SymmetricSecurityKey;
 
-            Assert.Null(securityKey);
-            Assert.NotEmpty(_logger.LoggedMessages);
-        }
+    //        Assert.Null(securityKey);
+    //        Assert.NotEmpty(_logger.LoggedMessages);
+    //    }
 
-        [Fact]
-        public async Task GetCachedKey()
-        {
-            _options.JwtSigningKeyCacheDuration = 5;
-            string key = "signingkey";
+    //    [Fact]
+    //    public async Task GetCachedKey()
+    //    {
+    //        _options.JwtSigningCertificateCacheDuration = 5;
+    //        string key = "signingkey";
 
-            var mockedCache = CreateMockedCache(CACHE_KEY, key);
-            var mockHandler = new MockMessageHandler<string>(HttpStatusCode.NotFound, null);
-            var provider = new JwtSigningKeyProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
-            var securityKey = await provider.ResolveSigningKeyAsync(true) as SymmetricSecurityKey;
+    //        var mockedCache = CreateMockedCache(CACHE_KEY, key);
+    //        var mockHandler = new MockMessageHandler<string>(HttpStatusCode.NotFound, null);
+    //        var provider = new JwtSigningCertificateProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
+    //        var securityKey = await provider.ResolveSigningKeyAsync(true) as SymmetricSecurityKey;
 
-            Assert.NotNull(securityKey);
-            Assert.Equal(Encoding.UTF8.GetBytes(key), securityKey.Key);
-        }
+    //        Assert.NotNull(securityKey);
+    //        Assert.Equal(Encoding.UTF8.GetBytes(key), securityKey.Key);
+    //    }
 
-        [Fact]
-        public async Task IgnoreCachedKey()
-        {
-            _options.JwtSigningKeyCacheDuration = 5;
-            string nonCachedKey = "nonCachedKey";
+    //    [Fact]
+    //    public async Task IgnoreCachedKey()
+    //    {
+    //        _options.JwtSigningCertificateCacheDuration = 5;
+    //        string nonCachedKey = "nonCachedKey";
 
-            var cacheEntry = new TestCacheEntry();
-            var mockedCache = CreateEmptyMockedCache();
-            mockedCache.Setup(c => c.CreateEntry("JwtSigningKey"))
-                .Returns(cacheEntry);
+    //        var cacheEntry = new TestCacheEntry();
+    //        var mockedCache = CreateEmptyMockedCache();
+    //        mockedCache.Setup(c => c.CreateEntry("JwtSigningKey"))
+    //            .Returns(cacheEntry);
 
-            var mockHandler = new MockMessageHandler<string>(HttpStatusCode.OK, nonCachedKey);
-            var provider = new JwtSigningKeyProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
-            var securityKey = await provider.ResolveSigningKeyAsync(false) as SymmetricSecurityKey;
+    //        var mockHandler = new MockMessageHandler<string>(HttpStatusCode.OK, nonCachedKey);
+    //        var provider = new JwtSigningCertificateProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
+    //        var securityKey = await provider.ResolveSigningKeyAsync(false) as SymmetricSecurityKey;
 
-            Assert.NotNull(securityKey);
-            Assert.Equal(Encoding.UTF8.GetBytes(nonCachedKey), securityKey.Key);
-        }
+    //        Assert.NotNull(securityKey);
+    //        Assert.Equal(Encoding.UTF8.GetBytes(nonCachedKey), securityKey.Key);
+    //    }
 
-        [Fact]
-        public async Task SetResponseToCache()
-        {
-            _options.JwtSigningKeyCacheDuration = 5;
-            var cacheEntry = new TestCacheEntry();
-            var mockedCache = CreateEmptyMockedCache();
-            mockedCache.Setup(c => c.CreateEntry("JwtSigningKey"))
-                .Returns(cacheEntry);
+    //    [Fact]
+    //    public async Task SetResponseToCache()
+    //    {
+    //        _options.JwtSigningCertificateCacheDuration = 5;
+    //        var cacheEntry = new TestCacheEntry();
+    //        var mockedCache = CreateEmptyMockedCache();
+    //        mockedCache.Setup(c => c.CreateEntry("JwtSigningKey"))
+    //            .Returns(cacheEntry);
 
-            string key = "signingkey";
+    //        string key = "signingkey";
 
-            var mockHandler = new MockMessageHandler<string>(HttpStatusCode.OK, key);
-            var provider = new JwtSigningKeyProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
+    //        var mockHandler = new MockMessageHandler<string>(HttpStatusCode.OK, key);
+    //        var provider = new JwtSigningCertificateProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
 
-            await provider.ResolveSigningKeyAsync(false);
+    //        await provider.ResolveSigningKeyAsync(false);
 
-            Assert.Equal(key, Encoding.UTF8.GetString(((SymmetricSecurityKey)cacheEntry.Value).Key));
-        }
+    //        Assert.Equal(key, Encoding.UTF8.GetString(((SymmetricSecurityKey)cacheEntry.Value).Key));
+    //    }
 
-        [Fact]
-        public async Task CacheDurationFromOptionsIsUsed()
-        {
-            _options.JwtSigningKeyCacheDuration = 5;
-            var cacheEntry = new TestCacheEntry();
-            var mockedCache = CreateEmptyMockedCache();
-            mockedCache.Setup(c => c.CreateEntry("JwtSigningKey"))
-                .Returns(cacheEntry);
+    //    [Fact]
+    //    public async Task CacheDurationFromOptionsIsUsed()
+    //    {
+    //        _options.JwtSigningCertificateCacheDuration = 5;
+    //        var cacheEntry = new TestCacheEntry();
+    //        var mockedCache = CreateEmptyMockedCache();
+    //        mockedCache.Setup(c => c.CreateEntry("JwtSigningKey"))
+    //            .Returns(cacheEntry);
 
-            string key = "signingkey";
+    //        string key = "signingkey";
 
-            var mockHandler = new MockMessageHandler<string>(HttpStatusCode.OK, key);
-            var provider = new JwtSigningKeyProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
+    //        var mockHandler = new MockMessageHandler<string>(HttpStatusCode.OK, key);
+    //        var provider = new JwtSigningCertificateProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
 
-            await provider.ResolveSigningKeyAsync(false);
+    //        await provider.ResolveSigningKeyAsync(false);
 
-            Assert.True(cacheEntry.AbsoluteExpirationRelativeToNow.Value == new TimeSpan(0, _options.JwtSigningKeyCacheDuration, 0));
-        }
+    //        Assert.True(cacheEntry.AbsoluteExpirationRelativeToNow.Value == new TimeSpan(0, _options.JwtSigningCertificateCacheDuration, 0));
+    //    }
                
 
-        private Mock<IMemoryCache> CreateEmptyMockedCache()
-        {
-            return CreateMockedCache("", null);
-        }
+    //    private Mock<IMemoryCache> CreateEmptyMockedCache()
+    //    {
+    //        return CreateMockedCache("", null);
+    //    }
 
-        private Mock<IMemoryCache> CreateMockedCache(string cacheKey, string securityKey)
-        {
-            var mockCache = new Mock<IMemoryCache>();
-            var cachedObject = securityKey != null ? new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey)) : null as object;
+    //    private Mock<IMemoryCache> CreateMockedCache(string cacheKey, string securityKey)
+    //    {
+    //        var mockCache = new Mock<IMemoryCache>();
+    //        var cachedObject = securityKey != null ? new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey)) : null as object;
 
-            mockCache.Setup(c => c.TryGetValue("", out cachedObject))
-                .Returns(false);
+    //        mockCache.Setup(c => c.TryGetValue("", out cachedObject))
+    //            .Returns(false);
 
-            mockCache.Setup(c => c.TryGetValue(cacheKey, out cachedObject))
-                .Returns(true);
+    //        mockCache.Setup(c => c.TryGetValue(cacheKey, out cachedObject))
+    //            .Returns(true);
 
-            return mockCache;
-        }
-    }
+    //        return mockCache;
+    //    }
+    //}
 }

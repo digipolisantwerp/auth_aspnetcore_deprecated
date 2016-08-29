@@ -9,7 +9,7 @@
         // ******** Init ********
 
         function Init() {
-            setupTokenRefresh();
+            //setupTokenRefresh();
         };
 
         Init();

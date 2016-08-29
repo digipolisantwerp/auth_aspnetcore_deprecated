@@ -23,12 +23,12 @@ namespace Digipolis.Auth
         public static IApplicationBuilder UseAuth(this IApplicationBuilder app)
         {
             var authOptions = app.ApplicationServices.GetService<IOptions<AuthOptions>>().Value;
-            var signingKeyProvider = app.ApplicationServices.GetService<IJwtSigningKeyProvider>();
-            var signatureValidator = app.ApplicationServices.GetService<IJwtTokenSignatureValidator>();
+            var signingKeyProvider = app.ApplicationServices.GetService<IJwtSigningCertificateProvider>();
+            //var signatureValidator = app.ApplicationServices.GetService<IJwtTokenSignatureValidator>();
             var logger = app.ApplicationServices.GetService<ILogger<JwtBearerMiddleware>>();
             var tokenRefreshHandler = app.ApplicationServices.GetService<ITokenRefreshHandler>();
 
-            var jwtBearerOptions = JwtBearerOptionsFactory.Create(authOptions, signingKeyProvider, signatureValidator, logger);
+            var jwtBearerOptions = JwtBearerOptionsFactory.Create(authOptions, signingKeyProvider, logger);
             jwtBearerOptions.AuthenticationScheme = AuthSchemes.JwtHeaderAuth;
 
             if (authOptions.EnableJwtHeaderAuth)
@@ -65,13 +65,21 @@ namespace Digipolis.Auth
 
                         OnRedirectToAccessDenied = context =>
                         {
-                            context.Response.Redirect(new PathString($"/{authOptions.AccessDeniedPath}"));
+                            if (context.Request.Path.Value.Contains(authOptions.FrontEndApiRouteIdentifier))
+                            {
+                                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                            }
+                            else
+                            {
+                                context.Response.Redirect(new PathString($"/{authOptions.AccessDeniedPath}"));
+                            }
+                            
                             return Task.FromResult<object>(null);
                         },
 
                         OnRedirectToLogin = context =>
                         {
-                            var url = $"{authOptions.ApiAuthUrl}?idp_url={authOptions.ApiAuthIdpUrl}&sp_name={authOptions.ApiAuthSpName}&sp_url={authOptions.ApiAuthSpUrl}&client_redirect=http://{context.Request.Host.Value}/{authOptions.TokenCallbackRoute}?returnUrl=";
+                            var url = $"{authOptions.ApiAuthUrl}?idp_url={authOptions.ApiAuthIdpUrl}&sp_name={authOptions.ApiAuthSpName}&sp_url={authOptions.ApiAuthSpUrl}&client_redirect={context.Request.Scheme}://{context.Request.Host.Value}/{authOptions.TokenCallbackRoute}?returnUrl=";
 
                             context.RedirectUri = Uri.EscapeUriString(url + context.Request.Path);
                             context.Response.Redirect(context.RedirectUri);

@@ -27,7 +27,7 @@ namespace Digipolis.Auth.PDP
             _cache = cache;
             _options = options.Value;
             _client = new HttpClient(handler);
-            _client.DefaultRequestHeaders.Add(HeaderKeys.Apikey, _options.JwtSigningKeyProviderApikey);
+            _client.DefaultRequestHeaders.Add(HeaderKeys.Apikey, _options.JwtSigningCertificateProviderApikey);
             _logger = logger;
 
             if (_options.PdpCacheDuration > 0)

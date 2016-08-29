@@ -1,7 +1,7 @@
 ﻿{
   "Auth": {
     "ApplicationName": "JHTEST2704",
-    "EnableJwtHeaderAuth": true,
+    "EnableJwtHeaderAuth": false,
     "EnableCookieAuth": true,
     "PdpUrl": "http://localhost:5000/pdp",
     //"PdpUrl": "https://esb-app1-a.antwerpen.be/authz/v1",
@@ -9,27 +9,26 @@
     "PdpCacheDuration": 1,
     "JwtAudience": "http://localhost:51020/myroute/token?returnUrl=/",
     //"JwtIssuer": "5f75f0c6cf4d4c4f97dd0ab68ce534f4",
-    "JwtIssuer": "775a67bf982546f59856fa3bdf1fe2c4",
+    "JwtIssuer": "431961b0d1594f1cab2b4e28fa1e9e15",
     //"JwtIssuer": "07a648578bd447f5ad3f38434a122279",
     //"JwtIssuer": "5fbfdd394d2e4a72ba75343bfda31e48",
-    "_JwtSigningKeyProviderUrl": "http://localhost:5000/signingKey",
-    "JwtSigningKeyProviderUrl": "",
-    "jwtSigningKeyProviderApikey": "yoursupersecretkey",
-    "JwtSigningKeyCacheDuration": 0,
+    //"JwtSigningKeyProviderUrl": "http://localhost:5000/signingKey",
+    "JwtSigningCertificateProviderApikey": "e07718ea-6e35-42ad-ba91-26bc69c11d87",
+    "JwtSigningCertificateCacheDuration": 0,
 
     //Api Engine Zandbak
-    //"ApiAuthUrl": "http://devasu1060.dev.digant.antwerpen.local/API-Engine-auth/v1/login/idp/redirect/proxied",
-    //"ApiAuthIdpUrl": "https://identityserver-o.antwerpen.be/samlsso",
-    //"ApiAuthSpName": "apiengine",
-    //"ApiAuthSpUrl": "http://devasu1060.dev.digant.antwerpen.local/API-Engine-auth/v1/login/idp/callback",
-    //"ApiAuthTokenRefreshUrl": "http://devasu1060.dev.digant.antwerpen.local/API-Engine-auth/v1/login/idp/token/refresh",
+    "ApiAuthUrl": "https://api-engine-z.antwerpen.be/API-Engine-auth/v1/login/idp/redirect/proxied",
+    "ApiAuthIdpUrl": "https://identityserver-o.antwerpen.be/samlsso",
+    "ApiAuthSpName": "apiengine-z",
+    "ApiAuthSpUrl": "https://api-engine-z.antwerpen.be/API-Engine-auth/v1/login/idp/callback",
+    "ApiAuthTokenRefreshUrl": "https://api-engine-z.antwerpen.be/API-Engine-auth/v1/login/idp/token/refresh",
 
     //Api Engine DEV
-    "ApiAuthUrl": "https://api-engine-o.antwerpen.be/API-Engine-auth/v1/login/idp/redirect/proxied",
-    "ApiAuthIdpUrl": "https://identityserver-o.antwerpen.be/samlsso",
-    "ApiAuthSpName": "apiengine",
-    "ApiAuthSpUrl": "https://api-engine-o.antwerpen.be/API-Engine-auth/v1/login/idp/callback",
-    "ApiAuthTokenRefreshUrl": "http://rasu073.rte.antwerpen.local/API-Engine-auth/v1/login/idp/token/refresh",
+    //"ApiAuthUrl": "https://api-engine-o.antwerpen.be/API-Engine-auth/v1/login/idp/redirect/proxied",
+    //"ApiAuthIdpUrl": "https://identityserver-o.antwerpen.be/samlsso",
+    //"ApiAuthSpName": "apiengine",
+    //"ApiAuthSpUrl": "https://api-engine-o.antwerpen.be/API-Engine-auth/v1/login/idp/callback",
+    //"ApiAuthTokenRefreshUrl": "http://rasu073.rte.antwerpen.local/API-Engine-auth/v1/login/idp/token/refresh",
 
     //Api Engine ACC
     //"ApiAuthUrl": "http://rasu073.rte.antwerpen.local/API-Engine-auth/v1/login/idp/redirect/proxied",
@@ -42,6 +41,7 @@
     "TokenCallbackRoute": "myroute/token",
     "TokenRefreshRoute": "myroute/token/refresh",
     "AutomaticTokenRefresh": "true",
-    "AccessDeniedPath": "Home/AccessDenied"
+    "AccessDeniedPath": "Home/AccessDenied",
+    "FrontEndApiRouteIdentifier": "api"
   }
 }

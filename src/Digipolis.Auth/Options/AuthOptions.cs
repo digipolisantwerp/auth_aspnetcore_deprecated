@@ -38,26 +38,15 @@
         public string JwtIssuer { get; set; }
 
         /// <summary>
-        /// The url to the Jwt signing key endpoint.
+        /// The api key for the signing certificate provider authentication.
         /// </summary>
-        public string JwtSigningKeyProviderUrl { get; set; }
+        public string JwtSigningCertificateProviderApikey { get; set; }
 
         /// <summary>
-        /// The api key for the signing key provider authentication.
-        /// </summary>
-        public string JwtSigningKeyProviderApikey { get; set; }
-
-        /// <summary>
-        /// The duration in minutes the Jwt signing key is cached.
+        /// The duration in minutes the Jwt signing certificate is cached.
         /// Default = 10 minutes.
         /// </summary>
-        public int JwtSigningKeyCacheDuration { get; set; } = 10;
-
-        /// <summary>
-        /// The clock skew in minutes to apply for the Jwt expiration validation.
-        /// Default = 0 minutes.
-        /// </summary>
-        public int JwtValidatorClockSkew { get; set; } = 0;
+        public int JwtSigningCertificateCacheDuration { get; set; } = 10;
 
         /// <summary>
         /// The url for the Api Engine authentication endpoint.
@@ -114,6 +103,11 @@
         /// The path to redirect when the access is denied.
         /// </summary>
         public string AccessDeniedPath { get; set; }
+
+        /// <summary>
+        /// A string the Auth framework can use to identify a front-end api route. Default = "api".
+        /// </summary>
+        public string FrontEndApiRouteIdentifier { get; set; } = AuthOptionsDefaults.FrontEndApiRouteIdentifier;
 
     }
 }

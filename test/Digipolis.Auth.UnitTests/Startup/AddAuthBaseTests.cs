@@ -136,8 +136,8 @@ namespace Digipolis.Auth.UnitTests.Startup
             Assert.Equal("audience", authOptions.JwtAudience);
             Assert.Equal("issuer", authOptions.JwtIssuer);
             Assert.Equal("singingKeyProviderUrl", authOptions.JwtSigningKeyProviderUrl);
-            Assert.Equal("singinKeyProviderApiKey", authOptions.JwtSigningKeyProviderApikey);
-            Assert.Equal(8, authOptions.JwtSigningKeyCacheDuration);
+            Assert.Equal("singinKeyProviderApiKey", authOptions.JwtSigningCertificateProviderApikey);
+            Assert.Equal(8, authOptions.JwtSigningCertificateCacheDuration);
             Assert.Equal(3, authOptions.JwtValidatorClockSkew);
             Assert.Equal("apiauthurl", authOptions.ApiAuthUrl);
             Assert.Equal("apiauthidpurl", authOptions.ApiAuthIdpUrl);
@@ -191,8 +191,8 @@ namespace Digipolis.Auth.UnitTests.Startup
 
             Act(services);
 
-            var registrations = services.Where(sd => sd.ServiceType == typeof(IJwtSigningKeyProvider) &&
-                                                     sd.ImplementationType == typeof(JwtSigningKeyProvider))
+            var registrations = services.Where(sd => sd.ServiceType == typeof(IJwtSigningCertificateProvider) &&
+                                                     sd.ImplementationType == typeof(JwtSigningCertificateProvider))
                                         .ToArray();
 
             Assert.Equal(1, registrations.Count());

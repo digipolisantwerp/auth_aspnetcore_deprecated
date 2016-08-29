@@ -12,7 +12,8 @@ namespace SampleApp.Controllers
 {
     //[AuthorizeWith(ActiveAuthenticationSchemes = AuthSchemes.CookieAuth, Permission = Constants.ApplicationLoginPermission)]
     //[Authorize(Policy = Constants.ApplicationUser)]
-    [Authorize(ActiveAuthenticationSchemes = AuthSchemes.CookieAuth)]
+    //[Authorize(ActiveAuthenticationSchemes = AuthSchemes.CookieAuth)]
+    [Authorize]
     public class HomeController : Controller
     {
         public IActionResult Index()

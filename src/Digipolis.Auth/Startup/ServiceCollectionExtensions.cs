@@ -34,7 +34,10 @@ namespace Digipolis.Auth
 
             services.Configure(setupAction);
 
-            AddAuthorization(services, policies);
+            var authOptions = BuildAuthOptions(services);
+            ValidateAuthConfig(authOptions);
+
+            AddAuthorization(services, policies, authOptions);
             RegisterServices(services);
 
             return services;
@@ -62,28 +65,33 @@ namespace Digipolis.Auth
             var section = config.GetSection(options.Section);
             services.Configure<AuthOptions>(section);
 
-            AddAuthorization(services, policies);
+            var authOptions = BuildAuthOptions(services);
+            ValidateAuthConfig(authOptions);
+
+            AddAuthorization(services, policies, authOptions);
             RegisterServices(services);
 
             return services;
         }
 
-        private static void AddAuthorization(IServiceCollection services, Dictionary<string, AuthorizationPolicy> policies)
+        private static void AddAuthorization(IServiceCollection services, Dictionary<string, AuthorizationPolicy> policies, AuthOptions authOptions)
         {
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap = new Dictionary<string, string>();
 
             services.AddAuthorization(options =>
             {
+                var authenticationScheme = GetAuthenticationScheme(authOptions);
+
                 options.AddPolicy(Policies.ConventionBased,
                                   policy =>
                                   {
-                                      policy.AuthenticationSchemes.Add(AuthSchemes.JwtHeaderAuth);
+                                      policy.AuthenticationSchemes.Add(authenticationScheme);
                                       policy.Requirements.Add(new ConventionBasedRequirement());
                                   });
                 options.AddPolicy(Policies.CustomBased,
                                   policy =>
                                   {
-                                      policy.AuthenticationSchemes.Add(AuthSchemes.JwtHeaderAuth);
+                                      policy.AuthenticationSchemes.Add(authenticationScheme);
                                       policy.Requirements.Add(new CustomBasedRequirement());
                                   });
 
@@ -104,14 +112,42 @@ namespace Digipolis.Auth
             services.AddSingleton<IAuthorizationHandler, CustomBasedAuthorizationHandler>();
             services.AddSingleton<IRequiredPermissionsResolver, RequiredPermissionsResolver>();
             services.AddSingleton<PermissionsClaimsTransformer>();
-            services.AddSingleton<IJwtSigningKeyProvider, JwtSigningKeyProvider>();
+            services.AddSingleton<IJwtSigningCertificateProvider, JwtSigningCertificateProvider>();
             services.AddSingleton<HttpMessageHandler, HttpClientHandler>();
-            services.AddSingleton<IJwtTokenSignatureValidator, JwtTokenSignatureValidator>();
+            //services.AddSingleton<IJwtTokenSignatureValidator, JwtTokenSignatureValidator>();
             services.AddSingleton<ISecurityTokenValidator, JwtSecurityTokenHandler>();
             services.AddSingleton<ITokenRefreshAgent, TokenRefreshAgent>();
             services.AddSingleton<ITokenRefreshHandler, TokenRefreshHandler>();
             services.AddSingleton<IAuthService, AuthService>();
-            services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, AuthActionsOptionsSetup>());
+            services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, AuthActionsOptionsSetup>()); 
+        }
+
+        private static void ValidateAuthConfig(AuthOptions options)
+        {
+            //if (options.EnableCookieAuth && options.EnableJwtHeaderAuth)
+            //{
+            //    throw new Exception("Invalid Auth configuration. CookieAuth and JwtHeaderAuth schemes are both enabled! You can only use one scheme.");
+            //}
+
+        }
+
+        private static string GetAuthenticationScheme(AuthOptions authOptions)
+        {
+            if (authOptions.EnableCookieAuth)
+                return AuthSchemes.CookieAuth;
+
+            if (authOptions.EnableJwtHeaderAuth)
+                return AuthSchemes.JwtHeaderAuth;
+
+            return null;
+        }
+
+        private static AuthOptions BuildAuthOptions(IServiceCollection services)
+        {
+            var configureOptions = services.BuildServiceProvider().GetRequiredService<IConfigureOptions<AuthOptions>>();
+            var authOptions = new AuthOptions();
+            configureOptions.Configure(authOptions);
+            return authOptions;
         }
     }
 }

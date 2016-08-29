@@ -7,5 +7,6 @@
         public const string TokenCallbackRoute = "auth/token";
         public const string TokenRefreshRoute = "auth/token/refresh";
         public const string PermissionsRoute = "auth/user/permissions";
+        public const string FrontEndApiRouteIdentifier = "api";
     }
 }

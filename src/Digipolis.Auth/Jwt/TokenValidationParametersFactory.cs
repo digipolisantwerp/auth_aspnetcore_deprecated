@@ -1,23 +1,25 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using System;
 using Digipolis.Auth.Options;
+using System.Text;
 
 namespace Digipolis.Auth.Jwt
 {
     public class TokenValidationParametersFactory
     {
-        public static TokenValidationParameters Create(AuthOptions authOptions, IJwtTokenSignatureValidator signatureValidator)
+        public static TokenValidationParameters Create(AuthOptions authOptions, IJwtSigningCertificateProvider jwtSigningKeyProvider)
         {
             var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateAudience = false,
                 ValidAudience = authOptions.JwtAudience,
-                ValidateIssuer = true,
+                ValidateIssuer = false,
                 ValidIssuer = authOptions.JwtIssuer,
                 ValidateLifetime = true,
-                ClockSkew = TimeSpan.FromMinutes(authOptions.JwtValidatorClockSkew),
+                RequireExpirationTime = false,
+                //LifetimeValidator = jwtSigningKeyProvider.LifetimeValidator,
                 NameClaimType = "sub",
-                SignatureValidator = signatureValidator.SignatureValidator
+                IssuerSigningKeyResolver = jwtSigningKeyProvider.IssuerSigningKeyResolver,
             };
             
             return tokenValidationParameters;

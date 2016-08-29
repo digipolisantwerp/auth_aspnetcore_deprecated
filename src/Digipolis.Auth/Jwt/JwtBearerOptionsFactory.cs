@@ -10,18 +10,21 @@ namespace Digipolis.Auth.Jwt
 {
     internal class JwtBearerOptionsFactory
     {
-        public static JwtBearerOptions Create(AuthOptions authOptions, IJwtSigningKeyProvider signingKeyProvider, IJwtTokenSignatureValidator signatureValidator,
-            ILogger<JwtBearerMiddleware> logger)
+        public static JwtBearerOptions Create(AuthOptions authOptions, IJwtSigningCertificateProvider signingKeyProvider, ILogger<JwtBearerMiddleware> logger)
         {
             var jwtBearerOptions = new JwtBearerOptions
             {
                 AutomaticAuthenticate = true
             };
 
-            jwtBearerOptions.TokenValidationParameters = TokenValidationParametersFactory.Create(authOptions, signatureValidator);
+            jwtBearerOptions.TokenValidationParameters = TokenValidationParametersFactory.Create(authOptions, signingKeyProvider);
 
             jwtBearerOptions.Events = new JwtBearerEvents()
             {
+                //OnTokenValidated = context =>
+                //{
+                //    return Task.FromResult<object>(null);
+                //},
                 OnAuthenticationFailed = context =>
                 {
                     logger.LogInformation($"Jwt token validation failed. Exception: {context.Exception.ToString()}");
@@ -31,16 +34,17 @@ namespace Digipolis.Auth.Jwt
 
                     return Task.FromResult<object>(null);
                 },
-                OnChallenge = context =>
-                {
-                    return Task.FromResult<object>(null);
-                },
-                OnMessageReceived = async context =>
-                {
-                    //the signingKey is resolved on this event because we can make the call async here, in the signatureValidator async is not possible
-                    if (!String.IsNullOrWhiteSpace(authOptions.JwtSigningKeyProviderUrl))
-                        context.Options.TokenValidationParameters.IssuerSigningKey = await signingKeyProvider.ResolveSigningKeyAsync(true);
-                }
+                //OnChallenge = context =>
+                //{
+                //    return Task.FromResult<object>(null);
+                //},
+                //OnMessageReceived = context =>
+                //{
+                //    //the signingKey is resolved on this event because we can make the call async here, in the signatureValidator async is not possible
+                //    //if (!String.IsNullOrWhiteSpace(authOptions.JwtSigningKeyProviderUrl))
+                //    //context.Options.TokenValidationParameters.IssuerSigningKey = await signingKeyProvider.ResolveSigningKeyAsync(true);
+                //    return Task.FromResult<object>(null);
+                //}
             };
 
             return jwtBearerOptions;
