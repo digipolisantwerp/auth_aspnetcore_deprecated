@@ -12,7 +12,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
 {
     public class JwtBearerOptionsFactoryTests
     {
-        IJwtSigningCertificateProvider signingKeyProviderMock = Mock.Of<IJwtSigningCertificateProvider>();
+        IJwtSigningKeyResolver signingKeyResolverMock = Mock.Of<IJwtSigningKeyResolver>();
         TestLogger<JwtBearerMiddleware> loggerMock = TestLogger<JwtBearerMiddleware>.CreateLogger();
 
         [Fact]
@@ -23,9 +23,9 @@ namespace Digipolis.Auth.UnitTests.Jwt
                JwtIssuer = "jwtIssuer"
             };
 
-            var options = JwtBearerOptionsFactory.Create(authOptions, signingKeyProviderMock, loggerMock);
+            var options = JwtBearerOptionsFactory.Create(authOptions, signingKeyResolverMock, loggerMock);
 
-            Assert.True(options.TokenValidationParameters.ValidateIssuer);
+            Assert.False(options.TokenValidationParameters.ValidateIssuer);
             Assert.Equal(authOptions.JwtIssuer, options.TokenValidationParameters.ValidIssuer);
 
             Assert.False(options.TokenValidationParameters.ValidateAudience);
@@ -60,7 +60,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
         {
             var authOptions = new AuthOptions();
 
-            var options = JwtBearerOptionsFactory.Create(authOptions, signingKeyProviderMock, loggerMock);
+            var options = JwtBearerOptionsFactory.Create(authOptions, signingKeyResolverMock, loggerMock);
             var context = new AuthenticationFailedContext(null, options);
             context.Exception = new Exception("exceptiondetail");
 
@@ -75,7 +75,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
         {
             var authOptions = new AuthOptions();
 
-            var options = JwtBearerOptionsFactory.Create(authOptions, signingKeyProviderMock, loggerMock);
+            var options = JwtBearerOptionsFactory.Create(authOptions, signingKeyResolverMock, loggerMock);
             var context = new AuthenticationFailedContext(null, options);
             context.Exception = new Exception("exceptiondetail");
 

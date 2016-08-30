@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Digipolis.Auth
@@ -16,7 +17,7 @@ namespace Digipolis.Auth
         {
             var json = JsonConvert.SerializeObject(content, jsonSettings);
 
-            var stringContent = new StringContent(json);
+            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
 
             return await httpClient.PostAsync(requestUri, stringContent); 
         }

@@ -1,7 +1,7 @@
 ﻿{
   "Auth": {
-    "ApplicationName": "JHTEST2704",
-    "EnableJwtHeaderAuth": false,
+    "ApplicationName": "AuthToolboxSampleApp",
+    "EnableJwtHeaderAuth": true,
     "EnableCookieAuth": true,
     "PdpUrl": "http://localhost:5000/pdp",
     //"PdpUrl": "https://esb-app1-a.antwerpen.be/authz/v1",

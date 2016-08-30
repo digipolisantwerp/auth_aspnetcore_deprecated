@@ -135,10 +135,8 @@ namespace Digipolis.Auth.UnitTests.Startup
             Assert.Equal(60, authOptions.PdpCacheDuration);
             Assert.Equal("audience", authOptions.JwtAudience);
             Assert.Equal("issuer", authOptions.JwtIssuer);
-            Assert.Equal("singingKeyProviderUrl", authOptions.JwtSigningKeyProviderUrl);
             Assert.Equal("singinKeyProviderApiKey", authOptions.JwtSigningCertificateProviderApikey);
             Assert.Equal(8, authOptions.JwtSigningCertificateCacheDuration);
-            Assert.Equal(3, authOptions.JwtValidatorClockSkew);
             Assert.Equal("apiauthurl", authOptions.ApiAuthUrl);
             Assert.Equal("apiauthidpurl", authOptions.ApiAuthIdpUrl);
             Assert.Equal("authspname", authOptions.ApiAuthSpName);
@@ -185,29 +183,14 @@ namespace Digipolis.Auth.UnitTests.Startup
         }
 
         [Fact]
-        public void JwtSecurityKeyProviderIsRegistratedAsSingleton()
+        public void JwtSigningKeyResolverIsRegistratedAsSingleton()
         {
             var services = new ServiceCollection();
 
             Act(services);
 
-            var registrations = services.Where(sd => sd.ServiceType == typeof(IJwtSigningCertificateProvider) &&
-                                                     sd.ImplementationType == typeof(JwtSigningCertificateProvider))
-                                        .ToArray();
-
-            Assert.Equal(1, registrations.Count());
-            Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
-        }
-
-        [Fact]
-        public void JwtTokenSignatureValidatorIsRegistratedAsSingleton()
-        {
-            var services = new ServiceCollection();
-
-            Act(services);
-
-            var registrations = services.Where(sd => sd.ServiceType == typeof(IJwtTokenSignatureValidator) &&
-                                                     sd.ImplementationType == typeof(JwtTokenSignatureValidator))
+            var registrations = services.Where(sd => sd.ServiceType == typeof(IJwtSigningKeyResolver) &&
+                                                     sd.ImplementationType == typeof(JwtSigningKeyResolver))
                                         .ToArray();
 
             Assert.Equal(1, registrations.Count());

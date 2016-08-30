@@ -38,7 +38,7 @@
         public string JwtIssuer { get; set; }
 
         /// <summary>
-        /// The api key for the signing certificate provider authentication.
+        /// The api key for authentication on the signing certificate provider .
         /// </summary>
         public string JwtSigningCertificateProviderApikey { get; set; }
 
@@ -103,11 +103,5 @@
         /// The path to redirect when the access is denied.
         /// </summary>
         public string AccessDeniedPath { get; set; }
-
-        /// <summary>
-        /// A string the Auth framework can use to identify a front-end api route. Default = "api".
-        /// </summary>
-        public string FrontEndApiRouteIdentifier { get; set; } = AuthOptionsDefaults.FrontEndApiRouteIdentifier;
-
     }
 }

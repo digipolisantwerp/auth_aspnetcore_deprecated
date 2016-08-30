@@ -15,29 +15,25 @@ namespace Digipolis.Auth.Controllers
     public class TokenController : Controller
     {
         private readonly ILogger<TokenController> _logger;
-        private readonly IJwtSigningCertificateProvider _signingKeyProvider;
+        private readonly IJwtSigningKeyResolver _signingKeyResolver;
         private readonly AuthOptions _authOptions;
         private readonly ISecurityTokenValidator _jwtTokenValidator;
         private readonly ITokenRefreshAgent _tokenRefreshAgent;
-        private readonly IJwtSigningCertificateProvider _jwtSigningCertificateProvider;
 
         public TokenController(IOptions<AuthOptions> options,
-            IJwtSigningCertificateProvider signingKeyProvider,
-            IJwtSigningCertificateProvider jwtSigningCertificateProvider,
+            IJwtSigningKeyResolver signingKeyResolver,
             ISecurityTokenValidator jwtTokenValidator,
             ILogger<TokenController> logger,
             ITokenRefreshAgent tokenRefreshAgent)
         {
             if (options == null) throw new ArgumentNullException(nameof(options), $"{nameof(options)} cannot be null");
-            if (signingKeyProvider == null) throw new ArgumentNullException(nameof(signingKeyProvider), $"{nameof(signingKeyProvider)} cannot be null");
-            if (jwtSigningCertificateProvider == null) throw new ArgumentNullException(nameof(jwtSigningCertificateProvider), $"{nameof(jwtSigningCertificateProvider)} cannot be null");
+            if (signingKeyResolver == null) throw new ArgumentNullException(nameof(signingKeyResolver), $"{nameof(signingKeyResolver)} cannot be null");
             if (jwtTokenValidator == null) throw new ArgumentNullException(nameof(jwtTokenValidator), $"{nameof(jwtTokenValidator)} cannot be null");
             if (logger == null) throw new ArgumentNullException(nameof(logger), $"{nameof(logger    )} cannot be null");
             if (tokenRefreshAgent == null) throw new ArgumentNullException(nameof(tokenRefreshAgent), $"{nameof(tokenRefreshAgent)} cannot be null");
 
-            _signingKeyProvider = signingKeyProvider;
+            _signingKeyResolver = signingKeyResolver;
             _authOptions = options.Value;
-            _jwtSigningCertificateProvider = jwtSigningCertificateProvider;
             _jwtTokenValidator = jwtTokenValidator;
             _logger = logger;
             _tokenRefreshAgent = tokenRefreshAgent;
@@ -46,7 +42,7 @@ namespace Digipolis.Auth.Controllers
         
         public async Task<IActionResult> Callback(string returnUrl, string jwt)
         {
-            var validationParameters = TokenValidationParametersFactory.Create(_authOptions, _jwtSigningCertificateProvider);
+            var validationParameters = TokenValidationParametersFactory.Create(_authOptions, _signingKeyResolver);
 
             try
             {

@@ -21,10 +21,8 @@ namespace Digipolis.Auth.UnitTests.Startup
                     options.PdpCacheDuration = 60;
                     options.JwtAudience = "audience";
                     options.JwtIssuer = "issuer";
-                    options.JwtSigningKeyProviderUrl = "singingKeyProviderUrl";
                     options.JwtSigningCertificateProviderApikey = "singinKeyProviderApiKey";
                     options.JwtSigningCertificateCacheDuration = 8;
-                    options.JwtValidatorClockSkew = 3;
                     options.ApiAuthUrl = "apiauthurl";
                     options.ApiAuthIdpUrl = "apiauthidpurl";
                     options.ApiAuthSpName = "authspname";

@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Digipolis.Auth.Controllers;
+using Digipolis.Auth.Jwt;
+using Digipolis.Auth.Options;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.IdentityModel.Tokens;
@@ -10,9 +12,6 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Digipolis.Auth.Controllers;
-using Digipolis.Auth.Jwt;
-using Digipolis.Auth.Options;
 using Xunit;
 
 namespace Digipolis.Auth.UnitTests.Jwt
@@ -30,44 +29,30 @@ namespace Digipolis.Auth.UnitTests.Jwt
         public void ThrowsExceptionIfOptionsIsNull()
         {
             Assert.Throws<ArgumentNullException>(() => new TokenController(null,
-                Mock.Of<IJwtSigningCertificateProvider>(),
-                Mock.Of<IJwtTokenSignatureValidator>(),
+                Mock.Of<IJwtSigningKeyResolver>(),
                 Mock.Of<ISecurityTokenValidator>(),
                 _logger,
                 Mock.Of<ITokenRefreshAgent>()));
         }
 
         [Fact]
-        public void ThrowsExceptionIfIJwtSigningKeyProviderIsNull()
+        public void ThrowsExceptionIfIJwtSigningKeyResolverIsNull()
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
                 var ctrl = new TokenController(Options.Create(new AuthOptions()),
                 null,
-                Mock.Of<IJwtTokenSignatureValidator>(),
                 Mock.Of<ISecurityTokenValidator>(),
                 _logger,
                 Mock.Of<ITokenRefreshAgent>());
-            }); 
+            });
         }
 
         [Fact]
-        public void ThrowsExceptionIfIJwtTokenSignatureValidatorIsNull()
+        public void ThrowsExceptionIfISecurityTokenValidatorIsNull()
         {
             Assert.Throws<ArgumentNullException>(() => new TokenController(Options.Create(new AuthOptions()),
-                Mock.Of<IJwtSigningCertificateProvider>(),
-                null,
-                Mock.Of<ISecurityTokenValidator>(),
-                _logger,
-                Mock.Of<ITokenRefreshAgent>()));
-        }
-
-        [Fact]
-        public void ThrowsExceptionIfSecurityTokenValidatorIsNull()
-        {
-            Assert.Throws<ArgumentNullException>(() => new TokenController(Options.Create(new AuthOptions()),
-                Mock.Of<IJwtSigningCertificateProvider>(),
-                Mock.Of<IJwtTokenSignatureValidator>(),
+                Mock.Of<IJwtSigningKeyResolver>(),
                 null,
                 _logger,
                 Mock.Of<ITokenRefreshAgent>()));
@@ -77,8 +62,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
         public void ThrowsExceptionIfLoggerIsNull()
         {
             Assert.Throws<ArgumentNullException>(() => new TokenController(Options.Create(new AuthOptions()),
-                Mock.Of<IJwtSigningCertificateProvider>(),
-                Mock.Of<IJwtTokenSignatureValidator>(),
+                Mock.Of<IJwtSigningKeyResolver>(),
                 Mock.Of<ISecurityTokenValidator>(),
                 null,
                 Mock.Of<ITokenRefreshAgent>()));
@@ -88,48 +72,10 @@ namespace Digipolis.Auth.UnitTests.Jwt
         public void ThrowsExceptionIfTokenRefreshAgentIsNull()
         {
             Assert.Throws<ArgumentNullException>(() => new TokenController(Options.Create(new AuthOptions()),
-                Mock.Of<IJwtSigningCertificateProvider>(),
-                //Mock.Of<IJwtTokenSignatureValidator>(),
+                Mock.Of<IJwtSigningKeyResolver>(),
                 Mock.Of<ISecurityTokenValidator>(),
                 _logger,
                 null));
-        }
-
-        [Fact]
-        public async Task ResolveSigningKeyIfValidateSignatureIsTrue()
-        {
-            var jwtSigningKeyProvider = new Mock<IJwtSigningCertificateProvider>();
-            var authOptions = new AuthOptions { JwtSigningKeyProviderUrl = "someurl" , AccessDeniedPath = "/"};
-
-            var tokenController = new TokenController(Options.Create(authOptions),
-                jwtSigningKeyProvider.Object,
-                Mock.Of<IJwtTokenSignatureValidator>(),
-                Mock.Of<ISecurityTokenValidator>(),
-                _logger,
-                Mock.Of<ITokenRefreshAgent>());
-
-            await tokenController.Callback("abc", "123");
-
-            jwtSigningKeyProvider.Verify(p => p.ResolveSigningKeyAsync(false), Times.AtLeastOnce);
-
-        }
-
-        [Fact]
-        public async Task DontResolveSigningKeyIfValidateSignatureIsTrue()
-        {
-            var jwtSigningKeyProvider = new Mock<IJwtSigningCertificateProvider>();
-
-            var tokenController = new TokenController(Options.Create(new AuthOptions { AccessDeniedPath = "/" }),
-                jwtSigningKeyProvider.Object,
-                Mock.Of<IJwtTokenSignatureValidator>(),
-                Mock.Of<ISecurityTokenValidator>(),
-                _logger,
-                Mock.Of<ITokenRefreshAgent>());
-
-            await tokenController.Callback("abc", "123");
-
-            jwtSigningKeyProvider.Verify(p => p.ResolveSigningKeyAsync(false), Times.Never);
-
         }
 
         [Fact]
@@ -180,14 +126,13 @@ namespace Digipolis.Auth.UnitTests.Jwt
         {
             SecurityToken securityToken = null;
 
-            var jwtSigningKeyProvider = new Mock<IJwtSigningCertificateProvider>();
+            var jwtSigningKeyResolver = new Mock<IJwtSigningKeyResolver>();
             var jwtTokenValidator = new Mock<ISecurityTokenValidator>();
             jwtTokenValidator.Setup(v => v.ValidateToken(_jwtToken, It.IsAny<TokenValidationParameters>(), out securityToken))
                 .Returns(_claimsPrincipal);
 
             var tokenController = new TokenController(Options.Create(new AuthOptions { AccessDeniedPath = "Home/AccessDenied" }),
-                jwtSigningKeyProvider.Object,
-                Mock.Of<IJwtTokenSignatureValidator>(),
+                jwtSigningKeyResolver.Object,
                 jwtTokenValidator.Object,
                 _logger,
                 Mock.Of<ITokenRefreshAgent>());

@@ -20,6 +20,7 @@ namespace Digipolis.Auth.Jwt
         {
             _authOptions = options.Value;
             _client = new HttpClient(handler);
+            //_client.DefaultRequestHeaders.Accept.Add("Content-Type", "application/json");
             _logger = logger;
 
             _jsonSettings = new JsonSerializerSettings

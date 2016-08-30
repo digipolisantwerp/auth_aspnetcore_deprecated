@@ -6,9 +6,8 @@
     "JwtAudience": "audience",
     "JwtIssuer": "issuer",
     "JwtUserIdClaimType": "sub",
-    "JwtSigningKeyProviderUrl": "singingKeyProviderUrl",
-    "jwtSigningKeyProviderApikey": "singinKeyProviderApiKey",
-    "JwtSigningKeyCacheDuration": 8,
+    "JwtSigningCertificateProviderApikey": "singinKeyProviderApiKey",
+    "JwtSigningCertificateCacheDuration": 8,
     "JwtValidatorClockSkew": 3,
     "ApiAuthUrl": "apiauthurl",
     "ApiAuthIdpUrl": "apiauthidpurl",
@@ -20,6 +19,6 @@
     "TokenCallbackRoute": "custom/tokenendpoint",
     "TokenRefreshRoute": "custom/tokenrefresh",
     "PermissionsRoute": "custom/permissions",
-    "AccessDeniedPath":  "accessdenied"
+    "AccessDeniedPath": "accessdenied"
   }
 }

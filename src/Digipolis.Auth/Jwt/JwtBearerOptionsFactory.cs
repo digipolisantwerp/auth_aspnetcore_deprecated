@@ -10,14 +10,14 @@ namespace Digipolis.Auth.Jwt
 {
     internal class JwtBearerOptionsFactory
     {
-        public static JwtBearerOptions Create(AuthOptions authOptions, IJwtSigningCertificateProvider signingKeyProvider, ILogger<JwtBearerMiddleware> logger)
+        public static JwtBearerOptions Create(AuthOptions authOptions, IJwtSigningKeyResolver signingKeyResolver, ILogger<JwtBearerMiddleware> logger)
         {
             var jwtBearerOptions = new JwtBearerOptions
             {
                 AutomaticAuthenticate = true
             };
 
-            jwtBearerOptions.TokenValidationParameters = TokenValidationParametersFactory.Create(authOptions, signingKeyProvider);
+            jwtBearerOptions.TokenValidationParameters = TokenValidationParametersFactory.Create(authOptions, signingKeyResolver);
 
             jwtBearerOptions.Events = new JwtBearerEvents()
             {

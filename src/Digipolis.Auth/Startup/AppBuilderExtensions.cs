@@ -23,7 +23,7 @@ namespace Digipolis.Auth
         public static IApplicationBuilder UseAuth(this IApplicationBuilder app)
         {
             var authOptions = app.ApplicationServices.GetService<IOptions<AuthOptions>>().Value;
-            var signingKeyProvider = app.ApplicationServices.GetService<IJwtSigningCertificateProvider>();
+            var signingKeyProvider = app.ApplicationServices.GetService<JwtSigningKeyResolver>();
             //var signatureValidator = app.ApplicationServices.GetService<IJwtTokenSignatureValidator>();
             var logger = app.ApplicationServices.GetService<ILogger<JwtBearerMiddleware>>();
             var tokenRefreshHandler = app.ApplicationServices.GetService<ITokenRefreshHandler>();
@@ -65,15 +65,7 @@ namespace Digipolis.Auth
 
                         OnRedirectToAccessDenied = context =>
                         {
-                            if (context.Request.Path.Value.Contains(authOptions.FrontEndApiRouteIdentifier))
-                            {
-                                context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                            }
-                            else
-                            {
-                                context.Response.Redirect(new PathString($"/{authOptions.AccessDeniedPath}"));
-                            }
-                            
+                            context.Response.Redirect(new PathString($"/{authOptions.AccessDeniedPath}"));
                             return Task.FromResult<object>(null);
                         },
 

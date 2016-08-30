@@ -7,7 +7,7 @@ namespace Digipolis.Auth.Jwt
 {
     public class TokenValidationParametersFactory
     {
-        public static TokenValidationParameters Create(AuthOptions authOptions, IJwtSigningCertificateProvider jwtSigningKeyProvider)
+        public static TokenValidationParameters Create(AuthOptions authOptions, IJwtSigningKeyResolver jwtSigningKeyProvider)
         {
             var tokenValidationParameters = new TokenValidationParameters
             {
@@ -17,7 +17,6 @@ namespace Digipolis.Auth.Jwt
                 ValidIssuer = authOptions.JwtIssuer,
                 ValidateLifetime = true,
                 RequireExpirationTime = false,
-                //LifetimeValidator = jwtSigningKeyProvider.LifetimeValidator,
                 NameClaimType = "sub",
                 IssuerSigningKeyResolver = jwtSigningKeyProvider.IssuerSigningKeyResolver,
             };

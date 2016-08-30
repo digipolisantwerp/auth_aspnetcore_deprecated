@@ -1,23 +1,20 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using Digipolis.Auth.Options;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using Digipolis.Auth.Options;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
-using System.IO;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+using System.IO;
+using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text;
 using Toolbox.Auth.Jwt;
 
 namespace Digipolis.Auth.Jwt
 {
-    public class JwtSigningCertificateProvider : IJwtSigningCertificateProvider
+    public class JwtSigningKeyResolver : IJwtSigningKeyResolver
     {
         private readonly IMemoryCache _cache;
         private readonly AuthOptions _options;
@@ -25,9 +22,9 @@ namespace Digipolis.Auth.Jwt
         private readonly HttpClient _client;
         private readonly bool _cachingEnabled;
         private const string CACHE_KEY = "JwtSigningKey";
-        private readonly ILogger<JwtSigningCertificateProvider> _logger;
+        private readonly ILogger<JwtSigningKeyResolver> _logger;
 
-        public JwtSigningCertificateProvider(IMemoryCache cache, IOptions<AuthOptions> options, HttpMessageHandler handler, ILogger<JwtSigningCertificateProvider> logger)
+        public JwtSigningKeyResolver(IMemoryCache cache, IOptions<AuthOptions> options, HttpMessageHandler handler, ILogger<JwtSigningKeyResolver> logger)
         {
             if (cache == null) throw new ArgumentNullException(nameof(cache), $"{nameof(cache)} cannot be null");
             if (options == null || options.Value == null) throw new ArgumentNullException(nameof(options), $"{nameof(options)} cannot be null");
@@ -45,27 +42,6 @@ namespace Digipolis.Auth.Jwt
                 _cachingEnabled = true;
                 _cacheOptions = new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = new TimeSpan(0, _options.JwtSigningCertificateCacheDuration, 0) };
             }
-        }
-
-        public bool LifetimeValidator(DateTime? notBefore, DateTime? expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
-        {
-            var jwt = securityToken as JwtSecurityToken;
-
-            var expClaim = jwt.Claims.SingleOrDefault(c => c.Type == "exp");
-
-            if (expClaim == null)
-                throw new SecurityTokenNoExpirationException("Lifetime validation failed. The token is missing an Expiration Time.");
-
-            var expRawValue = Convert.ToInt64(expClaim.Value);
-            if (expRawValue > 9999999999)
-                expRawValue /= 1000;
-
-            var expDateTime = EpochTime.DateTime(expRawValue);
-
-            if (expDateTime.ToUniversalTime() <= DateTime.Now.ToUniversalTime())
-                return false;
-
-            return true;
         }
 
         public IEnumerable<SecurityKey> IssuerSigningKeyResolver(string token, SecurityToken securityToken, string kid, TokenValidationParameters validationParameters)
