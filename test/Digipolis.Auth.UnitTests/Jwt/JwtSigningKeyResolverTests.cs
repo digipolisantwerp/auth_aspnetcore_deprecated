@@ -17,7 +17,6 @@ namespace Digipolis.Auth.UnitTests.Jwt
 {
     public class JwtSigningKeyResolverTests
     {
-        private string _jwtKeyresolverUrl = "http://test.com";
         private AuthOptions _options;
         private const string CACHE_KEY = "JwtSigningKey";
         private TestLogger<JwtSigningKeyResolver> _logger = TestLogger<JwtSigningKeyResolver>.CreateLogger();

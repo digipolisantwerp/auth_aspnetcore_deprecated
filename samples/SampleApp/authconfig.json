@@ -42,6 +42,7 @@
     "TokenRefreshRoute": "myroute/token/refresh",
     "AutomaticTokenRefresh": "true",
     "AccessDeniedPath": "Home/AccessDenied",
-    "FrontEndApiRouteIdentifier": "api"
+    "FrontEndApiRouteIdentifier": "api",
+    "PermissionsRoute": "myauth/user/permissions"
   }
 }

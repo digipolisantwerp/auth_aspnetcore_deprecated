@@ -42,7 +42,7 @@
                 deferred.resolve(userPermissions);
             } else {
 
-                $http.get("auth/user/permissions")
+                $http.get("myauth/user/permissions")
                     .then(function (response) {
                         userPermissions = response.data;
                         permissionsLoaded = true;
