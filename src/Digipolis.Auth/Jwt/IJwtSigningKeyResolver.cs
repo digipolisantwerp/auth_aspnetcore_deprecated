@@ -1,7 +1,5 @@
 using Microsoft.IdentityModel.Tokens;
-using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Digipolis.Auth.Jwt
 {

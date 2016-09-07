@@ -22,7 +22,7 @@ namespace Digipolis.Auth.UnitTests.Startup
                     options.JwtAudience = "audience";
                     options.JwtIssuer = "issuer";
                     options.JwtSigningCertificateProviderApikey = "singinKeyProviderApiKey";
-                    options.JwtSigningCertificateCacheDuration = 8;
+                    options.JwtSigningKeyCacheDuration = 8;
                     options.ApiAuthUrl = "apiauthurl";
                     options.ApiAuthIdpUrl = "apiauthidpurl";
                     options.ApiAuthSpName = "authspname";

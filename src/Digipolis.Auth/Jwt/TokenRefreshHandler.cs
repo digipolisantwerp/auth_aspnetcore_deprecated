@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Digipolis.Auth.Options;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
-using Digipolis.Auth.Options;
 
 namespace Digipolis.Auth.Jwt
 {

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http.Authentication;
+﻿using Digipolis.Auth.Jwt;
+using Digipolis.Auth.Options;
+using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -7,8 +9,6 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
-using Digipolis.Auth.Jwt;
-using Digipolis.Auth.Options;
 
 namespace Digipolis.Auth.Controllers
 {

@@ -136,7 +136,7 @@ namespace Digipolis.Auth.UnitTests.Startup
             Assert.Equal("audience", authOptions.JwtAudience);
             Assert.Equal("issuer", authOptions.JwtIssuer);
             Assert.Equal("singinKeyProviderApiKey", authOptions.JwtSigningCertificateProviderApikey);
-            Assert.Equal(8, authOptions.JwtSigningCertificateCacheDuration);
+            Assert.Equal(8, authOptions.JwtSigningKeyCacheDuration);
             Assert.Equal("apiauthurl", authOptions.ApiAuthUrl);
             Assert.Equal("apiauthidpurl", authOptions.ApiAuthIdpUrl);
             Assert.Equal("authspname", authOptions.ApiAuthSpName);

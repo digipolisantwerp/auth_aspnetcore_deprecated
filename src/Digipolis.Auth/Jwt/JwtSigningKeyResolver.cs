@@ -10,7 +10,6 @@ using System.IO;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
-using Toolbox.Auth.Jwt;
 
 namespace Digipolis.Auth.Jwt
 {
@@ -37,10 +36,10 @@ namespace Digipolis.Auth.Jwt
             _client.DefaultRequestHeaders.Add("apikey", _options.JwtSigningCertificateProviderApikey);
             _logger = logger;
 
-            if (_options.JwtSigningCertificateCacheDuration > 0)
+            if (_options.JwtSigningKeyCacheDuration > 0)
             {
                 _cachingEnabled = true;
-                _cacheOptions = new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = new TimeSpan(0, _options.JwtSigningCertificateCacheDuration, 0) };
+                _cacheOptions = new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = new TimeSpan(0, _options.JwtSigningKeyCacheDuration, 0) };
             }
         }
 

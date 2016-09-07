@@ -7,7 +7,7 @@
     "JwtIssuer": "issuer",
     "JwtUserIdClaimType": "sub",
     "JwtSigningCertificateProviderApikey": "singinKeyProviderApiKey",
-    "JwtSigningCertificateCacheDuration": 8,
+    "JwtSigningKeyCacheDuration": 8,
     "JwtValidatorClockSkew": 3,
     "ApiAuthUrl": "apiauthurl",
     "ApiAuthIdpUrl": "apiauthidpurl",

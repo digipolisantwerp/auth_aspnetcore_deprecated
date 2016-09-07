@@ -12,6 +12,8 @@ namespace Digipolis.Auth.UnitTests
         private readonly T _responseContent;
         private readonly HttpStatusCode _responseCode;
 
+        public Uri RequestUri { get; private set; }
+
         public MockMessageHandler(HttpStatusCode responseCode, T responseContent)
         {
             _responseCode = responseCode;
@@ -21,6 +23,8 @@ namespace Digipolis.Auth.UnitTests
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             HttpResponseMessage response = null;
+
+            RequestUri = request.RequestUri;
 
             switch (_responseCode)
             {

@@ -43,10 +43,10 @@
         public string JwtSigningCertificateProviderApikey { get; set; }
 
         /// <summary>
-        /// The duration in minutes the Jwt signing certificate is cached.
-        /// Default = 10 minutes.
+        /// The duration in minutes the Jwt signing key is cached.
+        /// Default = 720 minutes.
         /// </summary>
-        public int JwtSigningCertificateCacheDuration { get; set; } = 10;
+        public int JwtSigningKeyCacheDuration { get; set; } = 720;
 
         /// <summary>
         /// The url for the Api Engine authentication endpoint.

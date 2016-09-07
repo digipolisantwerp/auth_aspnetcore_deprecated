@@ -40,5 +40,13 @@ namespace SampleApp.Controllers
         {
             return View();
         }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> SignOut()
+        {
+            await HttpContext.Authentication.SignOutAsync(AuthSchemes.CookieAuth);
+
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

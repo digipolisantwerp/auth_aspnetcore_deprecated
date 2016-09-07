@@ -23,8 +23,7 @@ namespace Digipolis.Auth
         public static IApplicationBuilder UseAuth(this IApplicationBuilder app)
         {
             var authOptions = app.ApplicationServices.GetService<IOptions<AuthOptions>>().Value;
-            var signingKeyProvider = app.ApplicationServices.GetService<JwtSigningKeyResolver>();
-            //var signatureValidator = app.ApplicationServices.GetService<IJwtTokenSignatureValidator>();
+            var signingKeyProvider = app.ApplicationServices.GetService<IJwtSigningKeyResolver>();
             var logger = app.ApplicationServices.GetService<ILogger<JwtBearerMiddleware>>();
             var tokenRefreshHandler = app.ApplicationServices.GetService<ITokenRefreshHandler>();
 

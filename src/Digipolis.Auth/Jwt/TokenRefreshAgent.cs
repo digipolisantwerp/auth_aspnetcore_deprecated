@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Digipolis.Auth.Options;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Digipolis.Auth.Options;
 
 namespace Digipolis.Auth.Jwt
 {
