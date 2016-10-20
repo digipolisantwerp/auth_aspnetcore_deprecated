@@ -1,0 +1,23 @@
+﻿This sample application uses this authorization scheme:
+
+The corresponding xacml for the PDP can be found in file permissions.xml
+
+The application has 3 types of users:
+
+	- Administrator
+	- Customer service collaborator
+	- Sales collaborator
+
+The idea is that an administrator has all permissions, a person form the customer service dept. can only read tickets and a sales person can create / modify tickets.
+
+
+Resource	Operation		Admin		Sales		Customer Service
+
+Tickets		read			X			X			X
+Tickets		create			X			X
+Tickets		update			X			X
+Tickets		delete			X			X
+
+
+Another permission is only granted to administrators (permision-125)
+

@@ -15,6 +15,7 @@ using Digipolis.Auth.Options;
 using Digipolis.Auth.PDP;
 using Digipolis.Auth.Services;
 using Xunit;
+using Microsoft.AspNetCore.Http;
 
 namespace Digipolis.Auth.UnitTests.Startup
 {
@@ -135,7 +136,6 @@ namespace Digipolis.Auth.UnitTests.Startup
             Assert.Equal(60, authOptions.PdpCacheDuration);
             Assert.Equal("audience", authOptions.JwtAudience);
             Assert.Equal("issuer", authOptions.JwtIssuer);
-            Assert.Equal("singinKeyProviderApiKey", authOptions.JwtSigningCertificateProviderApikey);
             Assert.Equal(8, authOptions.JwtSigningKeyCacheDuration);
             Assert.Equal("apiauthurl", authOptions.ApiAuthUrl);
             Assert.Equal("apiauthidpurl", authOptions.ApiAuthIdpUrl);
@@ -251,6 +251,21 @@ namespace Digipolis.Auth.UnitTests.Startup
 
             var registrations = services.Where(sd => sd.ServiceType == typeof(IAuthService) &&
                                                      sd.ImplementationType == typeof(AuthService))
+                                        .ToArray();
+
+            Assert.Equal(1, registrations.Count());
+            Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
+        }
+
+        [Fact]
+        public void HttpContextAccessorIsRegistratedAsSingleton()
+        {
+            var services = new ServiceCollection();
+
+            Act(services);
+
+            var registrations = services.Where(sd => sd.ServiceType == typeof(IHttpContextAccessor) &&
+                                                     sd.ImplementationType == typeof(HttpContextAccessor))
                                         .ToArray();
 
             Assert.Equal(1, registrations.Count());

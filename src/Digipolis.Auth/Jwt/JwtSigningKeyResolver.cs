@@ -33,7 +33,6 @@ namespace Digipolis.Auth.Jwt
             _cache = cache;
             _options = options.Value;
             _client = new HttpClient(handler, true);
-            _client.DefaultRequestHeaders.Add("apikey", _options.JwtSigningCertificateProviderApikey);
             _logger = logger;
 
             if (_options.JwtSigningKeyCacheDuration > 0)

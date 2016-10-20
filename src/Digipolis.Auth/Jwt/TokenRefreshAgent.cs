@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System;
 
 namespace Digipolis.Auth.Jwt
 {
@@ -27,6 +28,28 @@ namespace Digipolis.Auth.Jwt
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
             };
+        }
+
+        public async Task<string> LogoutTokenAsync(string userName, string redirectUrl)
+        {
+            var tokenLogoutRequest = new TokenLogoutRequest
+            {
+                SpName = _authOptions.ApiAuthSpName,
+                IdpUrl = _authOptions.ApiAuthIdpUrl,
+                Username = userName,
+                RelayState = redirectUrl
+            };
+
+            var response = await _client.PostAsync<TokenLogoutRequest>(_authOptions.ApiAuthTokenLogoutUrl, tokenLogoutRequest, _jsonSettings);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogInformation($"Token logout failed. Response status code: {response.StatusCode}");
+                return null;
+            }
+
+            var tokenLogoutResponse = await response.Content.ReadAsStringAsync();
+            return tokenLogoutResponse;
         }
 
         public async Task<string> RefreshTokenAsync(string token)

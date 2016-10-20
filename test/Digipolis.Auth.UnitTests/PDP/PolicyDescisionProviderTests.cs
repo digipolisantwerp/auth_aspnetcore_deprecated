@@ -53,7 +53,7 @@ namespace Digipolis.Auth.UnitTests.PDP
         }
 
         [Fact]
-        public void ThrowsExceptionIfClientIsNull()
+        public void ThrowsExceptionIfHandlerIsNull()
         {
             Assert.Throws<ArgumentNullException>(() => new PolicyDescisionProvider(Mock.Of<IMemoryCache>(),
                 Options.Create(new AuthOptions()),

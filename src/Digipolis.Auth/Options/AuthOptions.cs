@@ -38,15 +38,10 @@
         public string JwtIssuer { get; set; }
 
         /// <summary>
-        /// The api key for authentication on the signing certificate provider .
-        /// </summary>
-        public string JwtSigningCertificateProviderApikey { get; set; }
-
-        /// <summary>
         /// The duration in minutes the Jwt signing key is cached.
-        /// Default = 720 minutes.
+        /// Default = 1440 minutes (24 hours).
         /// </summary>
-        public int JwtSigningKeyCacheDuration { get; set; } = 720;
+        public int JwtSigningKeyCacheDuration { get; set; } = 1440;
 
         /// <summary>
         /// The url for the Api Engine authentication endpoint.
@@ -72,6 +67,11 @@
         /// The Api Engine authentication token refresh url.
         /// </summary>
         public string ApiAuthTokenRefreshUrl { get; set; }
+
+        /// <summary>
+        /// The Api Engine authentication logout url.
+        /// </summary>
+        public string ApiAuthTokenLogoutUrl { get; set; }
 
         /// <summary>
         /// Set to true to enable automatic token refresh.

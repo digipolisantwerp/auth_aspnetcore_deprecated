@@ -7,21 +7,25 @@ using Microsoft.AspNetCore.Authorization;
 using System.Net;
 using Digipolis.Auth.Authorization;
 using Digipolis.Auth;
+using Digipolis.Auth.Jwt;
+using Digipolis.Auth.Services;
 
 namespace SampleApp.Controllers
 {
-    //[AuthorizeWith(ActiveAuthenticationSchemes = AuthSchemes.CookieAuth, Permission = Constants.ApplicationLoginPermission)]
-    //[Authorize(Policy = Constants.ApplicationUser)]
-    //[Authorize(ActiveAuthenticationSchemes = AuthSchemes.CookieAuth)]
-    [Authorize]
     public class HomeController : Controller
     {
+        private readonly ITokenRefreshAgent _tokenRefreshAgent;
+
+        public HomeController(ITokenRefreshAgent tokenRefreshAgent)
+        {
+            _tokenRefreshAgent = tokenRefreshAgent;
+        }
+
         public IActionResult Index()
         {
             return View();
         }
 
-        //[AuthorizeWith(ActiveAuthenticationSchemes = AuthSchemes.TokenInCookie, Permission = Constants.ApplicationLoginPermission)]
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
@@ -34,19 +38,16 @@ namespace SampleApp.Controllers
             return View();
         }
 
-        [AllowAnonymous]
-        //[Route("noaccess")]
         public IActionResult AccessDenied()
         {
             return View();
         }
 
-        [AllowAnonymous]
-        public async Task<IActionResult> SignOut()
+        public async Task<IActionResult> SignOut([FromServices] IAuthService authService)
         {
-            await HttpContext.Authentication.SignOutAsync(AuthSchemes.CookieAuth);
+            var redirectUrl = await authService.LogOutAsync(ControllerContext, "Home", "Index");
 
-            return RedirectToAction("Index", "Home");
+            return Redirect(redirectUrl);
         }
     }
 }

@@ -1,5 +1,7 @@
 # Auth Toolbox
 
+This readme is applicable to version 1.0.x of the toolbox.
+
 The Auth toolbox handles both Authentication and Authorization that can be used in ASP.NET Core Web API and Web MVC Projects.
 
 The Auth toolbox supports two types of authentication flows.
@@ -20,7 +22,6 @@ The toolbox also provides Authorization attributes that can be used in the contr
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
 
 - [Installation](#installation)
 - [Configuration in Startup.ConfigureServices](#configuration-in-startupconfigureservices)
@@ -83,7 +84,7 @@ The Auth framework will read the given section of the json file with the followi
 ``` json
 {
   "Auth": {
-    "ApplicationName": "TestApp",
+    "ApplicationName": "TESTAPP",
     "EnableCookieAuth": false,
     "EnableJwtHeaderAuth": true,
     "PdpUrl": "http://pdp.somewhere.com/",
@@ -101,7 +102,7 @@ You can also call the AddAuth method, passing in the needed options directly:
 ``` csharp
     services.AddAuth(options =>
     {
-        options.ApplicationName = "SampleApp";
+        options.ApplicationName = "SAMPLEAPP";
         options.EnableCookieAuth = true;
         options.PdpUrl = "http://pdp.somewhere.com/";
         options.PdpCacheDuration = 240;
@@ -122,10 +123,9 @@ PdpCacheDuration | The duration in minutes the responses from the PDP are cached
 JwtIssuer | The issuer value used to validate the Jwt token.| 
 JwtAudience | The audience url used to validate the Jwt token.| 
 JwtSigningKeyProviderUrl | The url to the Jwt signing key provider endpoint.|
-jwtSigningKeyProviderApikey | The api key for the signing key provider authentication.|
-JwtSigningKeyCacheDuration | The duration in minutes the Jwt signing key is cached.| 10
-TokenRefreshRoute | The route used for the token refresh endpoint.| auth/token/refresh
-PermissionsRoute | The route used for the permissions endpoint.| auth/user/permissions
+JwtSigningKeyCacheDuration | The duration in minutes the Jwt signing key is cached.| 1440 (24 hours)
+TokenRefreshRoute | The route used for the token refresh endpoint.| "auth/token/refresh"
+PermissionsRoute | The route used for the permissions endpoint.| "auth/user/permissions"
 
 Options used for JwtHeaderAuth
 
@@ -142,7 +142,9 @@ ApiAuthUrl | The url of the Api Engine authentication endpoint.|
 ApiAuthIdpUrl | The url of the Idp the Api Engine will redirect the saml request to.|
 ApiAuthSpName | The service provider name of the Api Engine.|
 ApiAuthSpUrl | The Api Engine callback url where the idp must redirect to.|
-TokenCallbackRoute | The route used for the token callback url.| auth/token
+ApiAuthTokenRefreshUrl | The Api Engine authentication token refresh url.|
+ApiAuthTokenLogoutUrl | The Api Engine authentication logout url.|
+TokenCallbackRoute | The route used for the token callback url.| "auth/token"
 AutomaticTokenRefresh | Set to true to enable automatic token refresh.| false
 TokenRefreshTime | The amount of minutes before the jwt token expiration time at which to automatically refresh the token.| 5
 AccessDeniedPath | The path to redirect when the access is denied. | 
@@ -395,7 +397,6 @@ If the user us authenticated but the authorization failed due to missing permiss
  
  The toolbox uses a Jwt (JSON Web Token) to perform its authentication.
  For more details on how a Jwt is structured see https://jwt.io/introduction.  
- For development you can generate a jwt using an online tool like http://jwtbuilder.jamiekurtz.com.
  
 #### Structure
 
@@ -403,8 +404,9 @@ If the user us authenticated but the authorization failed due to missing permiss
  
  ``` json
 {
-  "typ": "JWT",
-  "alg": "HS256"
+  "alg": "RS256",
+  "x5u": "http://...",
+  "typ": "JWT"
 }
 .
 {
@@ -435,15 +437,12 @@ The value from the expiration claim ("exp") is compared against the current serv
 #### Signature validation
 
 In order to check the token origin and integrity, the token signature must be validated. 
-The signature from the token is considered to be an H-MAC SHA256 (HS256) encrypted with a symmetric key.
+The signature from the token is considered to be RSA encrypted with an asymmetric public key.
 
 The signing key used to validate the signature will be acquired from the instance that issued the token.
-This is done through a call to an endpoint on the issuer service. The url from that endpoint must be set in configuration in the **JwtSigningKeyProviderUrl** property.
-The authentication on the endpoint requires an api key which must also be set in configuration using the **jwtSigningKeyProviderApikey** property.
+This is done through a call to an endpoint on the issuer service. The url from that endpoint is provided in the token header with the **x5u** property.
 
-For the api key it is advised not to set the value in code or in a config file but to use the **User secrets** api from Microsoft see: https://docs.asp.net/en/latest/security/app-secrets.html
-
-The signing key can also be cached. The duration of the cache can be set using the **JwtSigningKeyCacheDuration** property in configuration. The default is 10 minutes. Use 0 to disable the cache.
+The signing key can also be cached. The duration of the cache can be set using the **JwtSigningKeyCacheDuration** property in configuration. The default is 1440 minutes (24 hours). Use 0 to disable the cache.
 
 
 

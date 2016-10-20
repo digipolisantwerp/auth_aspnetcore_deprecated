@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Digipolis.Auth.Options;
+using System.Net;
 
 namespace Digipolis.Auth.PDP
 {
@@ -27,7 +28,7 @@ namespace Digipolis.Auth.PDP
             if (context.Principal?.Identity?.Name == null || context.Principal?.Identities?.FirstOrDefault()?.HasClaim(c => c.Type == Claims.PermissionsType) == true)
                 return context.Principal;
 
-            var userId = context.Principal.Identities.FirstOrDefault()?.Claims.SingleOrDefault(c => c.Type == Claims.Name)?.Value;
+            var userId = context.Principal.Identity.Name;
 
             var pdpResponse = await _pdpProvider.GetPermissionsAsync(userId, _authOptions.ApplicationName);
 

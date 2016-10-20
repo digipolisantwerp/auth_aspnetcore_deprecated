@@ -27,7 +27,7 @@ namespace Digipolis.Auth.PDP
             _cache = cache;
             _options = options.Value;
             _client = new HttpClient(handler);
-            _client.DefaultRequestHeaders.Add(HeaderKeys.Apikey, _options.JwtSigningCertificateProviderApikey);
+            _client.DefaultRequestHeaders.Add(HeaderKeys.Apikey, _options.ApplicationName);
             _logger = logger;
 
             if (_options.PdpCacheDuration > 0)
@@ -49,7 +49,7 @@ namespace Digipolis.Auth.PDP
                     return pdpResponse;
             }
 
-            var response = await _client.GetAsync($"{_options.PdpUrl}/applications/{application}/users/{user}/permissions");
+            var response = await _client.GetAsync($"{_options.PdpUrl}/applications/{application}/users/{user.Replace("@","%40")}/permissions");
             if (response.IsSuccessStatusCode)
             {
                 pdpResponse = await response.Content.ReadAsAsync<PdpResponse>();

@@ -1,4 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Digipolis.Auth.Authorization;
+using Digipolis.Auth.Jwt;
+using Digipolis.Auth.Mvc;
+using Digipolis.Auth.Options;
+using Digipolis.Auth.PDP;
+using Digipolis.Auth.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,12 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
-using Digipolis.Auth.Authorization;
-using Digipolis.Auth.Jwt;
-using Digipolis.Auth.Mvc;
-using Digipolis.Auth.Options;
-using Digipolis.Auth.PDP;
-using Digipolis.Auth.Services;
 
 namespace Digipolis.Auth
 {
@@ -109,11 +110,13 @@ namespace Digipolis.Auth
             services.AddSingleton<IRequiredPermissionsResolver, RequiredPermissionsResolver>();
             services.AddSingleton<PermissionsClaimsTransformer>();
             services.AddSingleton<IJwtSigningKeyResolver, JwtSigningKeyResolver>();
-            services.AddSingleton<HttpMessageHandler, HttpClientHandler>();
             services.AddSingleton<ISecurityTokenValidator, JwtSecurityTokenHandler>();
             services.AddSingleton<ITokenRefreshAgent, TokenRefreshAgent>();
             services.AddSingleton<ITokenRefreshHandler, TokenRefreshHandler>();
             services.AddSingleton<IAuthService, AuthService>();
+
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.TryAddSingleton<HttpMessageHandler, HttpClientHandler>();
             services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, AuthActionsOptionsSetup>()); 
         }
 
