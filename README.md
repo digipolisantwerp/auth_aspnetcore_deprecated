@@ -268,6 +268,28 @@ Both **AuthorizeByConvention** and **AuthorizeWith** attributes are derived from
 This attribute can be used with both the JwtHeaderAuth and the CookieAuth schemes.
 Please note that the default scheme for this attribute is the **JwtHeaderAuth** scheme.
 
+## Login and logout
+
+Login and logout is only applicable to the CookieAuth scheme (Web MVC projects).
+
+### Login
+
+Login is automatically handled when placing an Authorize attribute on a controller or action. If no authorization cookie is present on the request the auth toolbox will return a redirect to start the login procedure on the external identity provider. 
+
+### Logout
+
+In order to logout from the application you can call the **LogoutAsync** method on the **IAuthService** implementation. This will return an url where the browser needs to be redirected to start the logout sequence on the identity provider.
+You need to pass the controller and action names where the browser needs to be redirected to after completion of the logout sequence.
+
+``` csharp
+    //Example: Logout method on a MVC controller.
+    public async Task<IActionResult> Logout([FromServices] IAuthService authService)
+    {
+        var redirectUrl = await authService.LogOutAsync(ControllerContext, "Home", "Index");
+        return Redirect(redirectUrl);
+    }
+```
+
 ## Additional functionality
 
 ### Token refresh
