@@ -47,5 +47,16 @@
     "AccessDeniedPath": "Home/AccessDenied",
     "FrontEndApiRouteIdentifier": "api",
     "PermissionsRoute": "myauth/user/permissions"
+  },
+  "DevPermissions": {
+    "UseDevPermissions": true,
+    "Permissions": [
+      "update-tickets",
+      "login-app",
+      "permission-125",
+      "read-tickets",
+      "delete-tickets",
+      "create-tickets"
+    ]
   }
 }

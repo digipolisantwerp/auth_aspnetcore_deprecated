@@ -1,5 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Digipolis.Auth.Authorization;
+using Digipolis.Auth.Jwt;
+using Digipolis.Auth.Options;
+using Digipolis.Auth.PDP;
+using Digipolis.Auth.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -7,15 +12,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
-using Digipolis.Auth.Authorization;
-using Digipolis.Auth.Jwt;
-using Digipolis.Auth.Mvc;
-using Digipolis.Auth.Options;
-using Digipolis.Auth.PDP;
-using Digipolis.Auth.Services;
 using Xunit;
-using Microsoft.AspNetCore.Http;
 
 namespace Digipolis.Auth.UnitTests.Startup
 {

@@ -2,12 +2,13 @@
 {
     public class AuthOptionsJsonFile
     {
-        public AuthOptionsJsonFile() : this(AuthOptionsDefaults.OptionsFileName)
+        public AuthOptionsJsonFile() : this(AuthOptionsDefaults.OptionsFileName, AuthOptionsDefaults.OptionsFileAuthSection)
         { }
 
-        public AuthOptionsJsonFile(string fileName)
+        public AuthOptionsJsonFile(string fileName, string section)
         {
             FileName = fileName;
+            Section = section;
         }
 
         public string BasePath { get; set; }

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Moq;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -14,6 +16,12 @@ namespace Digipolis.Auth.UnitTests.Startup
         {
             Act = services =>
             {
+                var mockHostingEnvironment = new Mock<IHostingEnvironment>();
+                mockHostingEnvironment.Setup(h => h.EnvironmentName)
+                    .Returns("");
+
+                services.AddSingleton<IHostingEnvironment>(mockHostingEnvironment.Object);
+
                 services.AddAuth(options =>
                 {
                     options.ApplicationName = "AppName";
@@ -42,6 +50,12 @@ namespace Digipolis.Auth.UnitTests.Startup
         public void AdditionalPoliciesAreAdded()
         {
             var services = new ServiceCollection();
+
+            var mockHostingEnvironment = new Mock<IHostingEnvironment>();
+            mockHostingEnvironment.Setup(h => h.EnvironmentName)
+                .Returns("");
+
+            services.AddSingleton<IHostingEnvironment>(mockHostingEnvironment.Object);
 
             var policiesDictionary = new Dictionary<string, AuthorizationPolicy>();
             var firstPolicy = new AuthorizationPolicyBuilder()

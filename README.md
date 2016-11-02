@@ -23,6 +23,7 @@ The toolbox also provides Authorization attributes that can be used in the contr
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [Installation](#installation)
 - [Configuration in Startup.ConfigureServices](#configuration-in-startupconfigureservices)
   - [Json config file](#json-config-file)
@@ -32,11 +33,15 @@ The toolbox also provides Authorization attributes that can be used in the contr
 - [Authorization usage](#authorization-usage)
   - [AuthorizeByConvention attribute](#authorizebyconvention-attribute)
   - [AuthorizeWith attribute](#authorizewith-attribute)
+- [Login and logout](#login-and-logout)
+  - [Login](#login)
+  - [Logout](#logout)
 - [Additional functionality](#additional-functionality)
   - [Token refresh](#token-refresh)
   - [Automatic token refresh](#automatic-token-refresh)
   - [Permissions endpoint](#permissions-endpoint)
   - [Auth service](#auth-service)
+  - [Development permissions](#development-permissions)
 - [How it works](#how-it-works)
   - [Basic auth flow](#basic-auth-flow)
   - [Request flow](#request-flow)
@@ -74,8 +79,8 @@ The path to the Json config file has to be given as argument to the AddAuth meth
 ``` csharp
     services.AddAuth(options =>
     {
-        options.BasePath = hostingEnvironment.ContentRootPath;
-        options.FileName = @"configs/authconfig.json";
+        options.BasePath = ConfigPath;
+        options.FileName = "auth.json";
         options.Section = "Auth";
     });
 ```
@@ -348,6 +353,26 @@ You can access the **User** object through the **AuthService**.
         //Access the User
         var user = _authService.User;
     }
+```
+
+### Development permissions
+
+In order to facilitate development you can use a feature called **Development permissions**. When the application runs in **Development** environment it is possible to bypass the PDP request and get the requested permissions from configuration.
+This way it is not needed to set up the permissions in the permissions' management infrastructure (IDP). 
+
+In order to use the development permissions the config file must have a section **DevPermissions** with the **UseDevPermissions** property set to **true**. This will only work when the application is running in **Development** environment.
+
+In the **DevPermissions** section of the config file you can set the permissions. These will be added for every user that logs in to the application.
+
+``` json
+    "DevPermissions": {
+        "UseDevPermissions": true,
+        "Permissions": [
+            "login-app",
+            "permission-125",
+            "read-tickets",
+    ]
+  }
 ```
 
 

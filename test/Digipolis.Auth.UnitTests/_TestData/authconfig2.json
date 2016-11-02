@@ -1,0 +1,31 @@
+﻿{
+  "Auth": {
+    "ApplicationName": "AppName",
+    "PdpUrl": "http://test.pdp.be/",
+    "PdpCacheDuration": 60,
+    "JwtAudience": "audience",
+    "JwtIssuer": "issuer",
+    "JwtUserIdClaimType": "sub",
+    "JwtSigningCertificateProviderApikey": "singinKeyProviderApiKey",
+    "JwtSigningKeyCacheDuration": 8,
+    "JwtValidatorClockSkew": 3,
+    "ApiAuthUrl": "apiauthurl",
+    "ApiAuthIdpUrl": "apiauthidpurl",
+    "ApiAuthSpName": "authspname",
+    "ApiAuthSpUrl": "apiauthspurl",
+    "ApiAuthTokenRefreshUrl": "apiauthtokenrefreshurl",
+    "TokenRefreshTime": 5,
+    "AutomaticTokenRefresh": "true",
+    "TokenCallbackRoute": "custom/tokenendpoint",
+    "TokenRefreshRoute": "custom/tokenrefresh",
+    "PermissionsRoute": "custom/permissions",
+    "AccessDeniedPath": "accessdenied"
+  },
+  "DevPermissions": {
+    "UseDevPermissions": true,
+    "Permissions": [
+      "permission1"
+    ]
+
+  }
+}

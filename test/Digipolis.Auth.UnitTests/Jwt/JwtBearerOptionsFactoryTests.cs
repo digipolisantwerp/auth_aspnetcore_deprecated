@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+﻿using Digipolis.Auth.Jwt;
+using Digipolis.Auth.Options;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Moq;
 using System;
-using System.Text;
 using System.Threading.Tasks;
-using Digipolis.Auth.Jwt;
-using Digipolis.Auth.Options;
 using Xunit;
 
 namespace Digipolis.Auth.UnitTests.Jwt
@@ -35,25 +33,6 @@ namespace Digipolis.Auth.UnitTests.Jwt
 
             Assert.Equal(Claims.Sub, options.TokenValidationParameters.NameClaimType);
         }
-
-        //[Fact]
-        //public async Task SigningKeyIsSetWhenTokenReceived()
-        //{
-        //    var keyBytes = Encoding.UTF8.GetBytes("secret");
-        //    var authOptions = new AuthOptions { JwtSigningKeyProviderUrl = "jwtSigningKeyProviderUrl" };
-        //    var signingKeyProviderMock = new Mock<IJwtSigningCertificateProvider>();
-        //    signingKeyProviderMock.Setup(v => v.ResolveSigningKeyAsync(true))
-        //        .ReturnsAsync(new SymmetricSecurityKey(keyBytes));
-
-        //    var options = JwtBearerOptionsFactory.Create(authOptions, signingKeyProviderMock.Object, loggerMock);
-        //    var context = new MessageReceivedContext(null, options);
-
-        //    await options.Events.MessageReceived(context);
-
-        //    var securityKey = options.TokenValidationParameters.IssuerSigningKey as SymmetricSecurityKey;
-
-        //    Assert.Equal(keyBytes, securityKey.Key);
-        //}
 
         [Fact]
         public async Task LogWhenAuthenticationFailed()

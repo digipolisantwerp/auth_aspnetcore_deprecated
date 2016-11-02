@@ -104,7 +104,6 @@ namespace Digipolis.Auth.UnitTests.Jwt
 
             Assert.IsType<RedirectResult>(result);
             Assert.Equal("/Home/AccessDenied", ((RedirectResult)result).Url);
-            //Assert.Equal("Home", ((RedirectToActionResult)result).ControllerName);
 
             Assert.NotEmpty(_logger.LoggedMessages);
             Assert.StartsWith($"Information, Jwt token validation failed. Exception: System.Exception", _logger.LoggedMessages.First());

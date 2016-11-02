@@ -64,7 +64,6 @@ namespace SampleApp
             {
                 configFile.BasePath = HostingEnvironment.ContentRootPath;
                 configFile.FileName = "authconfig.json";
-                configFile.Section = "Auth";
             }, PolicyBuilder.Build());
 
             #endregion
