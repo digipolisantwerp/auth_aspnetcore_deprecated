@@ -70,7 +70,7 @@ namespace Digipolis.Auth
 
                         OnRedirectToLogin = context =>
                         {
-                            var url = $"{authOptions.ApiAuthUrl}?idp_url={authOptions.ApiAuthIdpUrl}&sp_name={authOptions.ApiAuthSpName}&sp_url={authOptions.ApiAuthSpUrl}&client_redirect={context.Request.Scheme}://{context.Request.Host.Value}/{authOptions.TokenCallbackRoute}?returnUrl=";
+                            var url = $"{authOptions.ApiAuthUrl}?idp_url={authOptions.ApiAuthIdpUrl}&sp_name={authOptions.ApiAuthSpName}&sp_url={authOptions.ApiAuthSpUrl}&client_redirect={authOptions.ApplicationBaseUrl}/{authOptions.TokenCallbackRoute}?returnUrl=";
 
                             context.RedirectUri = Uri.EscapeUriString(url + context.Request.Path);
                             context.Response.Redirect(context.RedirectUri);

@@ -1,6 +1,7 @@
 ﻿{
   "Auth": {
     "ApplicationName": "AUTHTOOLBOXSAMPLEAPP",
+    "ApplicationBaseUrl":  "http://localhost:51020",
     "EnableJwtHeaderAuth": true,
     "EnableCookieAuth": true,
     //"PdpUrl": "http://localhost:5000/pdp",

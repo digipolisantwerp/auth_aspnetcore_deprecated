@@ -8,6 +8,12 @@
         public string ApplicationName { get; set; }
 
         /// <summary>
+        /// The base url for the application, including scheme and eventual port.
+        /// ex. https://test.antwerpen.be:443
+        /// </summary>
+        public string ApplicationBaseUrl { get; set; }
+
+        /// <summary>
         /// Set to true to enable the cookie authentication handling. Default = false.
         /// </summary>
         public bool EnableCookieAuth { get; set; } = false;

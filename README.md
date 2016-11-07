@@ -71,7 +71,7 @@ In Visual Studio you can also use the NuGet Package Manager to do this.
 
 The Auth framework is registered in the ConfigureServices method of the Startup class.
 
-There are 2 ways to configure the DataAccess framework: using a json config file or using code
+There are 2 ways to configure the Auth framework: using a json config file or using code
 
 ### Json config file
 
@@ -108,6 +108,7 @@ You can also call the AddAuth method, passing in the needed options directly:
     services.AddAuth(options =>
     {
         options.ApplicationName = "SAMPLEAPP";
+		options.ApplicationBaseUrl = "https://theappurl.domain";
         options.EnableCookieAuth = true;
         options.PdpUrl = "http://pdp.somewhere.com/";
         options.PdpCacheDuration = 240;
@@ -143,6 +144,7 @@ Options used for CookieAuth
 Option              | Description                                                | Default
 ------------------ | ----------------------------------------------------------- | --------------------------------------
 EnableCookieAuth              | Set to true to enable the CookieAuth scheme. (Web MVC)| False 
+ApplicationBaseUrl              | The base url for the application, including scheme and eventual port.|
 ApiAuthUrl | The url of the Api Engine authentication endpoint.| 
 ApiAuthIdpUrl | The url of the Idp the Api Engine will redirect the saml request to.|
 ApiAuthSpName | The service provider name of the Api Engine.|
