@@ -11,3 +11,7 @@
 ## 1.0.2
 
 - Bugfix client_redirect url buildup due to nginx changing host header
+
+## 1.0.3
+
+- Bugfix token validation on linux

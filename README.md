@@ -59,7 +59,7 @@ To add the toolbox to a project, you add the package to the project.json:
 
 ``` json 
 "dependencies": {
-    "Digipolis.Auth":  "1.0.1"
+    "Digipolis.Auth":  "1.0.3"
  }
 ``` 
 

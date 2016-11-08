@@ -88,7 +88,8 @@ namespace Digipolis.Auth.Jwt
         private static RsaSecurityKey TransformCertificateToSecurityKey(string cert)
         {
             cert = cert.Replace("-----BEGIN PUBLIC KEY-----", "").Replace("-----END PUBLIC KEY-----", "");
-            RSACryptoServiceProvider rsa = DecodeX509PublicKey(Convert.FromBase64String(cert));
+
+            var rsa = DecodeX509PublicKey(Convert.FromBase64String(cert));
 
             var rsaSecurityKey = new RsaSecurityKey(rsa.ExportParameters(false));
 
@@ -109,7 +110,7 @@ namespace Digipolis.Auth.Jwt
             return true;
         }
 
-        public static RSACryptoServiceProvider DecodeX509PublicKey(byte[] x509key)
+        public static RSA DecodeX509PublicKey(byte[] x509key)
         {
             // encoded OID sequence for  PKCS #1 rsaEncryption szOID_RSA_RSA = "1.2.840.113549.1.1.1"
             byte[] SeqOID = { 0x30, 0x0D, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01, 0x05, 0x00 };
@@ -188,12 +189,12 @@ namespace Digipolis.Auth.Jwt
                 byte[] exponent = binr.ReadBytes(expbytes);
 
                 // ------- create RSACryptoServiceProvider instance and initialize with public key -----
-                RSACryptoServiceProvider RSA = new RSACryptoServiceProvider();
+                var rsa = RSA.Create();
                 RSAParameters RSAKeyInfo = new RSAParameters();
                 RSAKeyInfo.Modulus = modulus;
                 RSAKeyInfo.Exponent = exponent;
-                RSA.ImportParameters(RSAKeyInfo);
-                return RSA;
+                rsa.ImportParameters(RSAKeyInfo);
+                return rsa;
             }
             catch (Exception)
             {
