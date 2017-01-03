@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -9,14 +10,27 @@ namespace Digipolis.Auth.Jwt
 {
     internal class JwtBearerOptionsFactory
     {
-        public static JwtBearerOptions Create(AuthOptions authOptions, IJwtSigningKeyResolver signingKeyResolver, ILogger<JwtBearerMiddleware> logger)
+        private readonly ILogger<JwtBearerOptionsFactory> _logger;
+        private readonly ITokenValidationParametersFactory _tokenValidationParametersFactory;
+
+        public JwtBearerOptionsFactory(ITokenValidationParametersFactory tokenValidationParametersFactory,
+            ILogger<JwtBearerOptionsFactory> logger)
+        {
+            if (tokenValidationParametersFactory == null) throw new ArgumentNullException(nameof(tokenValidationParametersFactory), $"{nameof(tokenValidationParametersFactory)} cannot be null");
+            if (logger == null) throw new ArgumentNullException(nameof(logger), $"{nameof(logger)} cannot be null");
+
+            _tokenValidationParametersFactory = tokenValidationParametersFactory;
+            _logger = logger;
+        }
+
+        public JwtBearerOptions Create()
         {
             var jwtBearerOptions = new JwtBearerOptions
             {
                 AutomaticAuthenticate = true
             };
 
-            jwtBearerOptions.TokenValidationParameters = TokenValidationParametersFactory.Create(authOptions, signingKeyResolver);
+            jwtBearerOptions.TokenValidationParameters = _tokenValidationParametersFactory.Create();
 
             jwtBearerOptions.Events = new JwtBearerEvents()
             {
@@ -26,7 +40,7 @@ namespace Digipolis.Auth.Jwt
                 //},
                 OnAuthenticationFailed = context =>
                 {
-                    logger.LogInformation($"Jwt token validation failed. Exception: {context.Exception.ToString()}");
+                    _logger.LogInformation($"Jwt token validation failed. Exception: {context.Exception.ToString()}");
 
                     context.Ticket = new Microsoft.AspNetCore.Authentication.AuthenticationTicket(new ClaimsPrincipal(), new Microsoft.AspNetCore.Http.Authentication.AuthenticationProperties(), string.Empty);
                     context.HandleResponse();
@@ -39,9 +53,6 @@ namespace Digipolis.Auth.Jwt
                 //},
                 //OnMessageReceived = context =>
                 //{
-                //    //the signingKey is resolved on this event because we can make the call async here, in the signatureValidator async is not possible
-                //    //if (!String.IsNullOrWhiteSpace(authOptions.JwtSigningKeyProviderUrl))
-                //    //context.Options.TokenValidationParameters.IssuerSigningKey = await signingKeyProvider.ResolveSigningKeyAsync(true);
                 //    return Task.FromResult<object>(null);
                 //}
             };

@@ -1,6 +1,7 @@
 ﻿using Digipolis.Auth.Jwt;
 using Digipolis.Auth.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Moq;
 using System;
 using System.Threading.Tasks;
@@ -10,51 +11,55 @@ namespace Digipolis.Auth.UnitTests.Jwt
 {
     public class JwtBearerOptionsFactoryTests
     {
-        IJwtSigningKeyResolver signingKeyResolverMock = Mock.Of<IJwtSigningKeyResolver>();
-        TestLogger<JwtBearerMiddleware> loggerMock = TestLogger<JwtBearerMiddleware>.CreateLogger();
+        IJwtSigningKeyResolver _signingKeyResolverMock = Mock.Of<IJwtSigningKeyResolver>();
+        TestLogger<JwtBearerOptionsFactory> _testLogger = TestLogger<JwtBearerOptionsFactory>.CreateLogger();
 
         [Fact]
-        public void CreateJwtBearerOptions()
+        public void ShouldSetTokenValidationParameters()
         {
             var authOptions = new AuthOptions
             {
                JwtIssuer = "jwtIssuer"
             };
 
-            var options = JwtBearerOptionsFactory.Create(authOptions, signingKeyResolverMock, loggerMock);
+            var tokenValidationParametersFactory = new Mock<ITokenValidationParametersFactory>();
+            var tokenValidationParameters = new TokenValidationParameters();
+            tokenValidationParametersFactory.Setup(f => f.Create())
+                .Returns(tokenValidationParameters);
 
-            Assert.False(options.TokenValidationParameters.ValidateIssuer);
-            Assert.Equal(authOptions.JwtIssuer, options.TokenValidationParameters.ValidIssuer);
+            var jwtBearerOptionsFactory = new JwtBearerOptionsFactory(tokenValidationParametersFactory.Object, _testLogger);
 
-            Assert.False(options.TokenValidationParameters.ValidateAudience);
-            Assert.Equal(authOptions.JwtAudience, options.TokenValidationParameters.ValidAudience);
+            var options = jwtBearerOptionsFactory.Create();
 
-            Assert.True(options.TokenValidationParameters.ValidateLifetime);
-
-            Assert.Equal(Claims.Sub, options.TokenValidationParameters.NameClaimType);
+            tokenValidationParametersFactory.Verify(m => m.Create(), Times.Once);
+            Assert.Same(tokenValidationParameters, options.TokenValidationParameters);
         }
 
         [Fact]
         public async Task LogWhenAuthenticationFailed()
         {
-            var authOptions = new AuthOptions();
+            var tokenValidationParametersFactory = new Mock<ITokenValidationParametersFactory>();
+            var jwtBearerOptionsFactory = new JwtBearerOptionsFactory(tokenValidationParametersFactory.Object, _testLogger);
 
-            var options = JwtBearerOptionsFactory.Create(authOptions, signingKeyResolverMock, loggerMock);
+            var options = jwtBearerOptionsFactory.Create();
+
             var context = new AuthenticationFailedContext(null, options);
             context.Exception = new Exception("exceptiondetail");
 
             await options.Events.AuthenticationFailed(context);
 
-            Assert.NotEmpty(loggerMock.LoggedMessages);
-            Assert.Contains("exceptiondetail", loggerMock.LoggedMessages[0]);
+            Assert.NotEmpty(_testLogger.LoggedMessages);
+            Assert.Contains("exceptiondetail", _testLogger.LoggedMessages[0]);
         }
 
         [Fact]
         public async Task EmptyAuthenticationTicketIsSetWHenAuthenticationFailed()
         {
-            var authOptions = new AuthOptions();
+            var tokenValidationParametersFactory = new Mock<ITokenValidationParametersFactory>();
+            var jwtBearerOptionsFactory = new JwtBearerOptionsFactory(tokenValidationParametersFactory.Object, _testLogger);
 
-            var options = JwtBearerOptionsFactory.Create(authOptions, signingKeyResolverMock, loggerMock);
+            var options = jwtBearerOptionsFactory.Create();
+
             var context = new AuthenticationFailedContext(null, options);
             context.Exception = new Exception("exceptiondetail");
 

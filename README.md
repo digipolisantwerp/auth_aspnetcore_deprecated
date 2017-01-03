@@ -42,6 +42,7 @@ The toolbox also provides Authorization attributes that can be used in the contr
   - [Permissions endpoint](#permissions-endpoint)
   - [Auth service](#auth-service)
   - [Development permissions](#development-permissions)
+  - [Disabling Jwt signature validation for testing purposes](#disabling-jwt-signature-validation-for-testing-purposes)
 - [How it works](#how-it-works)
   - [Basic auth flow](#basic-auth-flow)
   - [Request flow](#request-flow)
@@ -128,7 +129,6 @@ PdpUrl | The url for the policy decision provider (PDP). |
 PdpCacheDuration | The duration in minutes the responses from the PDP are cached. Set to zero to disable caching.| 60  
 JwtIssuer | The issuer value used to validate the Jwt token.| 
 JwtAudience | The audience url used to validate the Jwt token.| 
-JwtSigningKeyProviderUrl | The url to the Jwt signing key provider endpoint.|
 JwtSigningKeyCacheDuration | The duration in minutes the Jwt signing key is cached.| 1440 (24 hours)
 TokenRefreshRoute | The route used for the token refresh endpoint.| "auth/token/refresh"
 PermissionsRoute | The route used for the permissions endpoint.| "auth/user/permissions"
@@ -359,15 +359,17 @@ You can access the **User** object through the **AuthService**.
 
 ### Development permissions
 
-In order to facilitate development you can use a feature called **Development permissions**. When the application runs in **Development** environment it is possible to bypass the PDP request and get the requested permissions from configuration.
+In order to facilitate development you can use a feature called **Development permissions**. When the application runs in **Development** environment or in the environment specified by the **Environment** property of the **DevPermissionsOptions**, it is possible to bypass the PDP request and get the requested permissions from configuration.
 This way it is not needed to set up the permissions in the permissions' management infrastructure (IDP). 
 
-In order to use the development permissions the config file must have a section **DevPermissions** with the **UseDevPermissions** property set to **true**. This will only work when the application is running in **Development** environment.
+In order to use the development permissions the config file must have a section **DevPermissions** with the **UseDevPermissions** property set to **true**. 
+This will only work when the application is running in **Development** environment or in the environment specified by the **Environment** property of the **DevPermissionsOptions**
 
 In the **DevPermissions** section of the config file you can set the permissions. These will be added for every user that logs in to the application.
 
 ``` json
     "DevPermissions": {
+		"Environment": "Testing",
         "UseDevPermissions": true,
         "Permissions": [
             "login-app",
@@ -376,7 +378,11 @@ In the **DevPermissions** section of the config file you can set the permissions
     ]
   }
 ```
+### Disabling Jwt signature validation for testing purposes
 
+In order to be able to run integration tests against your application it is possible to disable the signature validation for the used jwt token. This can be done by setting the **RequireSignedTokens** property of the **DevPermissionsOptions** to false.
+This allows you to use a dummy jwt token during your integration tests. 
+The disabling of the signature validation will only work when the application is running in the environment specified by the **Environment** property of the **DevPermissionsOptions**.
 
 ## How it works
 

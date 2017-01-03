@@ -4,8 +4,8 @@ using Digipolis.Auth.Mvc;
 using Digipolis.Auth.Options;
 using Digipolis.Auth.PDP;
 using Digipolis.Auth.Services;
+using Digipolis.Auth.Utilities;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -34,6 +34,7 @@ namespace Digipolis.Auth
             if (setupAction == null) throw new ArgumentNullException(nameof(setupAction), $"{nameof(setupAction)} cannot be null.");
 
             services.Configure(setupAction);
+            services.Configure<DevPermissionsOptions>(options => { });
 
             return AddAuth(services, policies);
         }
@@ -82,11 +83,8 @@ namespace Digipolis.Auth
             var section = config.GetSection(options.Section);
             services.Configure<AuthOptions>(section);
 
-            if (IsEnvironmentDevelopment(services))
-            {
-                section = config.GetSection("DevPermissions");
-                services.Configure<DevPermissionsOptions>(section);
-            }
+            section = config.GetSection("DevPermissions");
+            services.Configure<DevPermissionsOptions>(section);
 
             return AddAuth(services, policies);
         }
@@ -94,12 +92,7 @@ namespace Digipolis.Auth
         private static IServiceCollection AddAuth(this IServiceCollection services, Dictionary<string, AuthorizationPolicy> policies)
         {
             var authOptions = BuildOptions<AuthOptions>(services);
-            DevPermissionsOptions devPermissionsOptions = null;
-
-            if (IsEnvironmentDevelopment(services))
-            {
-                devPermissionsOptions = BuildOptions<DevPermissionsOptions>(services);
-            }
+            var devPermissionsOptions = BuildOptions<DevPermissionsOptions>(services);
 
             AddAuthorization(services, policies, authOptions);
             RegisterServices(services, devPermissionsOptions);
@@ -147,12 +140,14 @@ namespace Digipolis.Auth
             services.AddSingleton<ITokenRefreshAgent, TokenRefreshAgent>();
             services.AddSingleton<ITokenRefreshHandler, TokenRefreshHandler>();
             services.AddSingleton<IAuthService, AuthService>();
+            services.AddSingleton<ITokenValidationParametersFactory, TokenValidationParametersFactory>();
+            services.AddSingleton<JwtBearerOptionsFactory>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.TryAddSingleton<HttpMessageHandler, HttpClientHandler>();
             services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, AuthActionsOptionsSetup>());
 
-            if (IsEnvironmentDevelopment(services) && devPermissionsOptions.UseDevPermissions)
+            if (EnvironmentHelper.IsDevelopmentOrRequiredEnvironment(services, devPermissionsOptions.Environment) && devPermissionsOptions.UseDevPermissions)
             {
                 services.AddSingleton<IPolicyDescisionProvider, DevPolicyDescisionProvider>();
             }
@@ -168,12 +163,6 @@ namespace Digipolis.Auth
             var options = new T();
             configureOptions.Configure(options);
             return options;
-        }
-
-        private static bool IsEnvironmentDevelopment(IServiceCollection services) 
-        {
-            var hostingEnvironment = services.BuildServiceProvider().GetRequiredService<IHostingEnvironment>();
-            return hostingEnvironment.IsDevelopment();
         }
     }
 }

@@ -23,6 +23,8 @@
     "AccessDeniedPath": "accessdenied"
   },
   "DevPermissions": {
+    "RequireSignedTokens": false,
+    "Environment":  "IntegrationTesting",
     "UseDevPermissions": true,
     "Permissions": [
       "permission1"

@@ -15,3 +15,7 @@
 ## 1.0.3
 
 - Bugfix token validation on linux
+
+## 1.0.4
+
+- added possibility to disable jwt token signature verification for testing purposes

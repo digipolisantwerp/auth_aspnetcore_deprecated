@@ -57,5 +57,17 @@ namespace Digipolis.Auth.UnitTests.Startup
             Assert.Equal(true, devPermissionsOptions.UseDevPermissions);
             Assert.NotEmpty(devPermissionsOptions.Permissions);
         }
+
+        [Fact]
+        public void DevPolicyDescisionProviderIsRegistred()
+        {
+            var services = new ServiceCollection();
+
+            Act(services);
+
+            var pdpProvider = services.BuildServiceProvider().GetService<IPolicyDescisionProvider>();
+
+            Assert.IsType(typeof(DevPolicyDescisionProvider), pdpProvider);
+        }
     }
 }

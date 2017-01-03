@@ -241,6 +241,21 @@ namespace Digipolis.Auth.UnitTests.Startup
         }
 
         [Fact]
+        public void TokenValidationParametersFactoryIsRegistratedAsSingleton()
+        {
+            var services = new ServiceCollection();
+
+            Act(services);
+
+            var registrations = services.Where(sd => sd.ServiceType == typeof(ITokenValidationParametersFactory) &&
+                                                     sd.ImplementationType == typeof(TokenValidationParametersFactory))
+                                        .ToArray();
+
+            Assert.Equal(1, registrations.Count());
+            Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
+        }
+
+        [Fact]
         public void AuthServiceIsRegistratedAsSingleton()
         {
             var services = new ServiceCollection();
@@ -264,6 +279,21 @@ namespace Digipolis.Auth.UnitTests.Startup
 
             var registrations = services.Where(sd => sd.ServiceType == typeof(IHttpContextAccessor) &&
                                                      sd.ImplementationType == typeof(HttpContextAccessor))
+                                        .ToArray();
+
+            Assert.Equal(1, registrations.Count());
+            Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
+        }
+
+        [Fact]
+        public void JwtBearerOptionsFactoryIsRegistratedAsSingleton()
+        {
+            var services = new ServiceCollection();
+
+            Act(services);
+
+            var registrations = services.Where(sd => sd.ServiceType == typeof(JwtBearerOptionsFactory) &&
+                                                     sd.ImplementationType == typeof(JwtBearerOptionsFactory))
                                         .ToArray();
 
             Assert.Equal(1, registrations.Count());

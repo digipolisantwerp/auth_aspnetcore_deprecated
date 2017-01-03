@@ -15,34 +15,33 @@ namespace Digipolis.Auth.Controllers
     public class TokenController : Controller
     {
         private readonly ILogger<TokenController> _logger;
-        private readonly IJwtSigningKeyResolver _signingKeyResolver;
         private readonly AuthOptions _authOptions;
         private readonly ISecurityTokenValidator _jwtTokenValidator;
         private readonly ITokenRefreshAgent _tokenRefreshAgent;
+        private readonly ITokenValidationParametersFactory _tokenValidationParametersFactory;
 
         public TokenController(IOptions<AuthOptions> options,
-            IJwtSigningKeyResolver signingKeyResolver,
             ISecurityTokenValidator jwtTokenValidator,
             ILogger<TokenController> logger,
-            ITokenRefreshAgent tokenRefreshAgent)
+            ITokenRefreshAgent tokenRefreshAgent,
+            ITokenValidationParametersFactory tokenValidationParametersFactory)
         {
             if (options == null) throw new ArgumentNullException(nameof(options), $"{nameof(options)} cannot be null");
-            if (signingKeyResolver == null) throw new ArgumentNullException(nameof(signingKeyResolver), $"{nameof(signingKeyResolver)} cannot be null");
             if (jwtTokenValidator == null) throw new ArgumentNullException(nameof(jwtTokenValidator), $"{nameof(jwtTokenValidator)} cannot be null");
             if (logger == null) throw new ArgumentNullException(nameof(logger), $"{nameof(logger    )} cannot be null");
             if (tokenRefreshAgent == null) throw new ArgumentNullException(nameof(tokenRefreshAgent), $"{nameof(tokenRefreshAgent)} cannot be null");
 
-            _signingKeyResolver = signingKeyResolver;
             _authOptions = options.Value;
             _jwtTokenValidator = jwtTokenValidator;
             _logger = logger;
             _tokenRefreshAgent = tokenRefreshAgent;
+            _tokenValidationParametersFactory = tokenValidationParametersFactory;
         }
 
         
         public async Task<IActionResult> Callback(string returnUrl, string jwt)
         {
-            var validationParameters = TokenValidationParametersFactory.Create(_authOptions, _signingKeyResolver);
+            var validationParameters = _tokenValidationParametersFactory.Create();
 
             try
             {

@@ -23,11 +23,10 @@ namespace Digipolis.Auth
         public static IApplicationBuilder UseAuth(this IApplicationBuilder app)
         {
             var authOptions = app.ApplicationServices.GetService<IOptions<AuthOptions>>().Value;
-            var signingKeyProvider = app.ApplicationServices.GetService<IJwtSigningKeyResolver>();
-            var logger = app.ApplicationServices.GetService<ILogger<JwtBearerMiddleware>>();
             var tokenRefreshHandler = app.ApplicationServices.GetService<ITokenRefreshHandler>();
+            var jwtBearerOptionsFactory = app.ApplicationServices.GetService<JwtBearerOptionsFactory>();
 
-            var jwtBearerOptions = JwtBearerOptionsFactory.Create(authOptions, signingKeyProvider, logger);
+            var jwtBearerOptions = jwtBearerOptionsFactory.Create();
             jwtBearerOptions.AuthenticationScheme = AuthSchemes.JwtHeaderAuth;
 
             if (authOptions.EnableJwtHeaderAuth)

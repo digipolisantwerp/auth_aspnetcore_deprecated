@@ -44,7 +44,6 @@ namespace SampleApp
             //    options.JwtAudience = "SampleApp";
             //    options.JwtIssuer = "5f75f0c6cf4d4c4f97dd0ab68ce534f4";
             //    //options.JwtIssuer = "Online JWT Builder";
-            //    options.JwtSigningKeyProviderUrl = "http://localhost:5000/signingKey";
             //    options.JwtSigningKeyCacheDuration = 0;
             //    options.JwtSigningKeyProviderApikey = "yoursupersecretkey";         //don't do this in your code! just for demo purpose
             //                                                                        //options.jwtSigningKeyProviderApikey = Configuration["apikey"];    //using the recomended way (see https://docs.asp.net/en/latest/security/app-secrets.html)

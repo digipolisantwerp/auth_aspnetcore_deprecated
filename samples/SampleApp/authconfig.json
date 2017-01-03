@@ -13,7 +13,6 @@
     "JwtIssuer": "431961b0d1594f1cab2b4e28fa1e9e15",
     //"JwtIssuer": "07a648578bd447f5ad3f38434a122279",
     //"JwtIssuer": "5fbfdd394d2e4a72ba75343bfda31e48",
-    //"JwtSigningKeyProviderUrl": "http://localhost:5000/signingKey",
     "JwtSigningCertificateProviderApikey": "e07718ea-6e35-42ad-ba91-26bc69c11d87",
     "JwtSigningCertificateCacheDuration": 0,
 
