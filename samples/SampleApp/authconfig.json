@@ -1,12 +1,12 @@
 ﻿{
   "Auth": {
     "ApplicationName": "AUTHTOOLBOXSAMPLEAPP",
-    "ApplicationBaseUrl":  "http://localhost:51020",
+    "ApplicationBaseUrl": "http://localhost:51020",
     "EnableJwtHeaderAuth": true,
     "EnableCookieAuth": true,
     //"PdpUrl": "http://localhost:5000/pdp",
-    //"PdpUrl": "https://esb-app1-a.antwerpen.be/authz/v1",
-    "PdpUrl": "https://esb-app1-o.antwerpen.be/authz/v1",
+    "PdpUrl": "https://api-gw-o.antwerpen.be/acpaas/authz/v1",
+    "PdpApiKey": "ea56d8f5-aed2-45fa-92e4-af9e4973894d",
     "PdpCacheDuration": 0,
     "JwtAudience": "http://localhost:51020/myroute/token?returnUrl=/",
     //"JwtIssuer": "5f75f0c6cf4d4c4f97dd0ab68ce534f4",

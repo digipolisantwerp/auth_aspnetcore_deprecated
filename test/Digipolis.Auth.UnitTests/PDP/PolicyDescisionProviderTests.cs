@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Moq;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -18,12 +19,13 @@ namespace Digipolis.Auth.UnitTests.PDP
         private string _userId = "user123";
         private string _pdpUrl = "http://test.com";
         private string requestedresource = "requestedResource";
+        private string _apiKey = "apiKeyValue";
         private AuthOptions _options;
         private TestLogger<PolicyDescisionProvider> _logger = TestLogger<PolicyDescisionProvider>.CreateLogger();
 
         public PolicyDescisionProviderTests()
         {
-            _options = new AuthOptions { PdpUrl = _pdpUrl, PdpCacheDuration = 0 };
+            _options = new AuthOptions { PdpUrl = _pdpUrl, PdpCacheDuration = 0, PdpApiKey = _apiKey };
         }
 
         [Fact]
@@ -92,6 +94,25 @@ namespace Digipolis.Auth.UnitTests.PDP
         }
 
         [Fact]
+        public async Task ApiKeyIsSetInHeader()
+        {
+            var mockedCache = CreateEmptyMockedCache();
+
+            var pdpResponse = new PdpResponse
+            {
+                applicationId = _application,
+                userId = _userId,
+                permissions = new List<String>(new string[] { requestedresource })
+            };
+
+            var mockHandler = new MockMessageHandler<PdpResponse>(HttpStatusCode.OK, pdpResponse);
+            var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
+            var result = await provider.GetPermissionsAsync(_userId, _application);
+
+            Assert.Equal(_apiKey, mockHandler.Headers.GetValues(HeaderKeys.Apikey).FirstOrDefault());
+        }
+
+        [Fact]
         public async Task ReturnsNullIfUserUnknown()
         {
             var mockedCache = CreateEmptyMockedCache();
@@ -155,6 +176,31 @@ namespace Digipolis.Auth.UnitTests.PDP
             Assert.Equal(pdpResponse.applicationId, ((PdpResponse)cacheEntry.Value).applicationId);
             Assert.Equal(pdpResponse.userId, ((PdpResponse)cacheEntry.Value).userId);
             Assert.Equal(pdpResponse.permissions, ((PdpResponse)cacheEntry.Value).permissions);
+        }
+
+        [Fact]
+        public async Task ShouldNotCacheResponseWithoutPermissions()
+        {
+            _options.PdpCacheDuration = 60;
+            var cacheEntry = new TestCacheEntry();
+            var mockedCache = CreateEmptyMockedCache();
+            mockedCache.Setup(c => c.CreateEntry(BuildCacheKey(_userId)))
+                .Returns(cacheEntry);
+
+            var pdpResponse = new PdpResponse
+            {
+                applicationId = _application,
+                userId = _userId,
+                permissions = new List<String>(new string[] { })
+            };
+
+            var mockHandler = new MockMessageHandler<PdpResponse>(HttpStatusCode.OK, pdpResponse);
+            var provider = new PolicyDescisionProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
+
+            var result = await provider.GetPermissionsAsync(_userId, _application);
+
+            mockedCache.Verify(c => c.CreateEntry(It.IsAny<object>()), Times.Never);
+            Assert.Null(cacheEntry.Value);
         }
 
         [Fact]

@@ -2,11 +2,11 @@
 
 ## 1.0.0
 
-- initial version
+- Initial version
 
 ## 1.0.1
 
-- added development persmissions feature
+- Added development persmissions feature
 
 ## 1.0.2
 
@@ -18,4 +18,9 @@
 
 ## 1.0.4
 
-- added possibility to disable jwt token signature verification for testing purposes
+- Added possibility to disable jwt token signature verification for testing purposes
+
+## 1.0.5
+
+- Added PDP api key
+- Removed caching of PDP response without permissions

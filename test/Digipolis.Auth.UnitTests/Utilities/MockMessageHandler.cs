@@ -2,6 +2,7 @@
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,6 +14,7 @@ namespace Digipolis.Auth.UnitTests
         private readonly HttpStatusCode _responseCode;
 
         public Uri RequestUri { get; private set; }
+        public HttpRequestHeaders Headers { get; private set; }
 
         public MockMessageHandler(HttpStatusCode responseCode, T responseContent)
         {
@@ -25,6 +27,7 @@ namespace Digipolis.Auth.UnitTests
             HttpResponseMessage response = null;
 
             RequestUri = request.RequestUri;
+            Headers = request.Headers;
 
             switch (_responseCode)
             {

@@ -94,6 +94,7 @@ The Auth framework will read the given section of the json file with the followi
     "EnableCookieAuth": false,
     "EnableJwtHeaderAuth": true,
     "PdpUrl": "http://pdp.somewhere.com/",
+    "PdpApiKey": "some api key",
     "PdpCacheDuration": 240,
     "JwtAudience": "audience",
     "JwtIssuer": "issuer",
@@ -112,6 +113,7 @@ You can also call the AddAuth method, passing in the needed options directly:
 		options.ApplicationBaseUrl = "https://theappurl.domain";
         options.EnableCookieAuth = true;
         options.PdpUrl = "http://pdp.somewhere.com/";
+        options.PdpApiKey = "some api key";
         options.PdpCacheDuration = 240;
         options.JwtAudience = "audience";
         options.JwtIssuer = "JWTIssuer";
@@ -126,6 +128,7 @@ Option              | Description                                               
 ------------------ | ----------------------------------------------------------- | --------------------------------------
 ApplicationName              | The name of the application. Required in order to request permissions to the PDP.|
 PdpUrl | The url for the policy decision provider (PDP). |
+PdpApiKey | The api key for the PDP endpoint. |
 PdpCacheDuration | The duration in minutes the responses from the PDP are cached. Set to zero to disable caching.| 60  
 JwtIssuer | The issuer value used to validate the Jwt token.| 
 JwtAudience | The audience url used to validate the Jwt token.| 

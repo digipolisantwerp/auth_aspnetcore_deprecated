@@ -5,6 +5,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Digipolis.Auth.Options;
+using System.Linq;
 
 namespace Digipolis.Auth.PDP
 {
@@ -27,7 +28,7 @@ namespace Digipolis.Auth.PDP
             _cache = cache;
             _options = options.Value;
             _client = new HttpClient(handler);
-            _client.DefaultRequestHeaders.Add(HeaderKeys.Apikey, _options.ApplicationName);
+            _client.DefaultRequestHeaders.Add(HeaderKeys.Apikey, _options.PdpApiKey);
             _logger = logger;
 
             if (_options.PdpCacheDuration > 0)
@@ -59,7 +60,7 @@ namespace Digipolis.Auth.PDP
                 _logger.LogCritical($"Impossible to retreive permissions from {_options.PdpUrl} for {application} / {user}. Response status code: {response.StatusCode}");
             }
 
-            if (cachingEnabled && pdpResponse != null)
+            if (cachingEnabled && (pdpResponse?.permissions.Any()).GetValueOrDefault())
                 _cache.Set(BuildCacheKey(user), pdpResponse, _cacheOptions);
 
             return pdpResponse;

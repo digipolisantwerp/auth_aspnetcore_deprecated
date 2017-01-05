@@ -4,6 +4,7 @@
     "ApplicationBaseUrl": "ApplicationBaseUrl",
     "PdpUrl": "http://test.pdp.be/",
     "PdpCacheDuration": 60,
+    "PdpApiKey": "PdpApiKey",
     "JwtAudience": "audience",
     "JwtIssuer": "issuer",
     "JwtUserIdClaimType": "sub",

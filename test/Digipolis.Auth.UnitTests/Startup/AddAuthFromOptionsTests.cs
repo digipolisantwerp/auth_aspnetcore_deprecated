@@ -27,6 +27,7 @@ namespace Digipolis.Auth.UnitTests.Startup
                     options.ApplicationName = "AppName";
                     options.ApplicationBaseUrl = "ApplicationBaseUrl";
                     options.PdpUrl = "http://test.pdp.be/";
+                    options.PdpApiKey = "PdpApiKey";
                     options.PdpCacheDuration = 60;
                     options.JwtAudience = "audience";
                     options.JwtIssuer = "issuer";

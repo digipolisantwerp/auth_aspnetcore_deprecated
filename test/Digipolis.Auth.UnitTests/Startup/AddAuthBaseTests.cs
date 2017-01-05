@@ -131,6 +131,7 @@ namespace Digipolis.Auth.UnitTests.Startup
             Assert.Equal("AppName", authOptions.ApplicationName);
             Assert.Equal("ApplicationBaseUrl", authOptions.ApplicationBaseUrl);
             Assert.Equal("http://test.pdp.be/", authOptions.PdpUrl);
+            Assert.Equal("PdpApiKey", authOptions.PdpApiKey);
             Assert.Equal(60, authOptions.PdpCacheDuration);
             Assert.Equal("audience", authOptions.JwtAudience);
             Assert.Equal("issuer", authOptions.JwtIssuer);

@@ -29,6 +29,11 @@
         public string PdpUrl { get; set; }
 
         /// <summary>
+        /// The api key for the PDP endpoint.
+        /// </summary>
+        public string PdpApiKey { get; set; }
+
+        /// <summary>
         /// The duration in minutes the responses from the PDP are cached.
         /// Set to zero to disable caching. Default = 60.
         /// </summary>
