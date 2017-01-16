@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Digipolis.ApplicationServices;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
 using System.IO;
-using Xunit;
 
 namespace Digipolis.Auth.UnitTests.Startup
 {
@@ -20,6 +20,11 @@ namespace Digipolis.Auth.UnitTests.Startup
                     .Returns("Development");
 
                 services.AddSingleton<IHostingEnvironment>(mockHostingEnvironment.Object);
+
+                services.AddApplicationServices(setup =>
+                {
+                    setup.ApplicationId = Guid.NewGuid().ToString();
+                });
 
                 services.AddAuth(options =>
                 {

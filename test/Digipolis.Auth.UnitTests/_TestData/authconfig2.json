@@ -5,6 +5,7 @@
     "PdpUrl": "http://test.pdp.be/",
     "PdpCacheDuration": 60,
     "PdpApiKey": "PdpApiKey",
+    "DotnetKeystore": "keystoreConnectionString",
     "JwtAudience": "audience",
     "JwtIssuer": "issuer",
     "JwtUserIdClaimType": "sub",

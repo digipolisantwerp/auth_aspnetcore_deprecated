@@ -38,6 +38,12 @@
         /// Set to zero to disable caching. Default = 60.
         /// </summary>
         public int PdpCacheDuration { get; set; } = 60;
+
+        /// <summary>
+        /// Connection string for the shared dataprotection key store.
+        /// </summary>
+        public string DotnetKeystore { get; set; }
+        
         /// <summary>
         /// The audience url used to validate the Jwt token.
         /// </summary>

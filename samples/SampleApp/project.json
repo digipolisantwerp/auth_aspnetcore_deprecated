@@ -20,6 +20,7 @@
     "Microsoft.Extensions.Logging.Console": "1.0.0",
     "Microsoft.Extensions.Logging.Debug": "1.0.0",
     "Swashbuckle": "6.0.0-beta901",
+    "Digipolis.ApplicationServices": "1.0.0",
     "Digipolis.Auth": "*"
   },
 

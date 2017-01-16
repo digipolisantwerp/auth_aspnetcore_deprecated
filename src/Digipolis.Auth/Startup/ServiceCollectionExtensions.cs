@@ -1,10 +1,12 @@
-﻿using Digipolis.Auth.Authorization;
+﻿using Digipolis.ApplicationServices;
+using Digipolis.Auth.Authorization;
 using Digipolis.Auth.Jwt;
 using Digipolis.Auth.Mvc;
 using Digipolis.Auth.Options;
 using Digipolis.Auth.PDP;
 using Digipolis.Auth.Services;
 using Digipolis.Auth.Utilities;
+using Digipolis.DataProtection.Postgres;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -91,8 +93,17 @@ namespace Digipolis.Auth
 
         private static IServiceCollection AddAuth(this IServiceCollection services, Dictionary<string, AuthorizationPolicy> policies)
         {
-            var authOptions = BuildOptions<AuthOptions>(services);
-            var devPermissionsOptions = BuildOptions<DevPermissionsOptions>(services);
+            var serviceProvider = services.BuildServiceProvider();
+
+            var authOptions = BuildOptions<AuthOptions>(serviceProvider, services);
+            var devPermissionsOptions = BuildOptions<DevPermissionsOptions>(serviceProvider, services);
+
+            var applicationContext = GetApplicationContext(serviceProvider);
+
+            if (authOptions.EnableCookieAuth)
+            {
+                services.AddDataProtection().PersistKeysToPostgres(authOptions.DotnetKeystore, Guid.Parse(applicationContext.ApplicationId), Guid.Parse(applicationContext.InstanceId));
+            }
 
             AddAuthorization(services, policies, authOptions);
             RegisterServices(services, devPermissionsOptions);
@@ -157,12 +168,24 @@ namespace Digipolis.Auth
             }
         }
 
-        private static T BuildOptions<T>(IServiceCollection services) where T : class, new()
+        private static T BuildOptions<T>(IServiceProvider serviceProvider, IServiceCollection services) where T : class, new()
         {
-            var configureOptions = services.BuildServiceProvider().GetRequiredService<IConfigureOptions<T>>();
+            var configureOptions = serviceProvider.GetRequiredService<IConfigureOptions<T>>();
             var options = new T();
             configureOptions.Configure(options);
             return options;
+        }
+
+        private static IApplicationContext GetApplicationContext(IServiceProvider serviceProvider)
+        {
+            try
+            {
+                return serviceProvider.GetRequiredService<IApplicationContext>();
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new InvalidOperationException($"{ex.Message}, make sure you have added and configured the Digipolis.ApplicationContext package!");
+            }
         }
     }
 }

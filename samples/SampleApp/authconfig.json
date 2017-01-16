@@ -8,6 +8,7 @@
     "PdpUrl": "https://api-gw-o.antwerpen.be/acpaas/authz/v1",
     "PdpApiKey": "ea56d8f5-aed2-45fa-92e4-af9e4973894d",
     "PdpCacheDuration": 0,
+    "DotnetKeystore": "Server=localhost;Port=15432;Database=dotnetkeystore;User Id=postgrers;Password=postgres;",
     "JwtAudience": "http://localhost:51020/myroute/token?returnUrl=/",
     //"JwtIssuer": "5f75f0c6cf4d4c4f97dd0ab68ce534f4",
     "JwtIssuer": "431961b0d1594f1cab2b4e28fa1e9e15",

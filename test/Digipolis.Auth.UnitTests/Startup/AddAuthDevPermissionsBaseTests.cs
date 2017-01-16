@@ -21,7 +21,7 @@ namespace Digipolis.Auth.UnitTests.Startup
         public Action<ServiceCollection> Act { get; set; }
 
         [Fact]
-        public void DevPolicyDescisionProviderIsRegistratedAsSingleton()
+        public void DevPolicyDescisionProviderIsRegisteredAsSingleton()
         {
             var services = new ServiceCollection();
 
@@ -36,7 +36,7 @@ namespace Digipolis.Auth.UnitTests.Startup
         }
 
         [Fact]
-        public void DevPermissionsOptionsAreRegistratedAsSingleton()
+        public void DevPermissionsOptionsAreRegisteredAsSingleton()
         {
             var services = new ServiceCollection();
 

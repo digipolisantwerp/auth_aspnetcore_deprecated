@@ -1,9 +1,9 @@
-﻿using Digipolis.Auth.PDP;
+﻿using Digipolis.ApplicationServices;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace Digipolis.Auth.UnitTests.Startup
 {
@@ -19,8 +19,14 @@ namespace Digipolis.Auth.UnitTests.Startup
 
                 services.AddSingleton<IHostingEnvironment>(mockHostingEnvironment.Object);
 
+                services.AddApplicationServices(setup =>
+                {
+                    setup.ApplicationId = Guid.NewGuid().ToString();
+                });
+
                 services.AddAuth(options =>
                 {
+                    options.DotnetKeystore = "keystoreConnectionString";
                 }, devPermissionsOptions =>
                 {
                     devPermissionsOptions.UseDevPermissions = true;

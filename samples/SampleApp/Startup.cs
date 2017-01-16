@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Digipolis.ApplicationServices;
+using Digipolis.Auth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Digipolis.Auth;
 using SampleApp.Policies;
 
 namespace SampleApp
@@ -31,6 +28,12 @@ namespace SampleApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddApplicationServices(setup =>
+            {
+                setup.ApplicationName = "AUTHTOOLBOXSAMPLEAPP";
+                setup.ApplicationId = "4830EF90-6252-4EDD-BD44-BC50D0B4F3D4";
+            });
+
             //Add authorization services with options and policies
             #region Code Based configuration
 

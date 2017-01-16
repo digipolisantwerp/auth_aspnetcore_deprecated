@@ -4,6 +4,7 @@ using Digipolis.Auth.Options;
 using Digipolis.Auth.PDP;
 using Digipolis.Auth.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -18,7 +19,7 @@ namespace Digipolis.Auth.UnitTests.Startup
 {
     public abstract class AddAuthBaseTests
     {
-        public Action<ServiceCollection> Act { get; set; }
+        public Action<IServiceCollection> Act { get; set; }
 
         [Fact]
         public void ActionNullRaisesArgumentException()
@@ -32,7 +33,7 @@ namespace Digipolis.Auth.UnitTests.Startup
         }
 
         [Fact]
-        public void PolicyDescisionProviderIsRegistratedAsSingleton()
+        public void PolicyDescisionProviderIsRegisteredAsSingleton()
         {
             var services = new ServiceCollection();
 
@@ -48,7 +49,7 @@ namespace Digipolis.Auth.UnitTests.Startup
 
 
         [Fact]
-        public void AuthorizePermissionsHandlerIsRegistratedAsSingleton()
+        public void AuthorizePermissionsHandlerIsRegisteredAsSingleton()
         {
             var services = new ServiceCollection();
 
@@ -64,7 +65,7 @@ namespace Digipolis.Auth.UnitTests.Startup
 
 
         [Fact]
-        public void RequiredPermissionsResolverIsRegistratedAsSingleton()
+        public void RequiredPermissionsResolverIsRegisteredAsSingleton()
         {
             var services = new ServiceCollection();
 
@@ -80,7 +81,7 @@ namespace Digipolis.Auth.UnitTests.Startup
 
 
         [Fact]
-        public void HttpClientHandlerIsRegistratedAsSingleton()
+        public void HttpClientHandlerIsRegisteredAsSingleton()
         {
             var services = new ServiceCollection();
 
@@ -95,7 +96,7 @@ namespace Digipolis.Auth.UnitTests.Startup
         }
 
         [Fact]
-        public void PermissionsClaimsTransformerIsRegistratedAsSingleton()
+        public void PermissionsClaimsTransformerIsRegisteredAsSingleton()
         {
             var services = new ServiceCollection();
 
@@ -110,7 +111,7 @@ namespace Digipolis.Auth.UnitTests.Startup
         }
 
         [Fact]
-        public void AuthOptionsAreRegistratedAsSingleton()
+        public void AuthOptionsAreRegisteredAsSingleton()
         {
             var services = new ServiceCollection();
 
@@ -132,6 +133,7 @@ namespace Digipolis.Auth.UnitTests.Startup
             Assert.Equal("ApplicationBaseUrl", authOptions.ApplicationBaseUrl);
             Assert.Equal("http://test.pdp.be/", authOptions.PdpUrl);
             Assert.Equal("PdpApiKey", authOptions.PdpApiKey);
+            Assert.Equal("keystoreConnectionString", authOptions.DotnetKeystore);
             Assert.Equal(60, authOptions.PdpCacheDuration);
             Assert.Equal("audience", authOptions.JwtAudience);
             Assert.Equal("issuer", authOptions.JwtIssuer);
@@ -182,7 +184,7 @@ namespace Digipolis.Auth.UnitTests.Startup
         }
 
         [Fact]
-        public void JwtSigningKeyResolverIsRegistratedAsSingleton()
+        public void JwtSigningKeyResolverIsRegisteredAsSingleton()
         {
             var services = new ServiceCollection();
 
@@ -197,7 +199,7 @@ namespace Digipolis.Auth.UnitTests.Startup
         }
 
         [Fact]
-        public void JwtSecurityTokenHandlerIsRegistratedAsSingleton()
+        public void JwtSecurityTokenHandlerIsRegisteredAsSingleton()
         {
             var services = new ServiceCollection();
 
@@ -212,7 +214,7 @@ namespace Digipolis.Auth.UnitTests.Startup
         }
 
         [Fact]
-        public void TokenRefreshAgentIsRegistratedAsSingleton()
+        public void TokenRefreshAgentIsRegisteredAsSingleton()
         {
             var services = new ServiceCollection();
 
@@ -227,7 +229,7 @@ namespace Digipolis.Auth.UnitTests.Startup
         }
 
         [Fact]
-        public void TokenRefreshHandlerIsRegistratedAsSingleton()
+        public void TokenRefreshHandlerIsRegisteredAsSingleton()
         {
             var services = new ServiceCollection();
 
@@ -242,7 +244,7 @@ namespace Digipolis.Auth.UnitTests.Startup
         }
 
         [Fact]
-        public void TokenValidationParametersFactoryIsRegistratedAsSingleton()
+        public void TokenValidationParametersFactoryIsRegisteredAsSingleton()
         {
             var services = new ServiceCollection();
 
@@ -257,7 +259,7 @@ namespace Digipolis.Auth.UnitTests.Startup
         }
 
         [Fact]
-        public void AuthServiceIsRegistratedAsSingleton()
+        public void AuthServiceIsRegisteredAsSingleton()
         {
             var services = new ServiceCollection();
 
@@ -272,7 +274,7 @@ namespace Digipolis.Auth.UnitTests.Startup
         }
 
         [Fact]
-        public void HttpContextAccessorIsRegistratedAsSingleton()
+        public void HttpContextAccessorIsRegisteredAsSingleton()
         {
             var services = new ServiceCollection();
 
@@ -287,7 +289,7 @@ namespace Digipolis.Auth.UnitTests.Startup
         }
 
         [Fact]
-        public void JwtBearerOptionsFactoryIsRegistratedAsSingleton()
+        public void JwtBearerOptionsFactoryIsRegisteredAsSingleton()
         {
             var services = new ServiceCollection();
 
