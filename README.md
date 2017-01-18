@@ -1,7 +1,5 @@
 # Auth Toolbox
 
-This readme is applicable to version 1.0.x of the toolbox.
-
 The Auth toolbox handles both Authentication and Authorization that can be used in ASP.NET Core Web API and Web MVC Projects.
 
 The Auth toolbox supports two types of authentication flows.
@@ -61,7 +59,7 @@ To add the toolbox to a project, you add the package to the project.json:
 
 ``` json 
 "dependencies": {
-    "Digipolis.Auth":  "1.1.0"
+    "Digipolis.Auth":  "1.1.1"
  }
 ``` 
 
@@ -111,6 +109,7 @@ The Auth framework will read the given section of the json file with the followi
     "PdpUrl": "http://pdp.somewhere.com/",
     "PdpApiKey": "some api key",
     "PdpCacheDuration": 240,
+    "UseDotnetKeystore": true,
     "DotnetKeystore": "connection string",
     "JwtAudience": "audience",
     "JwtIssuer": "issuer",
@@ -131,6 +130,7 @@ You can also call the AddAuth method, passing in the needed options directly:
         options.PdpUrl = "http://pdp.somewhere.com/";
         options.PdpApiKey = "some api key";
         options.PdpCacheDuration = 240;
+        options.UseDotnetKeystore = true;
         options.DotnetKeystore = "connection string";
         options.JwtAudience = "audience";
         options.JwtIssuer = "JWTIssuer";
@@ -147,7 +147,6 @@ ApplicationName              | The name of the application. Required in order to
 PdpUrl | The url for the policy decision provider (PDP). |
 PdpApiKey | The api key for the PDP endpoint. |
 PdpCacheDuration | The duration in minutes the responses from the PDP are cached. Set to zero to disable caching.| 60 
-DotnetKeystore | Connection string for the shared dataprotection key store.| 
 JwtIssuer | The issuer value used to validate the Jwt token.| 
 JwtAudience | The audience url used to validate the Jwt token.| 
 JwtSigningKeyCacheDuration | The duration in minutes the Jwt signing key is cached.| 1440 (24 hours)
@@ -176,6 +175,8 @@ TokenCallbackRoute | The route used for the token callback url.| "auth/token"
 AutomaticTokenRefresh | Set to true to enable automatic token refresh.| false
 TokenRefreshTime | The amount of minutes before the jwt token expiration time at which to automatically refresh the token.| 5
 AccessDeniedPath | The path to redirect when the access is denied. | 
+UseDotnetKeystore | Set to true to use a shared (external) dataprotection key store to store the key used by cookie auth.| 
+DotnetKeystore | Connection string for the shared dataprotection key store.| 
 
 
 ### Additional claims
@@ -459,8 +460,8 @@ The scheme relies on an authentication cookie to authenticate the user. If no co
 Once the token is received and validated, the user is signed in and two cookies are set. The first is an authentication cookie and is the default asp.net cookie. The second is a cookie containing the jwt token.
 This cookie named **jwt** can be used on the client side to extract the jwt token needed for Api calls (see jwtHeaderAuth flow).
 
-In order to be able to scale the application, the key used to encrypt the authentication cookie by the DataProtection api, is stored in a shared database. The connection string to that database is set 
-in the **DotnetKeystore** property of the **AuthOptions**.
+In order to be able to scale the application, the key used to encrypt the authentication cookie by the DataProtection api, can be stored in a shared database. The connection string to that database is set 
+in the **DotnetKeystore** property of the **AuthOptions**. To use this key from shared store the **UseDotnetKeystore** property on the **AuthOptions** must be set to true.
 
 ### JwtHeaderAuth scheme
 

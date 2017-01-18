@@ -40,6 +40,11 @@
         public int PdpCacheDuration { get; set; } = 60;
 
         /// <summary>
+        /// Set to true to use a shared (external) dataprotection key store to store the key used by cookie auth.
+        /// </summary>
+        public bool UseDotnetKeystore { get; set; }
+        
+        /// <summary>
         /// Connection string for the shared dataprotection key store.
         /// </summary>
         public string DotnetKeystore { get; set; }

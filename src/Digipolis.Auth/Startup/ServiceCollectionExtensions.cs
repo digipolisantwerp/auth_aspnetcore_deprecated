@@ -100,7 +100,7 @@ namespace Digipolis.Auth
 
             var applicationContext = GetApplicationContext(serviceProvider);
 
-            if (authOptions.EnableCookieAuth)
+            if (authOptions.EnableCookieAuth && authOptions.UseDotnetKeystore)
             {
                 services.AddDataProtection().PersistKeysToPostgres(authOptions.DotnetKeystore, Guid.Parse(applicationContext.ApplicationId), Guid.Parse(applicationContext.InstanceId));
             }

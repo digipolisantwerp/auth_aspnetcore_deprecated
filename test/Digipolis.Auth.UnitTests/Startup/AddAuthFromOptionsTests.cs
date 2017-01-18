@@ -36,6 +36,7 @@ namespace Digipolis.Auth.UnitTests.Startup
                     options.PdpUrl = "http://test.pdp.be/";
                     options.PdpApiKey = "PdpApiKey";
                     options.PdpCacheDuration = 60;
+                    options.UseDotnetKeystore = true;
                     options.DotnetKeystore = "keystoreConnectionString";
                     options.JwtAudience = "audience";
                     options.JwtIssuer = "issuer";
@@ -128,6 +129,7 @@ namespace Digipolis.Auth.UnitTests.Startup
                 services.AddAuth(options =>
                 {
                     options.ApplicationName = "AppName";
+                    options.UseDotnetKeystore = true;
                     options.EnableCookieAuth = true;
                 });
             }
@@ -138,6 +140,30 @@ namespace Digipolis.Auth.UnitTests.Startup
 
             Assert.NotNull(exception);
             Assert.Equal("connectionString", exception.Message);
+        }
+
+        [Fact]
+        public void DataProtectionKeyStorageIsOnlyRegisteredWhenSetinConfig()
+        {
+            var services = new ServiceCollection();
+
+            var mockHostingEnvironment = new Mock<IHostingEnvironment>();
+            mockHostingEnvironment.Setup(h => h.EnvironmentName)
+                .Returns("");
+
+            services.AddSingleton<IHostingEnvironment>(mockHostingEnvironment.Object);
+
+            services.AddApplicationServices(setup =>
+            {
+                setup.ApplicationId = Guid.NewGuid().ToString();
+            });
+
+            //Act should not produce exception
+            services.AddAuth(options =>
+                {
+                    options.ApplicationName = "AppName";
+                    options.EnableCookieAuth = true;
+                });
         }
     }
 }
