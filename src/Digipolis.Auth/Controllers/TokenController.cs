@@ -72,7 +72,7 @@ namespace Digipolis.Auth.Controllers
         {
             var jwt = new JwtSecurityToken(token);
 
-            if (jwt.Audiences.FirstOrDefault() != _authOptions.JwtAudience)
+            if (!String.IsNullOrWhiteSpace(_authOptions.JwtAudience) && !jwt.Audiences.FirstOrDefault().StartsWith(_authOptions.JwtAudience))
                 return BadRequest();
 
             var newToken = await _tokenRefreshAgent.RefreshTokenAsync(token);

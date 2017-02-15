@@ -1,5 +1,9 @@
 # Auth Toolbox
 
+## 1.1.2
+
+- Audience validation on token refresh only when set in options and partial match
+
 ## 1.1.0
 
 - Added shared data protection key storage for load ballanced setup

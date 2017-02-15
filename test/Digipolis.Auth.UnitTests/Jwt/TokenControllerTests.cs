@@ -117,7 +117,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
             Assert.Equal("Index", ((RedirectToActionResult)result).ActionName);
             Assert.Equal("Home", ((RedirectToActionResult)result).ControllerName);
         }
-
+        
         private TokenController CreateTokenController(bool returnUrlIsLocal)
         {
             SecurityToken securityToken = null;
