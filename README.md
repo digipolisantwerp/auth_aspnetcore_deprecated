@@ -55,15 +55,23 @@ The toolbox also provides Authorization attributes that can be used in the contr
 
 ## Installation
 
-To add the toolbox to a project, you add the package to the project.json:
+To add the toolbox to a project, you add the package to the csproj project file:
+
+```xml
+  <ItemGroup>
+    <PackageReference Include="Digipolis.Auth" Version="2.0.0" />
+  </ItemGroup>
+``` 
+
+or if your project still works with project.json :
 
 ``` json 
 "dependencies": {
-    "Digipolis.Auth":  "1.1.2"
+    "Digipolis.Auth":  "2.0.0"
  }
-``` 
+```
 
-ALWAYS check the latest version [here](https://github.com/digipolisantwerp/auth_aspnetcore/blob/master/src/Digipolis.Auth/project.json) before adding the above line !
+ALWAYS check the latest version [here](https://github.com/digipolisantwerp/auth_aspnetcore/blob/master/src/Digipolis.Auth/Digipolis.Auth.csproj) before adding the above line !
 
 In Visual Studio you can also use the NuGet Package Manager to do this.
 

@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Unit tests for the Auth toolbox</Description>
+    <Authors>digipolis.be</Authors>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <AssemblyName>Digipolis.Auth.UnitTests</AssemblyName>
+    <PackageId>Digipolis.Auth.UnitTests</PackageId>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
+    <PackageTargetFallback>$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+    <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Digipolis.Auth\Digipolis.Auth.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
+    <PackageReference Include="xunit" Version="2.2.0" />
+    <PackageReference Include="moq.netcore" Version="4.4.0-beta8" />
+    <PackageReference Include="System.Diagnostics.TraceSource" Version="4.3.0" />
+    <PackageReference Include="Digipolis.ApplicationServices" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.0-beta1-build3642" />    
+  </ItemGroup>
+
+</Project>

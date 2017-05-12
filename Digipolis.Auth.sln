@@ -1,11 +1,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B9B2BBF4-ADEE-03F9-FAD8-D9E71044D12B}"
 	ProjectSection(SolutionItems) = preProject
 		changelog.md = changelog.md
-		global.json = global.json
 		nuget.config = nuget.config
 		readme.md = readme.md
 	EndProjectSection
@@ -19,13 +18,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{F1A919A4-1
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{E1A61BD2-F970-47DD-8645-F75CBDB0CDE6}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "SamplePDP", "samples\SamplePDP\SamplePDP.xproj", "{BD03F8A1-98AA-485A-B4AA-913141C8B3BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SamplePDP", "samples\SamplePDP\SamplePDP.csproj", "{BD03F8A1-98AA-485A-B4AA-913141C8B3BF}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "SampleApp", "samples\SampleApp\SampleApp.xproj", "{30E05B9D-9E1E-45D5-BBCB-FA3154C3889C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleApp", "samples\SampleApp\SampleApp.csproj", "{30E05B9D-9E1E-45D5-BBCB-FA3154C3889C}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Digipolis.Auth", "src\Digipolis.Auth\Digipolis.Auth.xproj", "{A66BF273-CD32-1A2F-52A6-EE88C52C0287}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Digipolis.Auth", "src\Digipolis.Auth\Digipolis.Auth.csproj", "{A66BF273-CD32-1A2F-52A6-EE88C52C0287}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Digipolis.Auth.UnitTests", "test\Digipolis.Auth.UnitTests\Digipolis.Auth.UnitTests.xproj", "{364116A0-87AD-A08F-3CC5-26D22AF43786}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Digipolis.Auth.UnitTests", "test\Digipolis.Auth.UnitTests\Digipolis.Auth.UnitTests.csproj", "{364116A0-87AD-A08F-3CC5-26D22AF43786}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,5 +1,9 @@
 # Auth Toolbox
 
+## 2.0.0
+
+- conversion to csproj en MSBuild.
+
 ## 1.1.2
 
 - Audience validation on token refresh only when set in options and partial match
