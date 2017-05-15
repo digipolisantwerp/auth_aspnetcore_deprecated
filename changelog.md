@@ -31,7 +31,7 @@
 
 ## 1.0.1
 
-- Added development persmissions feature
+- Added development permissions feature
 
 ## 1.0.0
 

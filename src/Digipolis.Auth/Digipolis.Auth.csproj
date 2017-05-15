@@ -25,8 +25,8 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.0.2" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="1.0.2" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.0.2" />
-    <PackageReference Include="Digipolis.DataProtection.Postgres" Version="1.0.0" />
-    <PackageReference Include="Digipolis.ApplicationServices" Version="1.0.0" />
+    <PackageReference Include="Digipolis.DataProtection.Postgres" Version="2.0.0" />
+    <PackageReference Include="Digipolis.ApplicationServices" Version="2.0.0" />
   </ItemGroup>
 
 </Project>
