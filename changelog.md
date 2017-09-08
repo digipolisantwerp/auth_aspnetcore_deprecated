@@ -1,5 +1,10 @@
 # Auth Toolbox
 
+## 2.1.0
+
+- Added possibility to disable the jwt token cookie
+- Added possibility to add the jwt token to the session state
+
 ## 2.0.0
 
 - conversion to csproj en MSBuild.

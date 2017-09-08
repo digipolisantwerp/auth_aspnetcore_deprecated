@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Moq;
 using System;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -44,6 +45,28 @@ namespace Digipolis.Auth.UnitTests.Services
             var returnedUser = authService.User;
 
             Assert.Same(user, returnedUser);
+        }
+
+        [Fact]
+        public void GetsUserToken()
+        {
+            var user = new ClaimsPrincipal();
+            var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
+            mockHttpContextAccessor.SetupGet(m => m.HttpContext.User)
+                .Returns(user);
+            var mockSession = new Mock<ISession>();
+            var userToken = "user token";
+            var userTokenBytes = Encoding.UTF8.GetBytes(userToken);
+            mockSession.Setup(s => s.TryGetValue("auth-jwt", out userTokenBytes)).Returns(true);
+
+            var mockHttpContext = new Mock<HttpContext>();
+            mockHttpContext.SetupGet(c => c.Session).Returns(mockSession.Object);
+            mockHttpContextAccessor.SetupGet(c => c.HttpContext).Returns(mockHttpContext.Object);
+            var authService = new AuthService(mockHttpContextAccessor.Object, Mock.Of<ITokenRefreshAgent>(), Mock.Of<IUrlHelperFactory>());
+
+            var returnedUserToken = authService.UserToken;
+
+            Assert.Equal(userToken, returnedUserToken);
         }
 
         [Fact]

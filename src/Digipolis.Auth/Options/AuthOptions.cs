@@ -66,6 +66,19 @@
         public int JwtSigningKeyCacheDuration { get; set; } = 1440;
 
         /// <summary>
+        /// Set to true to add the jwt token in a cookie.
+        /// Default = true.
+        /// </summary>
+        public bool AddJwtCookie { get; set; } = true;
+
+        /// <summary>
+        /// Set to true to add the jwt token to the Http Session.
+        /// This requires Sessions to be enabled and configured.
+        /// Default = false;
+        /// </summary>
+        public bool AddJwtToSession { get; set; }
+
+        /// <summary>
         /// The url for the Api Engine authentication endpoint.
         /// </summary>
         public string ApiAuthUrl { get; set; }

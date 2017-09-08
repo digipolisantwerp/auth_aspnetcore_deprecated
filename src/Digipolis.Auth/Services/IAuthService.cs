@@ -8,6 +8,7 @@ namespace Digipolis.Auth.Services
     public interface IAuthService
     {
         ClaimsPrincipal User { get; }
+        string UserToken { get; }
         Task<string> LogOutAsync(ControllerContext controllerContext, string redirectController, string redirectAction);
     }
 }

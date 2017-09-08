@@ -14,9 +14,12 @@ namespace SampleApp.Controllers.Api
     //[AuthorizeByConvention] // => apply convention based permissions on all controller actions
     public class TicketsController : Controller
     {
+        private readonly IAuthService _authService;
+
         //The purpose of this controller is to demonstrate the use of the "AuthorizeByConvention" and "AuthorizeWith" attributes.
-        public TicketsController()
+        public TicketsController(IAuthService authService)
         {
+            _authService = authService;
         }
 
         [HttpGet]                   // => The Http method determines the first part of the permission, not the action method name!
@@ -25,7 +28,8 @@ namespace SampleApp.Controllers.Api
         //or [Authorize(Policy = Policies.ConventionBased)]
         public IActionResult GetAction()
         {
-            var user = ControllerContext.HttpContext.User;
+            var user = _authService.User;
+            var userToken = _authService.UserToken;
             return new ObjectResult($"Authorized: response from tickets GetAction(). User: {user.Identity.Name}");
         }
 

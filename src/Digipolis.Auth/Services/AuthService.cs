@@ -35,6 +35,14 @@ namespace Digipolis.Auth.Services
             }
         }
 
+        public string UserToken
+        {
+            get
+            {
+                return _httpContextAccessor.HttpContext.Session.GetString("auth-jwt");
+            }
+        }
+
         public async Task<string> LogOutAsync(ControllerContext controllerContext, string redirectController, string redirectAction)
         { 
             await _httpContextAccessor.HttpContext.Authentication.SignOutAsync(AuthSchemes.CookieAuth);

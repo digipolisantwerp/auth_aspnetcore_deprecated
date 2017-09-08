@@ -70,6 +70,8 @@ namespace SampleApp
 
             #endregion
 
+            services.AddSession();
+
             // Add framework services.
             services.AddMvc();
 
@@ -95,6 +97,8 @@ namespace SampleApp
 
             //Add authorization middleware
             app.UseAuth();
+
+            app.UseSession();
 
             app.UseMvc(routes =>
             {

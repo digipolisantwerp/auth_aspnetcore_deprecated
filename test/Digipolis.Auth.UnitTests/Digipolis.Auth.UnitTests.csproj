@@ -22,7 +22,7 @@
     <PackageReference Include="xunit" Version="2.2.0" />
     <PackageReference Include="moq.netcore" Version="4.4.0-beta8" />
     <PackageReference Include="System.Diagnostics.TraceSource" Version="4.3.0" />
-    <PackageReference Include="Digipolis.ApplicationServices" Version="1.0.0" />
+    <PackageReference Include="Digipolis.ApplicationServices" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +32,14 @@
   <!-- mark as test project -->
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="_TestData\authconfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="_TestData\authconfig2.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

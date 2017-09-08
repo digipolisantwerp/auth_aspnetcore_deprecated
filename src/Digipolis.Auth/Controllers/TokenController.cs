@@ -9,6 +9,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace Digipolis.Auth.Controllers
 {
@@ -56,9 +57,6 @@ namespace Digipolis.Auth.Controllers
                                 AllowRefresh = false
                             });
 
-                HttpContext.Response.Cookies.Append("jwt", jwt);
-
-                return RedirectToLocal(returnUrl);
             }
             catch (Exception ex)
             {
@@ -66,6 +64,14 @@ namespace Digipolis.Auth.Controllers
 
                 return Redirect($"/{_authOptions.AccessDeniedPath}");
             }
+
+            if (_authOptions.AddJwtCookie)
+                HttpContext.Response.Cookies.Append("jwt", jwt);
+
+            if (_authOptions.AddJwtToSession)
+                HttpContext.Session.SetString("auth-jwt", jwt);
+
+            return RedirectToLocal(returnUrl);
         }
 
         public async Task<IActionResult> Refresh(string token)

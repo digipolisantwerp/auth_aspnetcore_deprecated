@@ -47,7 +47,8 @@
     "AutomaticTokenRefresh": "true",
     "AccessDeniedPath": "Home/AccessDenied",
     "FrontEndApiRouteIdentifier": "api",
-    "PermissionsRoute": "myauth/user/permissions"
+    "PermissionsRoute": "myauth/user/permissions",
+    "AddJwtToSession": true
   },
   "DevPermissions": {
     "UseDevPermissions": true,

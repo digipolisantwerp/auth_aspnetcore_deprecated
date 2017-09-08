@@ -11,6 +11,7 @@ using Moq;
 using System;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -23,6 +24,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
         private string _redirectUrl = "redirecturl";
         private Mock<AuthenticationManager> _mockAuthenticationManager;
         private Mock<IResponseCookies> _mockCookies;
+        private Mock<ISession> _mockSession;
         private ClaimsPrincipal _claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(Claims.Name, "userid"), new Claim(ClaimTypes.Name, "userid") }, "Bearer"));
 
         [Fact]
@@ -117,8 +119,55 @@ namespace Digipolis.Auth.UnitTests.Jwt
             Assert.Equal("Index", ((RedirectToActionResult)result).ActionName);
             Assert.Equal("Home", ((RedirectToActionResult)result).ControllerName);
         }
-        
-        private TokenController CreateTokenController(bool returnUrlIsLocal)
+
+        [Fact]
+        public async Task SetJwtCookieByDefault()
+        {
+            var tokenController = CreateTokenController(true);
+
+            var result = await tokenController.Callback(_redirectUrl, _jwtToken);
+
+            _mockCookies.Verify(c => c.Append("jwt", _jwtToken), Times.Once);
+        }
+
+        [Fact]
+        public async Task NotSetJwtCookieWhenOptionIsDisabled()
+        {
+            var tokenController = CreateTokenController(true, disableJwtCookie: true);
+
+            var result = await tokenController.Callback(_redirectUrl, _jwtToken);
+
+            _mockCookies.Verify(c => c.Append("jwt", _jwtToken), Times.Never);
+        }
+
+        [Fact]
+        public async Task NotAddJwtToSessionByDefault()
+        {
+            var tokenController = CreateTokenController(true, disableJwtCookie: true);
+
+            var result = await tokenController.Callback(_redirectUrl, _jwtToken);
+
+            _mockSession.Verify(s => s.Set("auth-jwt", It.IsAny<byte[]>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task AddJwtToSessionWhenOptionIsSet()
+        {
+            var tokenController = CreateTokenController(true, false, addToSession: true);
+
+            string addedToken = String.Empty;
+
+            _mockSession.Setup(s => s.Set("auth-jwt", It.IsAny<byte[]>()))
+                    .Callback<string, byte[]>((key, value) => addedToken = Encoding.UTF8.GetString(value))
+                    .Verifiable();
+
+            var result = await tokenController.Callback(_redirectUrl, _jwtToken);
+
+            _mockCookies.Verify();
+            Assert.Equal(addedToken, _jwtToken);
+        }
+
+        private TokenController CreateTokenController(bool returnUrlIsLocal, bool disableJwtCookie = false, bool addToSession = false)
         {
             SecurityToken securityToken = null;
 
@@ -132,7 +181,15 @@ namespace Digipolis.Auth.UnitTests.Jwt
             tokenValidationParametersFactory.Setup(f => f.Create())
                 .Returns(tokenValidationParameters);
 
-            var tokenController = new TokenController(Options.Create(new AuthOptions { AccessDeniedPath = "Home/AccessDenied" }),
+            var authOptions = new AuthOptions
+            {
+                AccessDeniedPath = "Home/AccessDenied",
+            };
+
+            if (disableJwtCookie) authOptions.AddJwtCookie = false;
+            if (addToSession) authOptions.AddJwtToSession = true;
+
+            var tokenController = new TokenController(Options.Create(authOptions),
                 jwtTokenValidator.Object,
                 _logger,
                 Mock.Of<ITokenRefreshAgent>(),
@@ -143,6 +200,8 @@ namespace Digipolis.Auth.UnitTests.Jwt
             mockHttpContext.SetupGet(c => c.Authentication).Returns(_mockAuthenticationManager.Object);
             var mockHttpResponse = new Mock<HttpResponse>();
             mockHttpContext.SetupGet(c => c.Response).Returns(mockHttpResponse.Object);
+            _mockSession = new Mock<ISession>();
+            mockHttpContext.SetupGet(c => c.Session).Returns(_mockSession.Object);
             _mockCookies = new Mock<IResponseCookies>();
             mockHttpResponse.SetupGet(r => r.Cookies).Returns(_mockCookies.Object);
 

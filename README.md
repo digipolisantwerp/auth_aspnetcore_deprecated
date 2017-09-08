@@ -40,6 +40,8 @@ The toolbox also provides Authorization attributes that can be used in the contr
   - [Automatic token refresh](#automatic-token-refresh)
   - [Permissions endpoint](#permissions-endpoint)
   - [Auth service](#auth-service)
+  - [Jwt token in cookie](#jwt-token-in-cookie)
+  - [Jwt token in session](#jwt-token-in-session)
   - [Development permissions](#development-permissions)
   - [Disabling Jwt signature validation for testing purposes](#disabling-jwt-signature-validation-for-testing-purposes)
 - [How it works](#how-it-works)
@@ -59,7 +61,7 @@ To add the toolbox to a project, you add the package to the csproj project file:
 
 ```xml
   <ItemGroup>
-    <PackageReference Include="Digipolis.Auth" Version="2.0.0" />
+    <PackageReference Include="Digipolis.Auth" Version="2.1.0" />
   </ItemGroup>
 ``` 
 
@@ -67,7 +69,7 @@ or if your project still works with project.json :
 
 ``` json 
 "dependencies": {
-    "Digipolis.Auth":  "2.0.0"
+    "Digipolis.Auth":  "2.1.0"
  }
 ```
 
@@ -185,6 +187,8 @@ TokenRefreshTime | The amount of minutes before the jwt token expiration time at
 AccessDeniedPath | The path to redirect when the access is denied. | 
 UseDotnetKeystore | Set to true to use a shared (external) dataprotection key store to store the key used by cookie auth.| 
 DotnetKeystore | Connection string for the shared dataprotection key store.| 
+AddJwtCookie | Set to true to add the jwt token in a cookie. | True
+AddJwtToSession | Set to true to add the jwt token to the Http Session. | False
 
 
 ### Additional claims
@@ -385,6 +389,32 @@ You can access the **User** object through the **AuthService**.
         //Access the User
         var user = _authService.User;
     }
+```
+
+To get the user's jwt token you can read the **UserToken** property.  
+The token will only be set if session state is enabled and configured and if the **AddJwtToSession** property in the options is set to **True**.
+
+``` csharp
+    //Access the User
+    var userToken = _authService.UserToken;
+```
+
+### Jwt token in cookie
+
+When using the **CookieAuth** scheme the jwt token received after login can be added in a cookie witk key "jwt".  
+Using the **AddJwtCookie** setting in the options this can be turned on or off. By default it is turned on.  
+If you don't want the jwt token to be sent to the front end (in a cookie) set the option to **false**.
+
+### Jwt token in session
+
+When using the **CookieAuth** scheme the jwt token received after login can be added to the session.  
+Using the **AddJwtToSession** setting in the options this can be turned on or off. By default it is turned on.  
+Be sure to enable and configure session state when using this feature.
+
+You can extract the jwt token from the session using the key **"auth-jwt"**
+
+``` csharp
+    var token = HttpContext.Session.GetString("auth-jwt");
 ```
 
 ### Development permissions
