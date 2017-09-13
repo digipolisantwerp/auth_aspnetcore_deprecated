@@ -63,16 +63,32 @@ namespace Digipolis.Auth
 
                         OnRedirectToAccessDenied = context =>
                         {
-                            context.Response.Redirect(new PathString($"/{authOptions.AccessDeniedPath}"));
+                            if (IsAjaxRequest(context.Request))
+                            {
+                                context.Response.Headers["Location"] = context.RedirectUri;
+                                context.Response.StatusCode = 403;
+                            }
+                            else
+                            {
+                                context.Response.Redirect(new PathString($"/{authOptions.AccessDeniedPath}"));
+                            }
                             return Task.FromResult<object>(null);
                         },
 
                         OnRedirectToLogin = context =>
                         {
-                            var url = $"{authOptions.ApiAuthUrl}?idp_url={authOptions.ApiAuthIdpUrl}&sp_name={authOptions.ApiAuthSpName}&sp_url={authOptions.ApiAuthSpUrl}&client_redirect={authOptions.ApplicationBaseUrl}/{authOptions.TokenCallbackRoute}?returnUrl=";
+                            if (IsAjaxRequest(context.Request))
+                            {
+                                context.Response.Headers["Location"] = context.RedirectUri;
+                                context.Response.StatusCode = 401;
+                            }
+                            else
+                            {
+                                var url = $"{authOptions.ApiAuthUrl}?idp_url={authOptions.ApiAuthIdpUrl}&sp_name={authOptions.ApiAuthSpName}&sp_url={authOptions.ApiAuthSpUrl}&client_redirect={authOptions.ApplicationBaseUrl}/{authOptions.TokenCallbackRoute}?returnUrl=";
 
-                            context.RedirectUri = Uri.EscapeUriString(url + context.Request.Path);
-                            context.Response.Redirect(context.RedirectUri);
+                                context.RedirectUri = Uri.EscapeUriString(url + context.Request.Path);
+                                context.Response.Redirect(context.RedirectUri);
+                            }
                             return Task.FromResult<object>(null);
                         },
                     }
@@ -89,6 +105,14 @@ namespace Digipolis.Auth
             });
 
             return app;
+        }
+
+        private static bool IsAjaxRequest(HttpRequest request)
+        {
+            return (request.Path.StartsWithSegments(new PathString("/api"), StringComparison.OrdinalIgnoreCase)) ||
+                string.Equals(request.Query["X-Requested-With"], "XMLHttpRequest", StringComparison.Ordinal) ||
+                string.Equals(request.Headers["X-Requested-With"], "XMLHttpRequest", StringComparison.Ordinal);
+                
         }
     }
 }

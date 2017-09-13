@@ -1,5 +1,9 @@
 # Auth Toolbox
 
+## 2.2.0
+
+- Return http status codes instead of redirects when request is XMLHttpRequest or call to /api route with CookieAuth 
+
 ## 2.1.0
 
 - Added possibility to disable the jwt token cookie
