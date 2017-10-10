@@ -19,6 +19,11 @@
         public bool EnableCookieAuth { get; set; } = false;
 
         /// <summary>
+        /// CookieAuth authentication ticket life time. Default = 480 (8 hours).
+        /// </summary>
+        public int CookieAuthLifeTime { get; set; } = 480;
+
+        /// <summary>
         /// Set to true to enable the Jwt in header authentication handling. Default = true.
         /// </summary>
         public bool EnableJwtHeaderAuth { get; set; } = true;
@@ -48,11 +53,11 @@
         /// Connection string for the shared dataprotection key store.
         /// </summary>
         public string DotnetKeystore { get; set; }
-        
+
         /// <summary>
         /// The audience url used to validate the Jwt token.
         /// </summary>
-        public string JwtAudience { get; set; }
+        public string JwtAudience { get; set; } = string.Empty;
 
         /// <summary>
         /// The issuer string used to validate the Jwt token.

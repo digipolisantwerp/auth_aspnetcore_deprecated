@@ -149,7 +149,8 @@ namespace Digipolis.Auth.UnitTests.Startup
             Assert.Equal("custom/tokenendpoint", authOptions.TokenCallbackRoute);
             Assert.Equal("custom/tokenrefresh", authOptions.TokenRefreshRoute);
             Assert.Equal("custom/permissions", authOptions.PermissionsRoute);
-            Assert.Equal("accessdenied", authOptions.AccessDeniedPath); 
+            Assert.Equal("accessdenied", authOptions.AccessDeniedPath);
+            Assert.Equal(480, authOptions.CookieAuthLifeTime);
         }
 
         [Fact]

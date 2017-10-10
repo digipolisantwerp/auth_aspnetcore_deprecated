@@ -36,7 +36,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
         [Fact]
         public async Task RefreshTokenWhenWithinTokenRefreshTime()
         {
-            var options = Options.Create<AuthOptions>(new AuthOptions() {  TokenRefreshTime = 5 });
+            var options = Options.Create<AuthOptions>(new AuthOptions() {  TokenRefreshTime = 5, JwtAudience = "audience" });
             var logger = new TestLogger<TokenRefreshHandler>();
             var tokenRefreshAgentMock = new Mock<ITokenRefreshAgent>();
 
@@ -45,7 +45,8 @@ namespace Digipolis.Auth.UnitTests.Jwt
             var jwtHandler = new JwtSecurityTokenHandler();
             var jwt = jwtHandler.CreateEncodedJwt(new SecurityTokenDescriptor()
             {
-                Expires = DateTime.Now.AddMinutes(4)
+                Expires = DateTime.Now.AddMinutes(4),
+                Audience = "audience"
             });
 
             await tokenRefreshHandler.HandleRefreshAsync(jwt);

@@ -33,7 +33,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
             Assert.Throws<ArgumentNullException>(() => new TokenController(null,
                 Mock.Of<ISecurityTokenValidator>(),
                 _logger,
-                Mock.Of<ITokenRefreshAgent>(),
+                Mock.Of<ITokenRefreshHandler>(),
                 Mock.Of<ITokenValidationParametersFactory>()));
         }
 
@@ -43,7 +43,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
             Assert.Throws<ArgumentNullException>(() => new TokenController(Options.Create(new AuthOptions()),
                 null,
                 _logger,
-                Mock.Of<ITokenRefreshAgent>(),
+                Mock.Of<ITokenRefreshHandler>(),
                 Mock.Of<ITokenValidationParametersFactory>()));
     }
 
@@ -53,7 +53,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
             Assert.Throws<ArgumentNullException>(() => new TokenController(Options.Create(new AuthOptions()),
                 Mock.Of<ISecurityTokenValidator>(),
                 null,
-                Mock.Of<ITokenRefreshAgent>(),
+                Mock.Of<ITokenRefreshHandler>(),
                 Mock.Of<ITokenValidationParametersFactory>()));
         }
 
@@ -73,7 +73,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
             Assert.Throws<ArgumentNullException>(() => new TokenController(Options.Create(new AuthOptions()),
                 Mock.Of<ISecurityTokenValidator>(),
                 null,
-                Mock.Of<ITokenRefreshAgent>(),
+                Mock.Of<ITokenRefreshHandler>(),
                 null));
         }
 
@@ -158,16 +158,34 @@ namespace Digipolis.Auth.UnitTests.Jwt
             string addedToken = String.Empty;
 
             _mockSession.Setup(s => s.Set("auth-jwt", It.IsAny<byte[]>()))
-                    .Callback<string, byte[]>((key, value) => addedToken = Encoding.UTF8.GetString(value))
-                    .Verifiable();
+                    .Callback<string, byte[]>((key, value) => addedToken = Encoding.UTF8.GetString(value));
 
             var result = await tokenController.Callback(_redirectUrl, _jwtToken);
 
-            _mockCookies.Verify();
             Assert.Equal(addedToken, _jwtToken);
         }
 
-        private TokenController CreateTokenController(bool returnUrlIsLocal, bool disableJwtCookie = false, bool addToSession = false)
+        [Fact]
+        public async Task UseCookieAuthLifeTimeFromOptions()
+        {
+            var tokenController = CreateTokenController(true, true, false, new AuthOptions { CookieAuthLifeTime = 65 });
+
+            AuthenticationProperties usedAuthenticationProperties = null;
+                 
+            _mockAuthenticationManager.Setup(s => s.SignInAsync(AuthSchemes.CookieAuth, It.IsAny<ClaimsPrincipal>(), It.IsAny<AuthenticationProperties>()))
+                    .Callback<string, ClaimsPrincipal, AuthenticationProperties>((schema, principal, properties) => 
+                            usedAuthenticationProperties = properties);
+
+            var result = await tokenController.Callback(_redirectUrl, _jwtToken);
+
+            Assert.NotNull(usedAuthenticationProperties);
+            var expectedExpiresUtc = DateTime.UtcNow.AddMinutes(65);
+            Assert.True(usedAuthenticationProperties.ExpiresUtc <= expectedExpiresUtc && usedAuthenticationProperties.ExpiresUtc > expectedExpiresUtc.AddMinutes(-1));
+            Assert.False(usedAuthenticationProperties.IsPersistent);
+            Assert.False(usedAuthenticationProperties.AllowRefresh);
+        }
+
+        private TokenController CreateTokenController(bool returnUrlIsLocal, bool disableJwtCookie = false, bool addToSession = false, AuthOptions authOptions = null)
         {
             SecurityToken securityToken = null;
 
@@ -181,10 +199,8 @@ namespace Digipolis.Auth.UnitTests.Jwt
             tokenValidationParametersFactory.Setup(f => f.Create())
                 .Returns(tokenValidationParameters);
 
-            var authOptions = new AuthOptions
-            {
-                AccessDeniedPath = "Home/AccessDenied",
-            };
+            authOptions = authOptions ?? new AuthOptions();
+            authOptions.AccessDeniedPath = "Home/AccessDenied";
 
             if (disableJwtCookie) authOptions.AddJwtCookie = false;
             if (addToSession) authOptions.AddJwtToSession = true;
@@ -192,7 +208,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
             var tokenController = new TokenController(Options.Create(authOptions),
                 jwtTokenValidator.Object,
                 _logger,
-                Mock.Of<ITokenRefreshAgent>(),
+                Mock.Of<ITokenRefreshHandler>(),
                 tokenValidationParametersFactory.Object);
 
             var mockHttpContext = new Mock<HttpContext>();

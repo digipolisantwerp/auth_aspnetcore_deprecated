@@ -61,7 +61,7 @@ To add the toolbox to a project, you add the package to the csproj project file:
 
 ```xml
   <ItemGroup>
-    <PackageReference Include="Digipolis.Auth" Version="2.2.0" />
+    <PackageReference Include="Digipolis.Auth" Version="2.3.0" />
   </ItemGroup>
 ``` 
 
@@ -69,7 +69,7 @@ or if your project still works with project.json :
 
 ``` json 
 "dependencies": {
-    "Digipolis.Auth":  "2.2.0"
+    "Digipolis.Auth":  "2.3.0"
  }
 ```
 
@@ -189,6 +189,7 @@ UseDotnetKeystore | Set to true to use a shared (external) dataprotection key st
 DotnetKeystore | Connection string for the shared dataprotection key store.| 
 AddJwtCookie | Set to true to add the jwt token in a cookie. | True
 AddJwtToSession | Set to true to add the jwt token to the Http Session. | False
+CookieAuthLifeTime | CookieAuth authentication ticket life time. | 480 (8 hours)
 
 
 ### Additional claims
@@ -342,11 +343,15 @@ When calling the endpoint using a GET request, the current token must be passed 
 
 GET auth/token/refresh?token=xxxxx
 
+When the jwt token is stored in session storage (AddJwtToSession = true) it is possible to call the token refresh endpoint without parameters. In this case the token from the session storage will be refreshed when about to expire.
+
 ### Automatic token refresh
 
 When using the **CookieAuth** scheme it is possible to enable automatic token refresh.
 When enabled, the middleware will check if the token is about to expire and refresh the token when the expiration time is within a certain timespan.
 That timespan is 5 minutes by default but can be modified by changing the value of the **TokenRefreshTime** options value.
+
+Please note that the middleware is only running when a call is executed by the client. This means that if no call is executed the token still can expire and cannot be refreshed anymore. This automatic token refresh feature can be seen as a sliding expiration behaviour.
 
 Automatic token refresh is disabled by default. To enable it, set the **AutomaticTokenRefresh** options value to true.
 

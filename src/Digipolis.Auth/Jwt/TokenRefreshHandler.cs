@@ -37,7 +37,7 @@ namespace Digipolis.Auth.Jwt
 
             if (jwt.ValidTo < DateTime.UtcNow.AddMinutes(_authOptions.TokenRefreshTime))
             {
-                if (jwt.Audiences.FirstOrDefault() == _authOptions.JwtAudience)
+                if (jwt.Audiences.FirstOrDefault()?.StartsWith(_authOptions.JwtAudience) == true)
                 {
                     _logger.LogDebug($"Jwt refreshed, token: {token}");
                     return _tokenRefreshAgent.RefreshTokenAsync(token);

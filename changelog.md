@@ -1,5 +1,15 @@
 # Auth Toolbox
 
+## 2.3.0
+
+- AspNet CookieAuth authentication ticket lifetime configurable through options
+- Add querystring to return url on redirect
+- Token refresh when using jwt in session
+
+## 2.2.1
+
+- Clear the authentication cookie on redirect to login.
+
 ## 2.2.0
 
 - Return http status codes instead of redirects when request is XMLHttpRequest or call to /api route with CookieAuth 
