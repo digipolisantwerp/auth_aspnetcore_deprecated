@@ -1,5 +1,9 @@
 # Auth Toolbox
 
+## 2.4.0
+
+- Adding the support for jwt tokens generated using an application user (X-Credential-Username claim)
+
 ## 2.3.0
 
 - AspNet CookieAuth authentication ticket lifetime configurable through options
