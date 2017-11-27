@@ -143,5 +143,11 @@
         /// The path to redirect when the access is denied.
         /// </summary>
         public string AccessDeniedPath { get; set; }
+
+        /// <summary>
+        /// When enabled the permissions of the consumer application will be used when no user is authenticated.
+        /// </summary>
+        public bool EnableServiceAccountAuthorization { get; set; } = false;
+
     }
 }

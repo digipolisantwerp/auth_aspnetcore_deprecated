@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 
 namespace Digipolis.Auth.Jwt
 {
@@ -13,10 +15,10 @@ namespace Digipolis.Auth.Jwt
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IJwtSigningKeyResolver _jwtSigningKeyProvider;
 
-        public TokenValidationParametersFactory(IOptions<AuthOptions> authOptions, 
+        public TokenValidationParametersFactory(IOptions<AuthOptions> authOptions,
             IJwtSigningKeyResolver jwtSigningKeyProvider,
             IOptions<DevPermissionsOptions> devPermissionsOptions,
-            IHostingEnvironment  hostingEnvironment)
+            IHostingEnvironment hostingEnvironment)
         {
             if (authOptions == null) throw new ArgumentNullException(nameof(authOptions), $"{nameof(authOptions)} cannot be null");
             if (jwtSigningKeyProvider == null) throw new ArgumentNullException(nameof(jwtSigningKeyProvider), $"{nameof(jwtSigningKeyProvider)} cannot be null");
@@ -37,14 +39,29 @@ namespace Digipolis.Auth.Jwt
                 ValidAudience = _authOptions.JwtAudience,
                 ValidateIssuer = false,
                 ValidIssuer = _authOptions.JwtIssuer,
-                ValidateLifetime = true,
+                ValidateLifetime = ShouldValidateLifetime(),
                 RequireExpirationTime = false,
-                NameClaimType = "sub",
                 RequireSignedTokens = ShouldRequireSignedTokens(),
                 IssuerSigningKeyResolver = _jwtSigningKeyProvider.IssuerSigningKeyResolver,
+                NameClaimTypeRetriever = NameClaimTypeRetriever
             };
-            
+
             return tokenValidationParameters;
+        }
+
+        internal string NameClaimTypeRetriever(SecurityToken token, string y)
+        {
+            if (_authOptions.EnableServiceAccountAuthorization && token is JwtSecurityToken)
+            {
+                var jwtToken = (JwtSecurityToken)token;
+                var subClaim = jwtToken.Claims?.FirstOrDefault(x => x.Type == Claims.Sub)?.Value;
+                if (String.IsNullOrWhiteSpace(subClaim))
+                {
+                    return Claims.XConsumerUsername;
+                }
+            }
+
+            return Claims.Sub;
         }
 
         private bool ShouldRequireSignedTokens()
@@ -57,6 +74,18 @@ namespace Digipolis.Auth.Jwt
             }
 
             return requireSignedTokens;
+        }
+
+        private bool ShouldValidateLifetime()
+        {
+            var validateLifetime = true;
+
+            if (_hostingEnvironment.IsEnvironment(_devPermissionsOptions.Environment) && _devPermissionsOptions.ValidateTokenLifetime == false)
+            {
+                validateLifetime = false;
+            }
+
+            return validateLifetime;
         }
     }
 }
