@@ -163,6 +163,7 @@ JwtSigningKeyCacheDuration | The duration in minutes the Jwt signing key is cach
 TokenRefreshRoute | The route used for the token refresh endpoint.| "auth/token/refresh"
 PermissionsRoute | The route used for the permissions endpoint.| "auth/user/permissions"
 
+
 Options used for JwtHeaderAuth
 
 Option              | Description                                                | Default
@@ -430,12 +431,15 @@ This way it is not needed to set up the permissions in the permissions' manageme
 In order to use the development permissions the config file must have a section **DevPermissions** with the **UseDevPermissions** property set to **true**. 
 This will only work when the application is running in **Development** environment or in the environment specified by the **Environment** property of the **DevPermissionsOptions**
 
+In the **Development** environment the token lifetimevalidation can be disabled by setting  **ValidateTokenLifetime** to false. This enables easy testing without having to refresh the token.
+
 In the **DevPermissions** section of the config file you can set the permissions. These will be added for every user that logs in to the application.
 
 ``` json
     "DevPermissions": {
 		"Environment": "Testing",
         "UseDevPermissions": true,
+        "ValidateTokenLifetime": false,
         "Permissions": [
             "login-app",
             "permission-125",
@@ -523,7 +527,7 @@ If the user us authenticated but the authorization failed due to missing permiss
  
 #### Structure
 
- Here is an example of a Jwt (without signature) after base64 decoding:
+ Here is an example of a Jwt of an **authenticated user** (without signature) after base64 decoding:
  
  ``` json
 {
@@ -567,5 +571,27 @@ This is done through a call to an endpoint on the issuer service. The url from t
 
 The signing key can also be cached. The duration of the cache can be set using the **JwtSigningKeyCacheDuration** property in configuration. The default is 1440 minutes (24 hours). Use 0 to disable the cache.
 
+#### Using serviceaccount permissions
 
+When using app-to-app communication without authentication of a user (e.g.event processing), the permissions are retrieved using the applicationname. 
+The example below shows a JWT token without user authentication. The permissions are assigned to the serviceaccounts for **myapplicationname**.
 
+ ``` json
+{
+  "nbf": 1508506044,
+  "X-Credential-Username": "none",
+  "X-Consumer-Groups": "x.x.v1, x.x.v1, x.x.v1, x.x.v1",
+  "iss": "https://...",
+  "aud": "xxx",
+  "X-JWT-Issuer": "https://...",
+  "X-Consumer-Username": "int-x.myapplicationname.v1",
+  "X-Consumer-Custom-ID": "int-x.myapplicationname.v1",
+  "X-Authenticated-Userid": "none",
+  "X-Authenticated-Scope": "none",
+  "X-Host-Override": "none",
+  "iat": 1508506344,
+  "jti": "0ce77365c7c8421984317403271f51e5",
+  "X-Consumer-ID": "494964f6-0c7a-4d37-b131-6442ad7685ae",
+  "exp": 1508722344
+}
+```

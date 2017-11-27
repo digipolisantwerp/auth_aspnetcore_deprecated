@@ -1,5 +1,9 @@
 # Auth Toolbox
 
+## 2.4.0
+- Added option to disable token lifetimevalidation to enable easier testing.
+- Added support for serviceaccount permissions
+
 ## 2.3.0
 
 - AspNet CookieAuth authentication ticket lifetime configurable through options
