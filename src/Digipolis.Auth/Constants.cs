@@ -34,6 +34,7 @@
         public const string PermissionsType = "permissions";
         public const string Sub = "sub";
         public const string Name = "name";
+        public const string XConsumerUsername = "X-Consumer-Username";
     };
 
     internal static class HeaderKeys

@@ -13,5 +13,6 @@ namespace Digipolis.Auth.Options
         public bool RequireSignedTokens { get; set; } = true;
         public string Environment { get; set; } = "";
         public List<string> Permissions { get; set; }
+        public bool ValidateTokenLifetime { get; set; } = true;
     }
 }
