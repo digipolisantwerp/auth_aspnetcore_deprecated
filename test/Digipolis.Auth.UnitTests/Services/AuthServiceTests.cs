@@ -1,4 +1,5 @@
 ﻿using Digipolis.Auth.Jwt;
+using Digipolis.Auth.Options;
 using Digipolis.Auth.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Authentication;
@@ -48,7 +49,7 @@ namespace Digipolis.Auth.UnitTests.Services
         }
 
         [Fact]
-        public void GetsUserToken()
+        public void GetsUserTokenFromSession()
         {
             var user = new ClaimsPrincipal();
             var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
@@ -62,7 +63,40 @@ namespace Digipolis.Auth.UnitTests.Services
             var mockHttpContext = new Mock<HttpContext>();
             mockHttpContext.SetupGet(c => c.Session).Returns(mockSession.Object);
             mockHttpContextAccessor.SetupGet(c => c.HttpContext).Returns(mockHttpContext.Object);
-            var authService = new AuthService(mockHttpContextAccessor.Object, Mock.Of<ITokenRefreshAgent>(), Mock.Of<IUrlHelperFactory>());
+            var mockAuthOptions = new Mock<AuthOptions>();
+            mockAuthOptions.Setup(o => o.JwtTokenSource).Returns("session");
+            var mockTokenRefreshAgent = new Mock<ITokenRefreshAgent>();
+            mockTokenRefreshAgent.SetupGet(t => t.AuthOptions).Returns(mockAuthOptions.Object);
+            var authService = new AuthService(mockHttpContextAccessor.Object, mockTokenRefreshAgent.Object, Mock.Of<IUrlHelperFactory>());
+
+            var returnedUserToken = authService.UserToken;
+
+            Assert.Equal(userToken, returnedUserToken);
+        }
+
+        [Fact]
+        public void GetsUserTokenFromHeader()
+        {
+            var user = new ClaimsPrincipal();
+            var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
+            mockHttpContextAccessor.SetupGet(m => m.HttpContext.User)
+                .Returns(user);
+            var mockRequest = new Mock<HttpRequest>();
+            var userToken = "user token";
+            var userTokenBytes = Encoding.UTF8.GetBytes(userToken);
+            var mockHeaderDictionary = new Mock<IHeaderDictionary>();
+            var userTokenHeader = new Microsoft.Extensions.Primitives.StringValues("Bearer " + userToken);
+            mockHeaderDictionary.SetupGet(d => d["Authorization"]).Returns(userTokenHeader);
+            mockRequest.SetupGet(s => s.Headers).Returns(mockHeaderDictionary.Object);
+
+            var mockHttpContext = new Mock<HttpContext>();
+            mockHttpContext.SetupGet(c => c.Request).Returns(mockRequest.Object);
+            mockHttpContextAccessor.SetupGet(c => c.HttpContext).Returns(mockHttpContext.Object);
+            var mockAuthOptions = new Mock<AuthOptions>();
+            mockAuthOptions.SetupGet(o => o.JwtTokenSource).Returns("header");
+            var mockTokenRefreshAgent = new Mock<ITokenRefreshAgent>();
+            mockTokenRefreshAgent.SetupGet(t => t.AuthOptions).Returns(mockAuthOptions.Object);
+            var authService = new AuthService(mockHttpContextAccessor.Object, mockTokenRefreshAgent.Object, Mock.Of<IUrlHelperFactory>());
 
             var returnedUserToken = authService.UserToken;
 

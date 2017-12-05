@@ -17,6 +17,11 @@ namespace Digipolis.Auth.Jwt
 
         private readonly ILogger<TokenRefreshAgent> _logger;
 
+        public AuthOptions AuthOptions { get {
+                return _authOptions;
+            }
+        }
+
         public TokenRefreshAgent(IOptions<AuthOptions> options, ILogger<TokenRefreshAgent> logger, HttpMessageHandler handler)
         {
             _authOptions = options.Value;

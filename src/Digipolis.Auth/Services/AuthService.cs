@@ -39,7 +39,15 @@ namespace Digipolis.Auth.Services
         {
             get
             {
-                return _httpContextAccessor.HttpContext.Session.GetString("auth-jwt");
+                if (_tokenRefreshAgent.AuthOptions.JwtTokenSource == "session")
+                {
+                    return _httpContextAccessor.HttpContext.Session.GetString("auth-jwt");
+                }
+                else if (_tokenRefreshAgent.AuthOptions.JwtTokenSource == "header")
+                {
+                    return _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Substring(7);
+                }
+                throw new FormatException("AuthOption JwtTokenSource not in correct format.");
             }
         }
 
