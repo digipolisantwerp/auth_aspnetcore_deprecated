@@ -50,7 +50,7 @@ namespace Digipolis.Auth.UnitTests.Services
         }
 
         [Fact]
-        public void GetsUserTokenFromSession()
+        public void GetsUserTokenFromSessionWithDefaultOption()
         {
             var user = new ClaimsPrincipal();
             var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
@@ -64,10 +64,9 @@ namespace Digipolis.Auth.UnitTests.Services
             var mockHttpContext = new Mock<HttpContext>();
             mockHttpContext.SetupGet(c => c.Session).Returns(mockSession.Object);
             mockHttpContextAccessor.SetupGet(c => c.HttpContext).Returns(mockHttpContext.Object);
-            var mockAuthOptions = new Mock<IOptions<AuthOptions>>();
-            mockAuthOptions.Setup(o => o.Value.JwtTokenSource).Returns("session");
+            var authOptions = new AuthOptions();
             var mockTokenRefreshAgent = new Mock<ITokenRefreshAgent>();
-            var authService = new AuthService(mockHttpContextAccessor.Object, mockTokenRefreshAgent.Object, Mock.Of<IUrlHelperFactory>(), mockAuthOptions.Object);
+            var authService = new AuthService(mockHttpContextAccessor.Object, mockTokenRefreshAgent.Object, Mock.Of<IUrlHelperFactory>(), Options.Create(authOptions));
 
             var returnedUserToken = authService.UserToken;
 
@@ -75,7 +74,31 @@ namespace Digipolis.Auth.UnitTests.Services
         }
 
         [Fact]
-        public void GetsUserTokenFromHeader()
+        public void GetsUserTokenFromSessionWithJwtTokenSourceSetToSession()
+        {
+            var user = new ClaimsPrincipal();
+            var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
+            mockHttpContextAccessor.SetupGet(m => m.HttpContext.User)
+                .Returns(user);
+            var mockSession = new Mock<ISession>();
+            var userToken = "user token";
+            var userTokenBytes = Encoding.UTF8.GetBytes(userToken);
+            mockSession.Setup(s => s.TryGetValue("auth-jwt", out userTokenBytes)).Returns(true);
+
+            var mockHttpContext = new Mock<HttpContext>();
+            mockHttpContext.SetupGet(c => c.Session).Returns(mockSession.Object);
+            mockHttpContextAccessor.SetupGet(c => c.HttpContext).Returns(mockHttpContext.Object);
+            var authOptions = new AuthOptions { JwtTokenSource = "session" };
+            var mockTokenRefreshAgent = new Mock<ITokenRefreshAgent>();
+            var authService = new AuthService(mockHttpContextAccessor.Object, mockTokenRefreshAgent.Object, Mock.Of<IUrlHelperFactory>(), Options.Create(authOptions));
+
+            var returnedUserToken = authService.UserToken;
+
+            Assert.Equal(userToken, returnedUserToken);
+        }
+
+        [Fact]
+        public void GetsUserTokenFromHeaderWithJwtTokenSourceSetToHeader()
         {
             var user = new ClaimsPrincipal();
             var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
@@ -92,10 +115,9 @@ namespace Digipolis.Auth.UnitTests.Services
             var mockHttpContext = new Mock<HttpContext>();
             mockHttpContext.SetupGet(c => c.Request).Returns(mockRequest.Object);
             mockHttpContextAccessor.SetupGet(c => c.HttpContext).Returns(mockHttpContext.Object);
-            var mockAuthOptions = new Mock<IOptions<AuthOptions>>();
-            mockAuthOptions.Setup(o => o.Value.JwtTokenSource).Returns("header");
+            var authOptions = new AuthOptions { JwtTokenSource = "header" };
             var mockTokenRefreshAgent = new Mock<ITokenRefreshAgent>();
-            var authService = new AuthService(mockHttpContextAccessor.Object, mockTokenRefreshAgent.Object, Mock.Of<IUrlHelperFactory>(), mockAuthOptions.Object);
+            var authService = new AuthService(mockHttpContextAccessor.Object, mockTokenRefreshAgent.Object, Mock.Of<IUrlHelperFactory>(), Options.Create(authOptions));
 
             var returnedUserToken = authService.UserToken;
 
