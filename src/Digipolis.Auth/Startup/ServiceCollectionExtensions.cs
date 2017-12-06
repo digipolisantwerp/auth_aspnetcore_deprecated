@@ -164,6 +164,7 @@ namespace Digipolis.Auth
         private static void RegisterServices(IServiceCollection services, DevPermissionsOptions devPermissionsOptions)
         {
             services.AddMemoryCache();
+
             services.AddSingleton<IAuthorizationHandler, ConventionBasedAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, CustomBasedAuthorizationHandler>();
             services.AddSingleton<IRequiredPermissionsResolver, RequiredPermissionsResolver>();
@@ -172,16 +173,17 @@ namespace Digipolis.Auth
             services.AddSingleton<ISecurityTokenValidator, JwtSecurityTokenHandler>();
             services.AddSingleton<ITokenRefreshAgent, TokenRefreshAgent>();
             services.AddSingleton<ITokenRefreshHandler, TokenRefreshHandler>();
-            services.AddSingleton<IAuthService, AuthService>();
             services.AddSingleton<ITokenValidationParametersFactory, TokenValidationParametersFactory>();
             services.AddSingleton<JwtBearerOptionsFactory>();
             services.AddSingleton<CookieOptionsFactory>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.TryAddSingleton<HttpMessageHandler, HttpClientHandler>();
+            services.TryAddSingleton<IClaimsTransformation, PermissionsClaimsTransformer>();
+
             services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, AuthActionsOptionsSetup>());
 
-            services.TryAddSingleton<IClaimsTransformation, PermissionsClaimsTransformer>();
+            services.AddScoped<IAuthService, AuthService>();
 
             if (EnvironmentHelper.IsDevelopmentOrRequiredEnvironment(services, devPermissionsOptions.Environment) && devPermissionsOptions.UseDevPermissions)
             {

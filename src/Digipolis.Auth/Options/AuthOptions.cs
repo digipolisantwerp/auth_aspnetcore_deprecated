@@ -84,6 +84,14 @@
         public bool AddJwtToSession { get; set; }
 
         /// <summary>
+        /// Sets the source for the UserToken property in the AuthService. 
+        /// Set to "session" if jwt token source should be the Http Session (requires Sessions to be enabled and configured).
+        /// Set to "header" if jwt token source should be the Http Authentication header (requires that the header is set by the requesting party).
+        /// Default = session;
+        /// </summary>
+        public string JwtTokenSource { get; set; } = AuthOptionsDefaults.JwtTokenSource;
+
+        /// <summary>
         /// The url for the Api Engine authentication endpoint.
         /// </summary>
         public string ApiAuthUrl { get; set; }

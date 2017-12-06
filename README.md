@@ -194,6 +194,7 @@ DotnetKeystore | Connection string for the shared dataprotection key store.|
 AddJwtCookie | Set to true to add the jwt token in a cookie. | True
 AddJwtToSession | Set to true to add the jwt token to the Http Session. | False
 CookieAuthLifeTime | CookieAuth authentication ticket life time. | 480 (8 hours)
+JwtTokenSource | Sets the source for the UserToken property in the AuthService. Set to "session" if jwt token source should be the Http Session (requires Sessions to be enabled and configured). Set to "header" if jwt token source should be the Http Authentication header (requires that the header is set by the requesting party). | "session"
 
 
 ### Additional claims
