@@ -7,7 +7,7 @@ using Digipolis.Auth.PDP;
 
 namespace Digipolis.Auth.Controllers
 {
-    [Authorize(ActiveAuthenticationSchemes = AuthSchemes.JwtHeaderAuth)]
+    [Authorize(AuthenticationSchemes = AuthSchemes.JwtHeaderAuth)]
     public class PermissionsController : Controller
     {
         private readonly AuthOptions _authOptions;

@@ -1,5 +1,8 @@
 # Auth Toolbox
 
+## 3.0.0-beta1
+- Upgrade to ASP.NET Core 2.0
+
 ## 2.4.0
 - Added option to disable token lifetimevalidation to enable easier testing.
 - Added support for serviceaccount permissions

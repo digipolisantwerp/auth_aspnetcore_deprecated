@@ -1,8 +1,8 @@
 ﻿using Digipolis.Auth.Controllers;
 using Digipolis.Auth.Jwt;
 using Digipolis.Auth.Options;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Routing;
@@ -22,7 +22,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
         private TestLogger<TokenController> _logger = TestLogger<TokenController>.CreateLogger();
         private string _jwtToken = "token";
         private string _redirectUrl = "redirecturl";
-        private Mock<AuthenticationManager> _mockAuthenticationManager;
+        private Mock<IAuthenticationService> _mockAuthenticationService;
         private Mock<IResponseCookies> _mockCookies;
         private Mock<ISession> _mockSession;
         private ClaimsPrincipal _claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(Claims.Name, "userid"), new Claim(ClaimTypes.Name, "userid") }, "Bearer"));
@@ -34,7 +34,8 @@ namespace Digipolis.Auth.UnitTests.Jwt
                 Mock.Of<ISecurityTokenValidator>(),
                 _logger,
                 Mock.Of<ITokenRefreshHandler>(),
-                Mock.Of<ITokenValidationParametersFactory>()));
+                Mock.Of<ITokenValidationParametersFactory>(),
+                Mock.Of<IAuthenticationService>()));
         }
 
         [Fact]
@@ -44,7 +45,8 @@ namespace Digipolis.Auth.UnitTests.Jwt
                 null,
                 _logger,
                 Mock.Of<ITokenRefreshHandler>(),
-                Mock.Of<ITokenValidationParametersFactory>()));
+                Mock.Of<ITokenValidationParametersFactory>(),
+                Mock.Of<IAuthenticationService>()));
     }
 
         [Fact]
@@ -54,7 +56,8 @@ namespace Digipolis.Auth.UnitTests.Jwt
                 Mock.Of<ISecurityTokenValidator>(),
                 null,
                 Mock.Of<ITokenRefreshHandler>(),
-                Mock.Of<ITokenValidationParametersFactory>()));
+                Mock.Of<ITokenValidationParametersFactory>(),
+                Mock.Of<IAuthenticationService>()));
         }
 
         [Fact]
@@ -64,7 +67,8 @@ namespace Digipolis.Auth.UnitTests.Jwt
                 Mock.Of<ISecurityTokenValidator>(),
                 _logger,
                null,
-                Mock.Of<ITokenValidationParametersFactory>()));
+                Mock.Of<ITokenValidationParametersFactory>(),
+                Mock.Of<IAuthenticationService>()));
         }
 
         [Fact]
@@ -74,6 +78,18 @@ namespace Digipolis.Auth.UnitTests.Jwt
                 Mock.Of<ISecurityTokenValidator>(),
                 null,
                 Mock.Of<ITokenRefreshHandler>(),
+                null,
+                Mock.Of<IAuthenticationService>()));
+        }
+
+        [Fact]
+        public void ThrowsExceptionIfAuthenticationServiceIsNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => new TokenController(Options.Create(new AuthOptions()),
+                Mock.Of<ISecurityTokenValidator>(),
+                null,
+                Mock.Of<ITokenRefreshHandler>(),
+                Mock.Of<ITokenValidationParametersFactory>(),
                 null));
         }
 
@@ -87,7 +103,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
             Assert.IsType<RedirectResult>(result);
             Assert.Equal(_redirectUrl, ((RedirectResult)result).Url);
 
-            _mockAuthenticationManager.Verify(a => a.SignInAsync(AuthSchemes.CookieAuth, _claimsPrincipal, It.IsAny<AuthenticationProperties>()));
+            _mockAuthenticationService.Verify(a => a.SignInAsync(It.IsAny<HttpContext>(), AuthSchemes.CookieAuth, _claimsPrincipal, It.IsAny<AuthenticationProperties>()));
             _mockCookies.Verify(c => c.Append("jwt", _jwtToken), Times.Once);
         }
 
@@ -96,7 +112,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
         {
             var tokenController = CreateTokenController(true);
 
-            _mockAuthenticationManager.Setup(m => m.SignInAsync(AuthSchemes.CookieAuth, _claimsPrincipal, It.IsAny<AuthenticationProperties>()))
+            _mockAuthenticationService.Setup(m => m.SignInAsync(It.IsAny<HttpContext>(), AuthSchemes.CookieAuth, _claimsPrincipal, It.IsAny<AuthenticationProperties>()))
                 .Throws<Exception>();
 
             var result = await tokenController.Callback(_redirectUrl, _jwtToken);
@@ -172,7 +188,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
 
             AuthenticationProperties usedAuthenticationProperties = null;
                  
-            _mockAuthenticationManager.Setup(s => s.SignInAsync(AuthSchemes.CookieAuth, It.IsAny<ClaimsPrincipal>(), It.IsAny<AuthenticationProperties>()))
+            _mockAuthenticationService.Setup(s => s.SignInAsync(It.IsAny<HttpContext>(), AuthSchemes.CookieAuth, It.IsAny<ClaimsPrincipal>(), It.IsAny<AuthenticationProperties>()))
                     .Callback<string, ClaimsPrincipal, AuthenticationProperties>((schema, principal, properties) => 
                             usedAuthenticationProperties = properties);
 
@@ -209,11 +225,11 @@ namespace Digipolis.Auth.UnitTests.Jwt
                 jwtTokenValidator.Object,
                 _logger,
                 Mock.Of<ITokenRefreshHandler>(),
-                tokenValidationParametersFactory.Object);
+                tokenValidationParametersFactory.Object,
+                _mockAuthenticationService.Object);
 
             var mockHttpContext = new Mock<HttpContext>();
-            _mockAuthenticationManager = new Mock<AuthenticationManager>();
-            mockHttpContext.SetupGet(c => c.Authentication).Returns(_mockAuthenticationManager.Object);
+            _mockAuthenticationService = new Mock<IAuthenticationService>();
             var mockHttpResponse = new Mock<HttpResponse>();
             mockHttpContext.SetupGet(c => c.Response).Returns(mockHttpResponse.Object);
             _mockSession = new Mock<ISession>();

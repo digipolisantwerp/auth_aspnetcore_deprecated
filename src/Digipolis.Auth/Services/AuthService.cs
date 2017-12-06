@@ -1,4 +1,5 @@
 ﻿using Digipolis.Auth.Jwt;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -13,18 +14,22 @@ namespace Digipolis.Auth.Services
         private IHttpContextAccessor _httpContextAccessor;
         private readonly ITokenRefreshAgent _tokenRefreshAgent;
         private readonly IUrlHelperFactory _urlHelperFactory;
+        private readonly IAuthenticationService _authenticationService;
 
         public AuthService(IHttpContextAccessor httpContextAccessor,
             ITokenRefreshAgent tokenRefreshAgent,
-            IUrlHelperFactory urlHelperFactory)
+            IUrlHelperFactory urlHelperFactory,
+            IAuthenticationService authenticationService)
         {
             if (httpContextAccessor == null) throw new ArgumentNullException($"{nameof(httpContextAccessor)} cannot be null.");
             if (tokenRefreshAgent == null) throw new ArgumentNullException($"{nameof(tokenRefreshAgent)} cannot be null.");
             if (urlHelperFactory == null) throw new ArgumentNullException($"{nameof(urlHelperFactory)} cannot be null.");
+            if (authenticationService == null) throw new ArgumentNullException(nameof(authenticationService), $"{nameof(authenticationService)} cannot be null");
 
             _httpContextAccessor = httpContextAccessor;
             _tokenRefreshAgent = tokenRefreshAgent;
             _urlHelperFactory = urlHelperFactory;
+            _authenticationService = authenticationService;
         }
 
         public ClaimsPrincipal User
@@ -44,8 +49,8 @@ namespace Digipolis.Auth.Services
         }
 
         public async Task<string> LogOutAsync(ControllerContext controllerContext, string redirectController, string redirectAction)
-        { 
-            await _httpContextAccessor.HttpContext.Authentication.SignOutAsync(AuthSchemes.CookieAuth);
+        {
+            await _authenticationService.SignOutAsync(_httpContextAccessor.HttpContext, AuthSchemes.CookieAuth, new AuthenticationProperties());
 
             var urlHelper = _urlHelperFactory.GetUrlHelper(controllerContext);
             var returnUrl = urlHelper.Action(redirectAction, redirectController, null, _httpContextAccessor.HttpContext.Request.Scheme);

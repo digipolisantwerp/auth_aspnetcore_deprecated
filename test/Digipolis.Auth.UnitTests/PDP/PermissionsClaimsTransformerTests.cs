@@ -59,7 +59,7 @@ namespace Digipolis.Auth.UnitTests.PDP
             var transformer = new PermissionsClaimsTransformer(Options.Create(_authOptions), pdpProvider);
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(Claims.Name, _userId), new Claim(ClaimTypes.Name, _userId) }, "Bearer"));
 
-            var result = await transformer.TransformAsync(CreateClaimsTransformationContext(user));
+            var result = await transformer.TransformAsync(user);
 
             Assert.NotNull(result);
             Assert.True(result.HasClaim(Claims.PermissionsType, "permission1"));
@@ -80,7 +80,7 @@ namespace Digipolis.Auth.UnitTests.PDP
             var transformer = new PermissionsClaimsTransformer(Options.Create(_authOptions), pdpProvider);
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(Claims.Name, _userId), new Claim(ClaimTypes.Name, _userId) }, "Bearer"));
 
-            var result = await transformer.TransformAsync(CreateClaimsTransformationContext(user));
+            var result = await transformer.TransformAsync(user);
 
             Assert.NotNull(result);
             Assert.False(result.HasClaim(c => c.Type == Claims.PermissionsType));
@@ -93,16 +93,6 @@ namespace Digipolis.Auth.UnitTests.PDP
                 .ReturnsAsync(pdpResponse);
 
             return mockPdpProvider.Object;
-        }
-
-        private ClaimsTransformationContext CreateClaimsTransformationContext(ClaimsPrincipal user)
-        {
-            var claimsTransformationContext = new ClaimsTransformationContext(Mock.Of<HttpContext>())
-            {
-                Principal = user
-            };
-
-            return claimsTransformationContext;
         }
 
     }

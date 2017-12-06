@@ -1,6 +1,7 @@
 ﻿using Digipolis.Auth.Jwt;
 using Digipolis.Auth.Options;
-using Microsoft.AspNetCore.Http.Authentication;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -9,7 +10,6 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 
 namespace Digipolis.Auth.Controllers
 {
@@ -20,25 +20,28 @@ namespace Digipolis.Auth.Controllers
         private readonly AuthOptions _authOptions;
         private readonly ISecurityTokenValidator _jwtTokenValidator;
         private readonly ITokenValidationParametersFactory _tokenValidationParametersFactory;
+        private readonly IAuthenticationService _authenticationService;
 
         public TokenController(IOptions<AuthOptions> options,
             ISecurityTokenValidator jwtTokenValidator,
             ILogger<TokenController> logger,
             ITokenRefreshHandler tokenRefreshHandler,
-            ITokenValidationParametersFactory tokenValidationParametersFactory)
+            ITokenValidationParametersFactory tokenValidationParametersFactory,
+            IAuthenticationService authenticationService)
         {
             if (options == null) throw new ArgumentNullException(nameof(options), $"{nameof(options)} cannot be null");
             if (jwtTokenValidator == null) throw new ArgumentNullException(nameof(jwtTokenValidator), $"{nameof(jwtTokenValidator)} cannot be null");
             if (logger == null) throw new ArgumentNullException(nameof(logger), $"{nameof(logger    )} cannot be null");
             if (tokenRefreshHandler == null) throw new ArgumentNullException(nameof(tokenRefreshHandler), $"{nameof(tokenRefreshHandler)} cannot be null");
+            if(authenticationService == null) throw new ArgumentNullException(nameof(authenticationService), $"{nameof(authenticationService)} cannot be null");
 
             _authOptions = options.Value;
             _jwtTokenValidator = jwtTokenValidator;
             _logger = logger;
             _tokenRefreshHandler = tokenRefreshHandler;
             _tokenValidationParametersFactory = tokenValidationParametersFactory;
+            _authenticationService = authenticationService;
         }
-
         
         public async Task<IActionResult> Callback(string returnUrl, string jwt)
         {
@@ -46,10 +49,9 @@ namespace Digipolis.Auth.Controllers
 
             try
             {
-                SecurityToken jwtToken;
-                var userPrincipal = _jwtTokenValidator.ValidateToken(jwt, validationParameters, out jwtToken);
+                var userPrincipal = _jwtTokenValidator.ValidateToken(jwt, validationParameters, out SecurityToken jwtToken);
 
-                await HttpContext.Authentication.SignInAsync(AuthSchemes.CookieAuth, userPrincipal,
+                await _authenticationService.SignInAsync(HttpContext, AuthSchemes.CookieAuth, userPrincipal,
                             new AuthenticationProperties
                             {
                                 ExpiresUtc = DateTime.UtcNow.AddMinutes(_authOptions.CookieAuthLifeTime),
@@ -61,7 +63,6 @@ namespace Digipolis.Auth.Controllers
             catch (Exception ex)
             {
                 _logger.LogInformation($"Jwt token validation failed. Exception: {ex.ToString()}");
-
                 return Redirect($"/{_authOptions.AccessDeniedPath}");
             }
 

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace SampleApp.Controllers
 {
-    [AuthorizeWith(ActiveAuthenticationSchemes = AuthSchemes.CookieAuth, Permission = Constants.ApplicationLoginPermission)]
+    [AuthorizeWith(AuthenticationSchemes = AuthSchemes.CookieAuth, Permission = Constants.ApplicationLoginPermission)]
     //[Authorize(Policy = Constants.ApplicationUser)]
     //[Authorize(ActiveAuthenticationSchemes = AuthSchemes.CookieAuth)]
     //[Authorize]

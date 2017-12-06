@@ -61,7 +61,7 @@ To add the toolbox to a project, you add the package to the csproj project file:
 
 ```xml
   <ItemGroup>
-    <PackageReference Include="Digipolis.Auth" Version="2.4.0" />
+    <PackageReference Include="Digipolis.Auth" Version="3.0.0" />
   </ItemGroup>
 ``` 
 
@@ -69,7 +69,7 @@ or if your project still works with project.json :
 
 ``` json 
 "dependencies": {
-    "Digipolis.Auth":  "2.4.0"
+    "Digipolis.Auth":  "3.0.0"
  }
 ```
 
@@ -78,6 +78,9 @@ ALWAYS check the latest version [here](https://github.com/digipolisantwerp/auth_
 In Visual Studio you can also use the NuGet Package Manager to do this.
 
 ## Dependencies
+
+This toolbox targets **netstandard2.0** and can only be used on a platform implementing this standard (for example .NET Core 2.0).
+For .NET Core 1.x projects, use a version 2.x of this toolbox.
 
 The toolbox has a dependency on the IApplicationContext provided by the **Digipolis.ApplicationServices** toolbox that can be found [on github.](https://github.com/digipolisantwerp/application_aspnetcore)
 
@@ -473,28 +476,26 @@ If the user is not authenticated it will result in an empty user principal conta
 
 ### Request flow
 
-![alt text](docs/middleware.png "Flow")
+![alt text](docs/auth_pipeline_toolbox.png "Flow")
 
 The above picture visualizes the request flow and the middleware's in action.
 
-1. JwtBearerAuthentication middleware (only active when the jwtHeaderAuth scheme is anabled) checks if a jwt token is present in the Authorization header  
-	If the token is present, it is validated.
-	If the token is valid, the user is authenticated.  
+1. Authentication middleware
+    Handles authentication for the user, depending on selected schemes.
+	If the cookie is present and valid, the user is authenticated.
+    If the jwt token is presentand valid, the user is authenticated.  
 
-2. CookieAuthentication middleware (only active when the CookieAuth scheme is enabled) checks if a valid user cookie is present  
-	If the cookie is present, the user is authenticated.
-
-3. ClaimsTransformation middleware  
+2. ClaimsTransformation middleware  
 	If a user is authenticated, the permissions of the user are added as claims on the User's identity.
 
-4. If an Authorize... attribute is present on a controller or action, the filter checks the required permission for the action.
+3. If an Authorize... attribute is present on a controller or action, the filter checks the required permission for the action.
 
-5. If the user doesn't have the required permission, the request pipeline is interrupted  
+4. If the user doesn't have the required permission, the request pipeline is interrupted  
 	An http status code 403 is set on the response object.
 
-6. If the user has the requested permission, the action is invoked  
+5. If the user has the requested permission, the action is invoked  
 
-7. CookieAuthentication middleware checks if a 401 or 403 status code is set on the response object  
+6. Authentication middleware checks if a 401 or 403 status code is set on the response object  
 	If it is set and in combination of the authorization schema "CookieAuth" the response is transformed in a redirect response.
 
 ### CookieAuth scheme

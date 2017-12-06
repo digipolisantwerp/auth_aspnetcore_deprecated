@@ -1,7 +1,7 @@
 ﻿using Digipolis.Auth.Jwt;
 using Digipolis.Auth.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Moq;
@@ -18,19 +18,29 @@ namespace Digipolis.Auth.UnitTests.Services
         [Fact]
         public void ThrowsExceptionIfHttpContextAccessorIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new AuthService(null, Mock.Of<ITokenRefreshAgent>(), Mock.Of<IUrlHelperFactory>()));
+            Assert.Throws<ArgumentNullException>(() => new AuthService(null, Mock.Of<ITokenRefreshAgent>(), 
+                Mock.Of<IUrlHelperFactory>(), Mock.Of<IAuthenticationService>()));
         }
 
         [Fact]
         public void ThrowsExceptionIfTokenRefreshAgentIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new AuthService(Mock.Of<IHttpContextAccessor>(), null, Mock.Of<IUrlHelperFactory>()));
+            Assert.Throws<ArgumentNullException>(() => new AuthService(Mock.Of<IHttpContextAccessor>(), null, 
+                Mock.Of<IUrlHelperFactory>(), Mock.Of<IAuthenticationService>()));
         }
 
         [Fact]
         public void ThrowsExceptionIfUrlHelperFactoryIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new AuthService(Mock.Of<IHttpContextAccessor>(), Mock.Of<ITokenRefreshAgent>(), null));
+            Assert.Throws<ArgumentNullException>(() => new AuthService(Mock.Of<IHttpContextAccessor>(), Mock.Of<ITokenRefreshAgent>(), 
+                null, Mock.Of<IAuthenticationService>()));
+        }
+
+        [Fact]
+        public void ThrowsExceptionIfAuthenticationServiceIsNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => new AuthService(Mock.Of<IHttpContextAccessor>(), Mock.Of<ITokenRefreshAgent>(),
+                Mock.Of<IUrlHelperFactory>(), null));
         }
 
         [Fact]
@@ -40,7 +50,7 @@ namespace Digipolis.Auth.UnitTests.Services
             var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
             mockHttpContextAccessor.SetupGet(m => m.HttpContext.User)
                 .Returns(user);
-            var authService = new AuthService(mockHttpContextAccessor.Object, Mock.Of<ITokenRefreshAgent>(), Mock.Of<IUrlHelperFactory>());
+            var authService = new AuthService(mockHttpContextAccessor.Object, Mock.Of<ITokenRefreshAgent>(), Mock.Of<IUrlHelperFactory>(), Mock.Of<IAuthenticationService>());
 
             var returnedUser = authService.User;
 
@@ -62,7 +72,7 @@ namespace Digipolis.Auth.UnitTests.Services
             var mockHttpContext = new Mock<HttpContext>();
             mockHttpContext.SetupGet(c => c.Session).Returns(mockSession.Object);
             mockHttpContextAccessor.SetupGet(c => c.HttpContext).Returns(mockHttpContext.Object);
-            var authService = new AuthService(mockHttpContextAccessor.Object, Mock.Of<ITokenRefreshAgent>(), Mock.Of<IUrlHelperFactory>());
+            var authService = new AuthService(mockHttpContextAccessor.Object, Mock.Of<ITokenRefreshAgent>(), Mock.Of<IUrlHelperFactory>(), Mock.Of<IAuthenticationService>());
 
             var returnedUserToken = authService.UserToken;
 
@@ -72,20 +82,8 @@ namespace Digipolis.Auth.UnitTests.Services
         [Fact]
         public async Task LogOutAsync()
         {
-            var mockAuthenticationManager = new Mock<AuthenticationManager>();
+            var mockAuthenticationService = new Mock<IAuthenticationService>();
             var mockHttpContext = new Mock<HttpContext>();
-            mockHttpContext.SetupGet(m => m.Authentication)
-                .Returns(mockAuthenticationManager.Object);
-
-            var mockRequest = new Mock<HttpRequest>();
-            mockRequest.SetupGet(m => m.Scheme)
-                .Returns("http");
-
-            mockHttpContext.SetupGet(m => m.Request)
-                .Returns(mockRequest.Object);
-
-            mockHttpContext.SetupGet(m => m.User)
-                .Returns(new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name", "user123") })));
 
             var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
             mockHttpContextAccessor.SetupGet(m => m.HttpContext)
@@ -110,13 +108,13 @@ namespace Digipolis.Auth.UnitTests.Services
             mockUrlHelperFactory.Setup(m => m.GetUrlHelper(It.IsAny<ActionContext>()))
                 .Returns(mockUrlHelper.Object);
 
-            var authService = new AuthService(mockHttpContextAccessor.Object, mockTokenAgent.Object, mockUrlHelperFactory.Object);
+            var authService = new AuthService(mockHttpContextAccessor.Object, mockTokenAgent.Object, mockUrlHelperFactory.Object, mockAuthenticationService.Object);
 
             var controllerContext = new Mock<ControllerContext>();
 
             var result = await authService.LogOutAsync(new Microsoft.AspNetCore.Mvc.ControllerContext(), "Home", "Index");
 
-            mockAuthenticationManager.Verify(m => m.SignOutAsync(AuthSchemes.CookieAuth), Times.Once);
+            mockAuthenticationService.Verify(m => m.SignOutAsync(mockHttpContext.Object, AuthSchemes.CookieAuth, It.IsAny<AuthenticationProperties>()), Times.Once);
             Assert.Equal("logoutUrl", result);
             Assert.Equal("Home", urlActionContext.Controller);
             Assert.Equal("Index", urlActionContext.Action);

@@ -25,6 +25,8 @@ namespace Digipolis.Auth.UnitTests.Utilities
 
         public object Value { get; set; }
 
+        public long? Size { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public void Dispose()
         {
         }

@@ -1,15 +1,14 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Digipolis.Auth.Options;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Digipolis.Auth.Options;
-using System.Net;
 
 namespace Digipolis.Auth.PDP
 {
-    public class PermissionsClaimsTransformer : IClaimsTransformer
+    public class PermissionsClaimsTransformer : IClaimsTransformation
     {
         private readonly AuthOptions _authOptions;
         private readonly IPolicyDescisionProvider _pdpProvider;
@@ -23,21 +22,21 @@ namespace Digipolis.Auth.PDP
             _pdpProvider = pdpProvider;
         }
 
-        public async Task<ClaimsPrincipal> TransformAsync(ClaimsTransformationContext context)
+        public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
         {
-            if (context.Principal?.Identity?.Name == null || context.Principal?.Identities?.FirstOrDefault()?.HasClaim(c => c.Type == Claims.PermissionsType) == true)
-                return context.Principal;
+            if (principal?.Identity?.Name == null || principal?.Identities?.FirstOrDefault()?.HasClaim(c => c.Type == Claims.PermissionsType) == true)
+                return principal;
 
-            var userId = context.Principal.Identity.Name;
+            var userId = principal.Identity.Name;
 
             var pdpResponse = await _pdpProvider.GetPermissionsAsync(userId, _authOptions.ApplicationName);
 
             pdpResponse?.permissions?.ToList().ForEach(permission =>
             {
-                context.Principal.Identities.First().AddClaim(new Claim(Claims.PermissionsType, permission));
+                principal.Identities.First().AddClaim(new Claim(Claims.PermissionsType, permission));
             });
 
-            return context.Principal;
+            return principal;
         }
     }
 }
