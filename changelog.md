@@ -1,5 +1,8 @@
 # Auth Toolbox
 
+## 2.5.0
+- Added header jwt token read with option JwtTokenSource in AuthService.
+
 ## 2.4.0
 - Added option to disable token lifetimevalidation to enable easier testing.
 - Added support for serviceaccount permissions
