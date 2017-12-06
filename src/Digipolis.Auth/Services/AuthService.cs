@@ -1,7 +1,9 @@
 ﻿using Digipolis.Auth.Jwt;
+using Digipolis.Auth.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.Options;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -13,10 +15,12 @@ namespace Digipolis.Auth.Services
         private IHttpContextAccessor _httpContextAccessor;
         private readonly ITokenRefreshAgent _tokenRefreshAgent;
         private readonly IUrlHelperFactory _urlHelperFactory;
+        private readonly AuthOptions _authOptions;
 
         public AuthService(IHttpContextAccessor httpContextAccessor,
             ITokenRefreshAgent tokenRefreshAgent,
-            IUrlHelperFactory urlHelperFactory)
+            IUrlHelperFactory urlHelperFactory,
+            IOptions<AuthOptions> options)
         {
             if (httpContextAccessor == null) throw new ArgumentNullException($"{nameof(httpContextAccessor)} cannot be null.");
             if (tokenRefreshAgent == null) throw new ArgumentNullException($"{nameof(tokenRefreshAgent)} cannot be null.");
@@ -25,6 +29,7 @@ namespace Digipolis.Auth.Services
             _httpContextAccessor = httpContextAccessor;
             _tokenRefreshAgent = tokenRefreshAgent;
             _urlHelperFactory = urlHelperFactory;
+            _authOptions = options.Value;
         }
 
         public ClaimsPrincipal User
@@ -39,7 +44,15 @@ namespace Digipolis.Auth.Services
         {
             get
             {
-                return _httpContextAccessor.HttpContext.Session.GetString("auth-jwt");
+                if (_authOptions.JwtTokenSource == "session")
+                {
+                    return _httpContextAccessor.HttpContext.Session.GetString("auth-jwt");
+                }
+                else if (_authOptions.JwtTokenSource == "header")
+                {
+                    return _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Substring(7);
+                }
+                throw new FormatException("AuthOption JwtTokenSource not in correct format.");
             }
         }
 

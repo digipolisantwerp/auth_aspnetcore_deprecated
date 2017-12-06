@@ -9,5 +9,6 @@
         public const string TokenRefreshRoute = "auth/token/refresh";
         public const string PermissionsRoute = "auth/user/permissions";
         public const string FrontEndApiRouteIdentifier = "api";
+        public const string JwtTokenSource = "session";
     }
 }
