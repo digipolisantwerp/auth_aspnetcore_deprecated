@@ -176,10 +176,10 @@ namespace Digipolis.Auth
             services.AddSingleton<ITokenValidationParametersFactory, TokenValidationParametersFactory>();
             services.AddSingleton<JwtBearerOptionsFactory>();
             services.AddSingleton<CookieOptionsFactory>();
+            services.AddSingleton<IClaimsTransformation, PermissionsClaimsTransformer>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.TryAddSingleton<HttpMessageHandler, HttpClientHandler>();
-            services.TryAddSingleton<IClaimsTransformation, PermissionsClaimsTransformer>();
 
             services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, AuthActionsOptionsSetup>());
 
