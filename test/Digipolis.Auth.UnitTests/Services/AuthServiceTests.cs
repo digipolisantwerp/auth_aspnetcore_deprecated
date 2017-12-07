@@ -140,9 +140,16 @@ namespace Digipolis.Auth.UnitTests.Services
             var mockAuthenticationService = new Mock<IAuthenticationService>();
             var mockHttpContext = new Mock<HttpContext>();
 
+            var mockRequest = new Mock<HttpRequest>();
+            mockRequest.SetupGet(m => m.Scheme).Returns("http");
+
+            mockHttpContext.SetupGet(m => m.Request).Returns(mockRequest.Object);
+
+            mockHttpContext.SetupGet(m => m.User)
+                .Returns(new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name", "user123") })));
+
             var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-            mockHttpContextAccessor.SetupGet(m => m.HttpContext)
-                .Returns(mockHttpContext.Object);
+            mockHttpContextAccessor.SetupGet(m => m.HttpContext).Returns(mockHttpContext.Object);
 
             var mockTokenAgent = new Mock<ITokenRefreshAgent>();
             mockTokenAgent.Setup(a => a.LogoutTokenAsync("user123", "logoutUrl"))

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using System;
@@ -22,6 +23,7 @@ namespace Digipolis.Auth.UnitTests.Startup
                 mockHostingEnvironment.Setup(h => h.EnvironmentName)
                     .Returns("");
 
+                services.AddSingleton(typeof(ILogger<>), typeof(TestLogger<>));
                 services.AddSingleton<IHostingEnvironment>(mockHostingEnvironment.Object);
 
                 services.AddApplicationServices(setup =>
@@ -66,6 +68,7 @@ namespace Digipolis.Auth.UnitTests.Startup
             mockHostingEnvironment.Setup(h => h.EnvironmentName)
                 .Returns("");
 
+            services.AddSingleton(typeof(ILogger<>), typeof(TestLogger<>));
             services.AddSingleton<IHostingEnvironment>(mockHostingEnvironment.Object);
 
             services.AddApplicationServices(setup =>
@@ -115,6 +118,7 @@ namespace Digipolis.Auth.UnitTests.Startup
             mockHostingEnvironment.Setup(h => h.EnvironmentName)
                 .Returns("");
 
+            services.AddSingleton(typeof(ILogger<>), typeof(TestLogger<>));
             services.AddSingleton<IHostingEnvironment>(mockHostingEnvironment.Object);
 
             services.AddApplicationServices(setup =>
@@ -151,6 +155,7 @@ namespace Digipolis.Auth.UnitTests.Startup
             mockHostingEnvironment.Setup(h => h.EnvironmentName)
                 .Returns("");
 
+            services.AddSingleton(typeof(ILogger<>), typeof(TestLogger<>));
             services.AddSingleton<IHostingEnvironment>(mockHostingEnvironment.Object);
 
             services.AddApplicationServices(setup =>

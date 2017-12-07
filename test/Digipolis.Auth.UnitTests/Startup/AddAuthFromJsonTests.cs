@@ -1,6 +1,7 @@
 ﻿using Digipolis.ApplicationServices;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.IO;
@@ -19,6 +20,7 @@ namespace Digipolis.Auth.UnitTests.Startup
                 mockHostingEnvironment.Setup(h => h.EnvironmentName)
                     .Returns("");
 
+                services.AddSingleton(typeof(ILogger<>), typeof(TestLogger<>));
                 services.AddSingleton<IHostingEnvironment>(mockHostingEnvironment.Object);
 
                 services.AddApplicationServices(setup =>

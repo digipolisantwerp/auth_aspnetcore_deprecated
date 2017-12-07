@@ -4,7 +4,6 @@ using Digipolis.Auth.Options;
 using Digipolis.Auth.PDP;
 using Digipolis.Auth.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -261,7 +260,7 @@ namespace Digipolis.Auth.UnitTests.Startup
         }
 
         [Fact]
-        public void AuthServiceIsRegisteredAsSingleton()
+        public void AuthServiceIsRegisteredAsScoped()
         {
             var services = new ServiceCollection();
 
@@ -272,7 +271,7 @@ namespace Digipolis.Auth.UnitTests.Startup
                                         .ToArray();
 
             Assert.Equal(1, registrations.Count());
-            Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
+            Assert.Equal(ServiceLifetime.Scoped, registrations[0].Lifetime);
         }
 
         [Fact]
@@ -299,6 +298,21 @@ namespace Digipolis.Auth.UnitTests.Startup
 
             var registrations = services.Where(sd => sd.ServiceType == typeof(JwtBearerOptionsFactory) &&
                                                      sd.ImplementationType == typeof(JwtBearerOptionsFactory))
+                                        .ToArray();
+
+            Assert.Equal(1, registrations.Count());
+            Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
+        }
+
+        [Fact]
+        public void CookieOptionsFactoryIsRegisteredAsSingleton()
+        {
+            var services = new ServiceCollection();
+
+            Act(services);
+
+            var registrations = services.Where(sd => sd.ServiceType == typeof(CookieOptionsFactory) &&
+                                                     sd.ImplementationType == typeof(CookieOptionsFactory))
                                         .ToArray();
 
             Assert.Equal(1, registrations.Count());

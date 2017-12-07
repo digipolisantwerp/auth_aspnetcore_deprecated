@@ -2,6 +2,7 @@
 using Digipolis.Auth.Options;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
 using System;
@@ -46,7 +47,10 @@ namespace Digipolis.Auth.UnitTests.Jwt
             var options = new JwtBearerOptions();
             jwtBearerOptionsFactory.Setup(options);
 
-            var context = new AuthenticationFailedContext(null, new AuthenticationScheme("", "", null), options);
+            var mockHandler = Mock.Of<IAuthenticationHandler>();
+            var mockHttpContext = Mock.Of<HttpContext>();
+
+            var context = new AuthenticationFailedContext(mockHttpContext, new AuthenticationScheme("", "", mockHandler.GetType()), options);
             context.Exception = new Exception("exceptiondetail");
 
             await options.Events.AuthenticationFailed(context);
@@ -55,22 +59,5 @@ namespace Digipolis.Auth.UnitTests.Jwt
             Assert.Contains("exceptiondetail", _testLogger.LoggedMessages[0]);
         }
 
-        //[Fact]
-        //public async Task EmptyAuthenticationTicketIsSetWHenAuthenticationFailed()
-        //{
-        //    var tokenValidationParametersFactory = new Mock<ITokenValidationParametersFactory>();
-        //    var jwtBearerOptionsFactory = new JwtBearerOptionsFactory(tokenValidationParametersFactory.Object, _testLogger);
-
-        //    var options = new JwtBearerOptions();
-        //    jwtBearerOptionsFactory.Setup(options);
-
-        //    var context = new AuthenticationFailedContext(null, new AuthenticationScheme("", "", null), options);
-        //    context.Exception = new Exception("exceptiondetail");
-
-        //    await options.Events.AuthenticationFailed(context);
-
-        //    Assert.True(context.HandledResponse);
-        //    Assert.NotNull(context.Ticket);
-        //}
     }
 }   

@@ -189,7 +189,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
             AuthenticationProperties usedAuthenticationProperties = null;
                  
             _mockAuthenticationService.Setup(s => s.SignInAsync(It.IsAny<HttpContext>(), AuthSchemes.CookieAuth, It.IsAny<ClaimsPrincipal>(), It.IsAny<AuthenticationProperties>()))
-                    .Callback<string, ClaimsPrincipal, AuthenticationProperties>((schema, principal, properties) => 
+                    .Callback<HttpContext, string, ClaimsPrincipal, AuthenticationProperties>((context, schema, principal, properties) => 
                             usedAuthenticationProperties = properties);
 
             var result = await tokenController.Callback(_redirectUrl, _jwtToken);
@@ -221,6 +221,8 @@ namespace Digipolis.Auth.UnitTests.Jwt
             if (disableJwtCookie) authOptions.AddJwtCookie = false;
             if (addToSession) authOptions.AddJwtToSession = true;
 
+            _mockAuthenticationService = new Mock<IAuthenticationService>();
+
             var tokenController = new TokenController(Options.Create(authOptions),
                 jwtTokenValidator.Object,
                 _logger,
@@ -229,7 +231,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
                 _mockAuthenticationService.Object);
 
             var mockHttpContext = new Mock<HttpContext>();
-            _mockAuthenticationService = new Mock<IAuthenticationService>();
+            
             var mockHttpResponse = new Mock<HttpResponse>();
             mockHttpContext.SetupGet(c => c.Response).Returns(mockHttpResponse.Object);
             _mockSession = new Mock<ISession>();
