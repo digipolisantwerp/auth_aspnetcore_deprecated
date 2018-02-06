@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <VersionPrefix>3.0.0-beta1</VersionPrefix>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyName>Digipolis.Auth</AssemblyName>
     <PackageId>Digipolis.Auth</PackageId>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
