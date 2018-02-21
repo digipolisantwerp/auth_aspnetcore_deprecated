@@ -1,6 +1,6 @@
 # Auth Toolbox
 
-## 3.0.0-beta1
+## 3.0.0
 - Upgrade to ASP.NET Core 2.0
 
 ## 2.5.0
