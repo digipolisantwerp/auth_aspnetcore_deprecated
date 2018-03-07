@@ -35,6 +35,7 @@
         public const string Sub = "sub";
         public const string Name = "name";
         public const string XConsumerUsername = "X-Consumer-Username";
+        public const string XAuthenticatedUserId = "X-Authenticated-Userid";
     };
 
     internal static class HeaderKeys

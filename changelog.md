@@ -1,5 +1,8 @@
 # Auth Toolbox
 
+## 3.1.0
+- Support for OAuth jwt-up token (userid in X-Authenticated-UserId claim)
+
 ## 3.0.0
 - Upgrade to ASP.NET Core 2.0
 

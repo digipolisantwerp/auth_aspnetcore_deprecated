@@ -51,17 +51,19 @@ namespace Digipolis.Auth.Jwt
 
         internal string NameClaimTypeRetriever(SecurityToken token, string y)
         {
-            if (_authOptions.EnableServiceAccountAuthorization && token is JwtSecurityToken)
+            // user jwt token => sub claim present with value
+            // oauth jwt-up token => No sub claim, X-Authenticated-Userid claim present with value
+            var jwtToken = (JwtSecurityToken)token;
+
+            var userIdentificationClaim = jwtToken.Claims.FirstOrDefault(x => (x.Type == Claims.Sub && !String.IsNullOrWhiteSpace(x.Value) ||
+                                                                              (x.Type == Claims.XAuthenticatedUserId && !String.IsNullOrWhiteSpace(x.Value))));
+
+            if (_authOptions.EnableServiceAccountAuthorization && String.IsNullOrWhiteSpace(userIdentificationClaim?.Value))
             {
-                var jwtToken = (JwtSecurityToken)token;
-                var subClaim = jwtToken.Claims?.FirstOrDefault(x => x.Type == Claims.Sub)?.Value;
-                if (String.IsNullOrWhiteSpace(subClaim))
-                {
-                    return Claims.XConsumerUsername;
-                }
+                return Claims.XConsumerUsername;
             }
 
-            return Claims.Sub;
+            return userIdentificationClaim?.Type ?? Claims.Sub;
         }
 
         private bool ShouldRequireSignedTokens()
