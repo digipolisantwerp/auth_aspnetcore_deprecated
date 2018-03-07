@@ -13,20 +13,20 @@
     "JwtSigningCertificateCacheDuration": 0,
 
     //Api Engine DEV
-    "ApiAuthUrl": "https://api-engine-o.antwerpen.be/API-Engine-auth/v1/login/idp/redirect/proxied",
-    "ApiAuthIdpUrl": "https://identityserver-o.antwerpen.be/samlsso",
-    "ApiAuthSpName": "apiengine",
-    "ApiAuthSpUrl": "https://api-engine-o.antwerpen.be/API-Engine-auth/v1/login/idp/callback",
-    "ApiAuthTokenRefreshUrl": "https://api-engine-o.antwerpen.be/API-Engine-auth/v1/login/idp/token/refresh",
-    "ApiAuthTokenLogoutUrl": "https://api-engine-o.antwerpen.be/API-Engine-auth/v1/login/idp/logout",
+    //"ApiAuthUrl": "https://api-engine-o.antwerpen.be/API-Engine-auth/v1/login/idp/redirect/proxied",
+    //"ApiAuthIdpUrl": "https://identityserver-o.antwerpen.be/samlsso",
+    //"ApiAuthSpName": "apiengine",
+    //"ApiAuthSpUrl": "https://api-engine-o.antwerpen.be/API-Engine-auth/v1/login/idp/callback",
+    //"ApiAuthTokenRefreshUrl": "https://api-engine-o.antwerpen.be/API-Engine-auth/v1/login/idp/token/refresh",
+    //"ApiAuthTokenLogoutUrl": "https://api-engine-o.antwerpen.be/API-Engine-auth/v1/login/idp/logout",
 
     //Api Engine ACC
-    //"ApiAuthUrl": "http://rasu073.rte.antwerpen.local/API-Engine-auth/v1/login/idp/redirect/proxied",
-    //"ApiAuthIdpUrl": "https://identityserver-a.antwerpen.be/samlsso",
-    //"ApiAuthSpName": "apiengine",
-    //"ApiAuthSpUrl": "https://api-engine-a.antwerpen.be/API-Engine-auth/v1/login/idp/callback",
-    //"ApiAuthTokenRefreshUrl": "https://identityserver-a.antwerpen.be/API-Engine-auth/v1/login/idp/token/refresh",
-    //"ApiAuthTokenLogoutUrl": "https://identityserver-a.antwerpen.be/API-Engine-auth/v1/login/idp/logout",
+    "ApiAuthUrl": "https://api-engine-a.antwerpen.be/API-Engine-auth/v1/login/idp/redirect/proxied",
+    "ApiAuthIdpUrl": "https://identityserver-a.antwerpen.be/samlsso",
+    "ApiAuthSpName": "apiengine",
+    "ApiAuthSpUrl": "https://api-engine-a.antwerpen.be/API-Engine-auth/v1/login/idp/callback",
+    "ApiAuthTokenRefreshUrl": "https://api-engine-a.antwerpen.be/API-Engine-auth/v1/login/idp/token/refresh",
+    "ApiAuthTokenLogoutUrl": "https://api-engine-a.antwerpen.be/API-Engine-auth/v1/login/idp/logout",
 
     "TokenRefreshTime": 5,
     "TokenCallbackRoute": "myroute/token",
