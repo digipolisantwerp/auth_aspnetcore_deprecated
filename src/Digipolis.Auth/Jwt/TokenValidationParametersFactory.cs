@@ -55,8 +55,9 @@ namespace Digipolis.Auth.Jwt
             // oauth jwt-up token => No sub claim, X-Authenticated-Userid claim present with value
             var jwtToken = (JwtSecurityToken)token;
 
-            var userIdentificationClaim = jwtToken.Claims.FirstOrDefault(x => (x.Type == Claims.Sub && !String.IsNullOrWhiteSpace(x.Value) ||
-                                                                              (x.Type == Claims.XAuthenticatedUserId && !String.IsNullOrWhiteSpace(x.Value))));
+            const string ignoreValue = "none";
+            var userIdentificationClaim = jwtToken.Claims.FirstOrDefault(x => (x.Type == Claims.Sub && x.Value != ignoreValue ||
+                                                                              (x.Type == Claims.XAuthenticatedUserId && x.Value != ignoreValue)));
 
             if (_authOptions.EnableServiceAccountAuthorization && String.IsNullOrWhiteSpace(userIdentificationClaim?.Value))
             {
