@@ -2,7 +2,6 @@
 {
     public static class AuthOptionsDefaults
     {
-        public const string JwtUserIdClaimType = "sub";
         public const string OptionsFileName = "authconfig.json";
         public const string OptionsFileAuthSection = "Auth";
         public const string TokenCallbackRoute = "auth/token";

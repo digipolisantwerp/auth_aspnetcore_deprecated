@@ -9,7 +9,6 @@
     "DotnetKeystore": "keystoreConnectionString",
     "JwtAudience": "audience",
     "JwtIssuer": "issuer",
-    "JwtUserIdClaimType": "sub",
     "JwtSigningCertificateProviderApikey": "singinKeyProviderApiKey",
     "JwtSigningKeyCacheDuration": 8,
     "JwtValidatorClockSkew": 3,

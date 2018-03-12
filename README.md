@@ -125,8 +125,7 @@ The Auth framework will read the given section of the json file with the followi
     "UseDotnetKeystore": true,
     "DotnetKeystore": "connection string",
     "JwtAudience": "audience",
-    "JwtIssuer": "issuer",
-    "JwtUserIdClaimType": "sub"
+    "JwtIssuer": "issuer"
   }
 }
 ```
@@ -546,6 +545,8 @@ If the user us authenticated but the authorization failed due to missing permiss
   "sub": "jrocket@example.com"
 }
 ```
+
+The toolbox supports two flavors of user token where the user id is present in the **sub** claim or **X-Authenticated-Userid** claim.
 
 In order to validate the token the toolbox performs these checks:
   
