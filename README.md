@@ -22,6 +22,7 @@ The toolbox also provides Authorization attributes that can be used in the contr
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
+- [Versions](#versions)
 - [Installation](#installation)
 - [Dependencies](#dependencies)
 - [Configuration in Startup.ConfigureServices](#configuration-in-startupconfigureservices)
@@ -51,9 +52,18 @@ The toolbox also provides Authorization attributes that can be used in the contr
   - [JwtHeaderAuth scheme](#jwtheaderauth-scheme)
   - [Jwt token](#jwt-token)
     - [Structure](#structure)
+    - [Issuer validation](#issuer-validation)
+    - [Token expiration](#token-expiration)
+    - [Signature validation](#signature-validation)
+    - [Using serviceaccount permissions](#using-serviceaccount-permissions)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+## Versions
+
+The latest version of this package targets **.NET Standard 2.0**.
+
+Use version 2.x if you need a version targetting **.NET Standard 1.6**. The source code of this version is available in [branch 2.x](https://github.com/digipolisantwerp/auth_aspnetcore/tree/2.x) for maintenance reasons.
 
 ## Installation
 
