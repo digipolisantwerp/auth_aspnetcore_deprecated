@@ -1,5 +1,8 @@
 # Auth Toolbox
 
+## 3.2.0
+- Update Digipolis.DataProtection.Postgres to 3.0.0 (.NET Standard 2.0 compatible)
+
 ## 3.1.0
 - Support for OAuth jwt-up token (userid in X-Authenticated-UserId claim)
 

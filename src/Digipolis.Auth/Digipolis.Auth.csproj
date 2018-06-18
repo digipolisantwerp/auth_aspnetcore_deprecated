@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <VersionPrefix>3.1.0</VersionPrefix>
+    <VersionPrefix>3.2.0</VersionPrefix>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Digipolis.Auth</AssemblyName>
     <PackageId>Digipolis.Auth</PackageId>
@@ -23,7 +23,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.0.0" />
-    <PackageReference Include="Digipolis.DataProtection.Postgres" Version="2.0.0" />
+    <PackageReference Include="Digipolis.DataProtection.Postgres" Version="3.0.0" />
     <PackageReference Include="Digipolis.ApplicationServices" Version="2.0.0" />
   </ItemGroup>
 
