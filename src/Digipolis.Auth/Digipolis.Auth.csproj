@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <VersionPrefix>3.2.0</VersionPrefix>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -9,7 +8,6 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.0.0" />
@@ -26,5 +24,4 @@
     <PackageReference Include="Digipolis.DataProtection.Postgres" Version="3.0.0" />
     <PackageReference Include="Digipolis.ApplicationServices" Version="2.0.0" />
   </ItemGroup>
-
 </Project>

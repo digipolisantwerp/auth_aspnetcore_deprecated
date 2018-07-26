@@ -1,6 +1,4 @@
-﻿using Digipolis.Auth.Options;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Authentication;
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -10,15 +8,15 @@ namespace Digipolis.Auth.PDP
 {
     public class PermissionsClaimsTransformer : IClaimsTransformation
     {
-        private readonly AuthOptions _authOptions;
+        private readonly IPermissionApplicationNameProvider _permissionApplicationNameProvider;
         private readonly IPolicyDescisionProvider _pdpProvider;
 
-        public PermissionsClaimsTransformer(IOptions<AuthOptions> authOptions, IPolicyDescisionProvider pdpProvider)
+        public PermissionsClaimsTransformer(IPermissionApplicationNameProvider permissionApplicationNameProvider, IPolicyDescisionProvider pdpProvider)
         {
-            if (authOptions == null || authOptions.Value == null) throw new ArgumentNullException(nameof(authOptions), $"{nameof(authOptions)} cannot be null");
+            if(permissionApplicationNameProvider == null) throw new ArgumentNullException(nameof(permissionApplicationNameProvider), $"{nameof(permissionApplicationNameProvider)} cannot be null");
             if (pdpProvider == null) throw new ArgumentNullException(nameof(pdpProvider), $"{nameof(pdpProvider)} cannot be null");
 
-            _authOptions = authOptions.Value;
+            _permissionApplicationNameProvider = permissionApplicationNameProvider;
             _pdpProvider = pdpProvider;
         }
 
@@ -29,7 +27,7 @@ namespace Digipolis.Auth.PDP
 
             var userId = principal.Identity.Name;
 
-            var pdpResponse = await _pdpProvider.GetPermissionsAsync(userId, _authOptions.ApplicationName);
+            var pdpResponse = await _pdpProvider.GetPermissionsAsync(userId, _permissionApplicationNameProvider.ApplicationName());
 
             pdpResponse?.permissions?.ToList().ForEach(permission =>
             {
