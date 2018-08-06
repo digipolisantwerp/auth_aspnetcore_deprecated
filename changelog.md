@@ -1,5 +1,8 @@
 # Auth Toolbox
 
+## 3.2.1
+- Made it possible to override the default behaviour of retrieving the ApplicationName
+
 ## 3.2.0
 - Update Digipolis.DataProtection.Postgres to 3.0.0 (.NET Standard 2.0 compatible)
 
@@ -28,7 +31,7 @@
 
 ## 2.2.0
 
-- Return http status codes instead of redirects when request is XMLHttpRequest or call to /api route with CookieAuth 
+- Return http status codes instead of redirects when request is XMLHttpRequest or call to /api route with CookieAuth
 
 ## 2.1.0
 

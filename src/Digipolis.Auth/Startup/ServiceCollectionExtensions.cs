@@ -193,6 +193,8 @@ namespace Digipolis.Auth
             {
                 services.AddSingleton<IPolicyDescisionProvider, PolicyDescisionProvider>();
             }
+
+            services.TryAddScoped<IPermissionApplicationNameProvider, DefaultPermissionApplicationNameProvider>();
         }
 
         private static T BuildOptions<T>(IServiceProvider serviceProvider, IServiceCollection services) where T : class, new()

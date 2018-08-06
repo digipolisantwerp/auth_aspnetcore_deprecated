@@ -14,6 +14,7 @@ namespace Digipolis.Auth.UnitTests.PDP
     public class PermissionsClaimsTransformerTests
     {
         private readonly AuthOptions _authOptions;
+        private readonly string ApplicationName;
         private readonly string _userId = "user123";
 
         public PermissionsClaimsTransformerTests()
@@ -22,25 +23,19 @@ namespace Digipolis.Auth.UnitTests.PDP
             {
                 ApplicationName = "APP"
             };
+            ApplicationName = "APPLICATION";
         }
 
         [Fact]
-        public void ThrowsExceptionIfOptionsWrapperIsNull()
+        public void ThrowsExceptionIfpermissionApplicationNameProviderIsNull()
         {
             Assert.Throws<ArgumentNullException>(() => new PermissionsClaimsTransformer(null, Mock.Of<IPolicyDescisionProvider>()));
         }
 
         [Fact]
-        public void ThrowsExceptionIfOptionsAreNull()
-        {
-            Assert.Throws<ArgumentNullException>(() => new PermissionsClaimsTransformer(Options.Create<AuthOptions>(null), 
-                Mock.Of<IPolicyDescisionProvider>()));
-        }
-
-        [Fact]
         public void ThrowsExceptionIfPolicyDescisionProviderIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new PermissionsClaimsTransformer(Options.Create(new AuthOptions()),
+            Assert.Throws<ArgumentNullException>(() => new PermissionsClaimsTransformer(Mock.Of<IPermissionApplicationNameProvider>(),
                null));
         }
 
@@ -54,9 +49,9 @@ namespace Digipolis.Auth.UnitTests.PDP
                 permissions = new List<String>(new string[] { "permission1", "permission2" })
             };
 
-            var pdpProvider = CreateMockPolicyDescisionProvider(pdpResponse);
+            var pdpProvider = CreateMockPolicyDescisionProvider(pdpResponse, ApplicationName);
 
-            var transformer = new PermissionsClaimsTransformer(Options.Create(_authOptions), pdpProvider);
+            var transformer = new PermissionsClaimsTransformer(CreateMockPermissionApplicationNameProvider(ApplicationName), pdpProvider);
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(Claims.Name, _userId), new Claim(ClaimTypes.Name, _userId) }, "Bearer"));
 
             var result = await transformer.TransformAsync(user);
@@ -75,9 +70,9 @@ namespace Digipolis.Auth.UnitTests.PDP
                 userId = _userId,
             };
 
-            var pdpProvider = CreateMockPolicyDescisionProvider(pdpResponse);
+            var pdpProvider = CreateMockPolicyDescisionProvider(pdpResponse, ApplicationName);
 
-            var transformer = new PermissionsClaimsTransformer(Options.Create(_authOptions), pdpProvider);
+            var transformer = new PermissionsClaimsTransformer(CreateMockPermissionApplicationNameProvider(ApplicationName), pdpProvider);
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(Claims.Name, _userId), new Claim(ClaimTypes.Name, _userId) }, "Bearer"));
 
             var result = await transformer.TransformAsync(user);
@@ -86,14 +81,21 @@ namespace Digipolis.Auth.UnitTests.PDP
             Assert.False(result.HasClaim(c => c.Type == Claims.PermissionsType));
         }
 
-        private IPolicyDescisionProvider CreateMockPolicyDescisionProvider(PdpResponse pdpResponse)
+        private IPolicyDescisionProvider CreateMockPolicyDescisionProvider(PdpResponse pdpResponse, string applicationName)
         {
             var mockPdpProvider = new Mock<IPolicyDescisionProvider>();
-            mockPdpProvider.Setup(p => p.GetPermissionsAsync(_userId, _authOptions.ApplicationName))
+            mockPdpProvider.Setup(p => p.GetPermissionsAsync(_userId, applicationName))
                 .ReturnsAsync(pdpResponse);
 
             return mockPdpProvider.Object;
         }
 
+        private IPermissionApplicationNameProvider CreateMockPermissionApplicationNameProvider(string applicationName)
+        {
+            var mock = new Mock<IPermissionApplicationNameProvider>();
+            mock.Setup(m => m.ApplicationName()).Returns(applicationName);
+            
+            return mock.Object;
+        }
     }
 }
