@@ -45,6 +45,7 @@ The toolbox also provides Authorization attributes that can be used in the contr
   - [Jwt token in session](#jwt-token-in-session)
   - [Development permissions](#development-permissions)
   - [Disabling Jwt signature validation for testing purposes](#disabling-jwt-signature-validation-for-testing-purposes)
+  - [Overriding the default application name for retrieving permissions](#overriding-the-default-application-name-for-retrieving-permissions)
 - [How it works](#how-it-works)
   - [Basic auth flow](#basic-auth-flow)
   - [Request flow](#request-flow)
