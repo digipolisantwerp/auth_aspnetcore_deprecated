@@ -95,7 +95,7 @@ namespace Digipolis.Auth.UnitTests.Startup
         }
 
         [Fact]
-        public void PermissionsClaimsTransformerIsRegisteredAsSingleton()
+        public void PermissionsClaimsTransformerIsRegisteredAsScoped()
         {
             var services = new ServiceCollection();
 
@@ -106,7 +106,7 @@ namespace Digipolis.Auth.UnitTests.Startup
                                         .ToArray();
 
             Assert.Equal(1, registrations.Count());
-            Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
+            Assert.Equal(ServiceLifetime.Scoped, registrations[0].Lifetime);
         }
 
         [Fact]

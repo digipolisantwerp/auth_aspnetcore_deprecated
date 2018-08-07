@@ -168,7 +168,7 @@ namespace Digipolis.Auth
             services.AddSingleton<IAuthorizationHandler, ConventionBasedAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, CustomBasedAuthorizationHandler>();
             services.AddSingleton<IRequiredPermissionsResolver, RequiredPermissionsResolver>();
-            services.AddSingleton<PermissionsClaimsTransformer>();
+            services.AddScoped<PermissionsClaimsTransformer>();
             services.AddSingleton<IJwtSigningKeyResolver, JwtSigningKeyResolver>();
             services.AddSingleton<ISecurityTokenValidator, JwtSecurityTokenHandler>();
             services.AddSingleton<ITokenRefreshAgent, TokenRefreshAgent>();
@@ -176,7 +176,7 @@ namespace Digipolis.Auth
             services.AddSingleton<ITokenValidationParametersFactory, TokenValidationParametersFactory>();
             services.AddSingleton<JwtBearerOptionsFactory>();
             services.AddSingleton<CookieOptionsFactory>();
-            services.AddSingleton<IClaimsTransformation, PermissionsClaimsTransformer>();
+            services.AddScoped<IClaimsTransformation, PermissionsClaimsTransformer>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.TryAddSingleton<HttpMessageHandler, HttpClientHandler>();
