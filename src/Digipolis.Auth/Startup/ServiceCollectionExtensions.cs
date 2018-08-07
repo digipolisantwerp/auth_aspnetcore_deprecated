@@ -176,7 +176,7 @@ namespace Digipolis.Auth
             services.AddSingleton<ITokenValidationParametersFactory, TokenValidationParametersFactory>();
             services.AddSingleton<JwtBearerOptionsFactory>();
             services.AddSingleton<CookieOptionsFactory>();
-            services.AddSingleton<IClaimsTransformation, PermissionsClaimsTransformer>();
+            services.AddScoped<IClaimsTransformation, PermissionsClaimsTransformer>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.TryAddSingleton<HttpMessageHandler, HttpClientHandler>();
