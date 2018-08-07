@@ -1,5 +1,8 @@
 # Auth Toolbox
 
+## 3.2.2
+- Fixed the service registration which gave runtime exceptions due to previous change.
+
 ## 3.2.1
 - Made it possible to override the default behaviour of retrieving the ApplicationName
 
