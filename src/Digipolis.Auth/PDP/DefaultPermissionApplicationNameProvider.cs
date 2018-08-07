@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Claims;
 using Digipolis.Auth.Options;
 using Microsoft.Extensions.Options;
 
@@ -14,7 +15,7 @@ namespace Digipolis.Auth.PDP
             _authOptions = authOptions.Value;
         }
         
-        public string ApplicationName()
+        public string ApplicationName(ClaimsPrincipal principal)
         {
             return _authOptions.ApplicationName;
         }

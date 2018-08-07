@@ -1,5 +1,8 @@
 # Auth Toolbox
 
+## 3.2.3
+- added the current principal to the `IIPermissionApplicationNameProvider.ApplicationName(...)` method, so one can use the claims of the current user in the logic.
+
 ## 3.2.2
 - Fixed the service registration which gave runtime exceptions due to previous change.
 

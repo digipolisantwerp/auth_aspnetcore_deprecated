@@ -1,7 +1,9 @@
-﻿namespace Digipolis.Auth.PDP
+﻿using System.Security.Claims;
+
+namespace Digipolis.Auth.PDP
 {
     public interface IPermissionApplicationNameProvider
     {
-        string ApplicationName();
+        string ApplicationName(ClaimsPrincipal principal);
     }
 }
