@@ -1,6 +1,7 @@
 # DEPRECATED
 This is the old SAML 2.0 based toolbox and is not supported anymore. 
 We recommend using the OAuth 2.0 based flow. More info about using OAuth 2.0 can be found  [here](https://github.com/digipolisantwerpdocumentation/authentication).
+
 # Auth Toolbox
 
 The Auth toolbox handles both Authentication and Authorization that can be used in ASP.NET Core Web API and Web MVC Projects.

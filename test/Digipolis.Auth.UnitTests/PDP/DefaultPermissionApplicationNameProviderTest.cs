@@ -1,6 +1,6 @@
-﻿using System;
-using Digipolis.Auth.Options;
+﻿using Digipolis.Auth.Options;
 using Digipolis.Auth.PDP;
+using System;
 using Xunit;
 
 namespace Digipolis.Auth.UnitTests.PDP
@@ -31,7 +31,7 @@ namespace Digipolis.Auth.UnitTests.PDP
             
             var subject = new DefaultPermissionApplicationNameProvider(options);
             
-            Assert.Equal(applicationName, subject.ApplicationName());
+            Assert.Equal(applicationName, subject.ApplicationName(new System.Security.Claims.ClaimsPrincipal()));
         }
     }
 }
