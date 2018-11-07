@@ -1,5 +1,8 @@
 # Auth Toolbox
 
+## 3.2.4
+- change ReadMe and extra logging during token refresh
+
 ## 3.2.3
 - added the current principal to the `IIPermissionApplicationNameProvider.ApplicationName(...)` method, so one can use the claims of the current user in the logic.
 
