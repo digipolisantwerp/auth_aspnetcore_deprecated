@@ -39,8 +39,11 @@ namespace Digipolis.Auth.Jwt
             {
                 if (jwt.Audiences.FirstOrDefault()?.StartsWith(_authOptions.JwtAudience) == true)
                 {
-                    _logger.LogDebug($"Jwt refreshed, token: {token}");
-                    return _tokenRefreshAgent.RefreshTokenAsync(token);
+                    _logger.LogInformation($"Refresh Jwt token: {token}");
+                    var newToken = _tokenRefreshAgent.RefreshTokenAsync(token);
+                    _logger.LogDebug($"Jwt refreshed, new token: {newToken}");
+
+                    return newToken;
                 }
             }
 

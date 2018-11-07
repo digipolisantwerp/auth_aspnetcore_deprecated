@@ -163,6 +163,25 @@ You can also call the AddAuth method, passing in the needed options directly:
     });
 ```
 
+Or via a separate setup action of type Action<AuthOptions>:
+``` csharp
+    services.AddAuth(SetupAuthOptions);
+
+	void SetupAuthOptions(AuthOptions options)
+    {
+        options.ApplicationName = "SAMPLEAPP";
+        options.ApplicationBaseUrl = "https://theappurl.domain";
+        options.EnableCookieAuth = true;
+        options.PdpUrl = "http://pdp.somewhere.com/";
+        options.PdpApiKey = "some api key";
+        options.PdpCacheDuration = 240;
+        options.UseDotnetKeystore = true;
+        options.DotnetKeystore = "connection string";
+        options.JwtAudience = "audience";
+        options.JwtIssuer = "JWTIssuer";
+	};
+```
+
 Following options can be set:
 
 General options:
@@ -372,6 +391,7 @@ That timespan is 5 minutes by default but can be modified by changing the value 
 Please note that the middleware is only running when a call is executed by the client. This means that if no call is executed the token still can expire and cannot be refreshed anymore. This automatic token refresh feature can be seen as a sliding expiration behaviour.
 
 Automatic token refresh is disabled by default. To enable it, set the **AutomaticTokenRefresh** options value to true.
+If a JwtAudience is set in the AuthOptions-configuration, a check occurs during the token refresh to see if the token audience starts with the configured JwtAudience-key.
 
 
 ### Permissions endpoint
