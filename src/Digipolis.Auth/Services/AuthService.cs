@@ -52,7 +52,7 @@ namespace Digipolis.Auth.Services
             {
                 if (_authOptions.JwtTokenSource == "session")
                 {
-                    return _httpContextAccessor.HttpContext.Session.GetString("auth-jwt");
+                    return _httpContextAccessor.HttpContext.Session.GetString(JWTTokenKeys.Session);
                 }
                 else if (_authOptions.JwtTokenSource == "header")
                 {

@@ -42,4 +42,10 @@
     {
         public const string Apikey = "apikey";
     }
+
+    internal static class JWTTokenKeys
+    {
+        public const string Cookie = "jwt";
+        public const string Session = "auth-jwt";
+    }
 }

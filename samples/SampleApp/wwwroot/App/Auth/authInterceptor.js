@@ -18,7 +18,7 @@
             config.headers = config.headers || {};
 
             var jwt = $cookies.get("jwt");
-            //var jwt = $("#jwttoken").val();
+            
             if (jwt) {
                 config.headers.Authorization = 'Bearer ' + jwt;
             }

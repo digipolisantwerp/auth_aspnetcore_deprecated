@@ -1,5 +1,9 @@
 # Auth Toolbox
 
+## 3.2.5
+- use of constants for jwt-token keys (session, cookie keys)
+- add JWT-token to Cookie if AuthOptions "AddJwtCookie"-setting is true, independent of the AuthOptions "AutomaticTokenRefresh"-setting
+
 ## 3.2.4
 - change ReadMe and extra logging during token refresh
 

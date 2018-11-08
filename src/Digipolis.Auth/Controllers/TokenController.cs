@@ -67,10 +67,10 @@ namespace Digipolis.Auth.Controllers
             }
 
             if (_authOptions.AddJwtCookie)
-                HttpContext.Response.Cookies.Append("jwt", jwt);
-
+                HttpContext.Response.Cookies.Append(JWTTokenKeys.Cookie, jwt);
+            
             if (_authOptions.AddJwtToSession)
-                HttpContext.Session.SetString("auth-jwt", jwt);
+                HttpContext.Session.SetString(JWTTokenKeys.Session, jwt);
 
             return RedirectToLocal(returnUrl);
         }
@@ -78,7 +78,7 @@ namespace Digipolis.Auth.Controllers
         public async Task<IActionResult> Refresh(string token)
         {
             if (String.IsNullOrWhiteSpace(token) && _authOptions.AddJwtToSession)
-                token = HttpContext.Session.GetString("auth-jwt");
+                token = HttpContext.Session.GetString(JWTTokenKeys.Session);
 
             if (String.IsNullOrWhiteSpace(token))
             {
@@ -96,8 +96,16 @@ namespace Digipolis.Auth.Controllers
 
             var newToken = await _tokenRefreshHandler.HandleRefreshAsync(token);
 
-            if (newToken != null && _authOptions.AddJwtToSession)
-                HttpContext.Session.SetString("auth-jwt", newToken);
+            if (!string.IsNullOrWhiteSpace(newToken))
+            {
+                if (_authOptions.AddJwtCookie)
+                    HttpContext.Response.Cookies.Append(JWTTokenKeys.Cookie, newToken);
+
+                if (_authOptions.AddJwtToSession)
+                    HttpContext.Session.SetString(JWTTokenKeys.Session, newToken);
+            }
+
+            _logger.LogInformation($"Token refresh succeeded.");
 
             return Ok(newToken);
         }

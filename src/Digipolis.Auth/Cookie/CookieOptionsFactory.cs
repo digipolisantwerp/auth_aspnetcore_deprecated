@@ -30,25 +30,26 @@ namespace Digipolis.Auth
             {
                 OnValidatePrincipal = async context =>
                 {
+                    string token = null;
+                    if (_authOptions.AddJwtCookie)
+                        token = context.Request.Cookies["jwt"];
+
+                    if (_authOptions.AddJwtToSession)
+                        token = context.HttpContext.Session.GetString("auth-jwt");
+
                     if (_authOptions.AutomaticTokenRefresh)
                     {
-                        string token = null;
+                        // set token to newly received token
+                        token = await _tokenRefreshHandler.HandleRefreshAsync(token);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(token))
+                    {
                         if (_authOptions.AddJwtCookie)
-                            token = context.Request.Cookies["jwt"];
+                            context.Response.Cookies.Append("jwt", token);
 
                         if (_authOptions.AddJwtToSession)
-                            token = context.HttpContext.Session.GetString("auth-jwt");
-
-                        var response = await _tokenRefreshHandler.HandleRefreshAsync(token);
-
-                        if (response != null)
-                        {
-                            if (_authOptions.AddJwtCookie)
-                                context.Response.Cookies.Append("jwt", response);
-
-                            if (_authOptions.AddJwtToSession)
-                                context.HttpContext.Session.SetString("auth-jwt", response);
-                        }
+                            context.HttpContext.Session.SetString("auth-jwt", token);
                     }
                 },
 
@@ -82,7 +83,8 @@ namespace Digipolis.Auth
                     }
 
                     context.HttpContext.Response.Cookies.Delete(CookieAuthenticationDefaults.CookiePrefix + AuthSchemes.CookieAuth);
-
+                    context.HttpContext.Response.Cookies.Delete(JWTTokenKeys.Cookie);
+                    
                     return Task.FromResult<object>(null);
                 },
             };

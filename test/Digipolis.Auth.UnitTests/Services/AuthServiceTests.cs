@@ -69,7 +69,7 @@ namespace Digipolis.Auth.UnitTests.Services
             var mockSession = new Mock<ISession>();
             var userToken = "user token";
             var userTokenBytes = Encoding.UTF8.GetBytes(userToken);
-            mockSession.Setup(s => s.TryGetValue("auth-jwt", out userTokenBytes)).Returns(true);
+            mockSession.Setup(s => s.TryGetValue(JWTTokenKeys.Session, out userTokenBytes)).Returns(true);
 
             var mockHttpContext = new Mock<HttpContext>();
             mockHttpContext.SetupGet(c => c.Session).Returns(mockSession.Object);
@@ -93,7 +93,7 @@ namespace Digipolis.Auth.UnitTests.Services
             var mockSession = new Mock<ISession>();
             var userToken = "user token";
             var userTokenBytes = Encoding.UTF8.GetBytes(userToken);
-            mockSession.Setup(s => s.TryGetValue("auth-jwt", out userTokenBytes)).Returns(true);
+            mockSession.Setup(s => s.TryGetValue(JWTTokenKeys.Session, out userTokenBytes)).Returns(true);
 
             var mockHttpContext = new Mock<HttpContext>();
             mockHttpContext.SetupGet(c => c.Session).Returns(mockSession.Object);

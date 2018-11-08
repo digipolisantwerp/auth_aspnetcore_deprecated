@@ -444,8 +444,8 @@ The token will only be set if session state is enabled and configured and if the
 
 ### Jwt token in cookie
 
-When using the **CookieAuth** scheme the jwt token received after login can be added in a cookie witk key "jwt".
-Using the **AddJwtCookie** setting in the options this can be turned on or off. By default it is turned on.
+When using the **CookieAuth** scheme the jwt token received after login can be added in a cookie with key "jwt"
+using the **AddJwtCookie** setting in the options. This can be turned on or off. By default it is turned on.
 If you don't want the jwt token to be sent to the front end (in a cookie) set the option to **false**.
 
 ### Jwt token in session
@@ -454,10 +454,10 @@ When using the **CookieAuth** scheme the jwt token received after login can be a
 Using the **AddJwtToSession** setting in the options this can be turned on or off. By default it is turned on.
 Be sure to enable and configure session state when using this feature.
 
-You can extract the jwt token from the session using the key **"auth-jwt"**
+You can extract the jwt token from the session using the key **"auth-jwt"** (constant JWTTokenKeys.Session)
 
 ``` csharp
-    var token = HttpContext.Session.GetString("auth-jwt");
+    var token = HttpContext.Session.GetString(JWTTokenKeys.Session);
 ```
 
 ### Development permissions

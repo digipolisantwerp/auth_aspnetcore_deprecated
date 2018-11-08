@@ -104,7 +104,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
             Assert.Equal(_redirectUrl, ((RedirectResult)result).Url);
 
             _mockAuthenticationService.Verify(a => a.SignInAsync(It.IsAny<HttpContext>(), AuthSchemes.CookieAuth, _claimsPrincipal, It.IsAny<AuthenticationProperties>()));
-            _mockCookies.Verify(c => c.Append("jwt", _jwtToken), Times.Once);
+            _mockCookies.Verify(c => c.Append(JWTTokenKeys.Cookie, _jwtToken), Times.Once);
         }
 
         [Fact]
@@ -143,7 +143,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
 
             var result = await tokenController.Callback(_redirectUrl, _jwtToken);
 
-            _mockCookies.Verify(c => c.Append("jwt", _jwtToken), Times.Once);
+            _mockCookies.Verify(c => c.Append(JWTTokenKeys.Cookie, _jwtToken), Times.Once);
         }
 
         [Fact]
@@ -153,7 +153,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
 
             var result = await tokenController.Callback(_redirectUrl, _jwtToken);
 
-            _mockCookies.Verify(c => c.Append("jwt", _jwtToken), Times.Never);
+            _mockCookies.Verify(c => c.Append(JWTTokenKeys.Cookie, _jwtToken), Times.Never);
         }
 
         [Fact]
@@ -163,7 +163,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
 
             var result = await tokenController.Callback(_redirectUrl, _jwtToken);
 
-            _mockSession.Verify(s => s.Set("auth-jwt", It.IsAny<byte[]>()), Times.Never);
+            _mockSession.Verify(s => s.Set(JWTTokenKeys.Session, It.IsAny<byte[]>()), Times.Never);
         }
 
         [Fact]
@@ -173,7 +173,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
 
             string addedToken = String.Empty;
 
-            _mockSession.Setup(s => s.Set("auth-jwt", It.IsAny<byte[]>()))
+            _mockSession.Setup(s => s.Set(JWTTokenKeys.Session, It.IsAny<byte[]>()))
                     .Callback<string, byte[]>((key, value) => addedToken = Encoding.UTF8.GetString(value));
 
             var result = await tokenController.Callback(_redirectUrl, _jwtToken);
