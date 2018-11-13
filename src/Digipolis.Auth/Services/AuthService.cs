@@ -50,14 +50,20 @@ namespace Digipolis.Auth.Services
         {
             get
             {
-                if (_authOptions.JwtTokenSource == "session")
+                switch(_authOptions.JwtTokenSource.ToLower())
                 {
-                    return _httpContextAccessor.HttpContext.Session.GetString(JWTTokenKeys.Session);
+                    case JwtTokenSource.Session:
+                        return _httpContextAccessor.HttpContext.Session.GetString(JWTTokenKeys.Session);
+
+                    case JwtTokenSource.Cookie:
+                        return _httpContextAccessor.HttpContext.Request.Cookies[JWTTokenKeys.Cookie];
+
+                    case JwtTokenSource.Header:
+                        return _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Substring(7);
+
+                    default: break;
                 }
-                else if (_authOptions.JwtTokenSource == "header")
-                {
-                    return _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Substring(7);
-                }
+                
                 throw new FormatException("AuthOption JwtTokenSource not in correct format.");
             }
         }

@@ -48,4 +48,11 @@
         public const string Cookie = "jwt";
         public const string Session = "auth-jwt";
     }
+
+    internal static class JwtTokenSource
+    {
+        public const string Cookie = "cookie";
+        public const string Session = "session";
+        public const string Header = "header";
+    }
 }

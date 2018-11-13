@@ -114,6 +114,7 @@ namespace Digipolis.Auth
             var authenticationBuilder = services.AddAuthentication(options =>
             {
                 options.DefaultChallengeScheme = AuthSchemes.CookieAuth;
+                options.DefaultAuthenticateScheme = AuthSchemes.CookieAuth;
             });
 
             if (authOptions.EnableCookieAuth)
