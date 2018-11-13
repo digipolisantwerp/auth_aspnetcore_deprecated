@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Claims;
 using Digipolis.ApplicationServices;
 using Digipolis.Auth.PDP;
 using Microsoft.AspNetCore.Hosting;
@@ -58,7 +59,7 @@ namespace Digipolis.Auth.UnitTests.Startup
             var serviceProvider = serviceCollection.BuildServiceProvider().CreateScope().ServiceProvider;
             var appNameProvider = serviceProvider.GetRequiredService<IPermissionApplicationNameProvider>();
             
-            Assert.Equal(overridenApplicationName, appNameProvider.ApplicationName());
+            Assert.Equal(overridenApplicationName, appNameProvider.ApplicationName(new System.Security.Claims.ClaimsPrincipal()));
         }
         
         [Fact]
@@ -84,7 +85,7 @@ namespace Digipolis.Auth.UnitTests.Startup
             var serviceProvider = serviceCollection.BuildServiceProvider().CreateScope().ServiceProvider;
             var appNameProvider = serviceProvider.GetRequiredService<IPermissionApplicationNameProvider>();
             
-            Assert.Equal(overridenApplicationName, appNameProvider.ApplicationName());
+            Assert.Equal(overridenApplicationName, appNameProvider.ApplicationName(new System.Security.Claims.ClaimsPrincipal()));
         }
     }
 
@@ -97,7 +98,7 @@ namespace Digipolis.Auth.UnitTests.Startup
             _applicationName = applicationName;
         }
         
-        public string ApplicationName()
+        public string ApplicationName(ClaimsPrincipal principal)
         {
             return _applicationName;
         }

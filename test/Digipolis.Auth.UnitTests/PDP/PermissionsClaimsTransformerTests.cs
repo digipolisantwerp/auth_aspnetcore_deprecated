@@ -93,7 +93,7 @@ namespace Digipolis.Auth.UnitTests.PDP
         private IPermissionApplicationNameProvider CreateMockPermissionApplicationNameProvider(string applicationName)
         {
             var mock = new Mock<IPermissionApplicationNameProvider>();
-            mock.Setup(m => m.ApplicationName()).Returns(applicationName);
+            mock.Setup(m => m.ApplicationName(new System.Security.Claims.ClaimsPrincipal())).Returns(applicationName);
             
             return mock.Object;
         }
