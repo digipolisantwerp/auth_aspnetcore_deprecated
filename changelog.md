@@ -1,5 +1,10 @@
 # Auth Toolbox
 
+## 3.2.6
+- additional jwt-token source "cookie"
+- use of constants for jwt-token source (session, cookie or header)
+- resolve errors in unit tests
+
 ## 3.2.5
 - use of constants for jwt-token keys (session, cookie keys)
 - add JWT-token to Cookie if AuthOptions "AddJwtCookie"-setting is true, independent of the AuthOptions "AutomaticTokenRefresh"-setting

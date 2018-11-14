@@ -1,12 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Digipolis.Auth;
-using Digipolis.Auth.Authorization;
+﻿using Digipolis.Auth.Authorization;
 using Digipolis.Auth.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace SampleApp.Controllers.Api
 {

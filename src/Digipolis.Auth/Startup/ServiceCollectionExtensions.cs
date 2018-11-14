@@ -114,7 +114,6 @@ namespace Digipolis.Auth
             var authenticationBuilder = services.AddAuthentication(options =>
             {
                 options.DefaultChallengeScheme = AuthSchemes.CookieAuth;
-                options.DefaultAuthenticateScheme = AuthSchemes.CookieAuth;
             });
 
             if (authOptions.EnableCookieAuth)
@@ -169,7 +168,6 @@ namespace Digipolis.Auth
             services.AddSingleton<IAuthorizationHandler, ConventionBasedAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, CustomBasedAuthorizationHandler>();
             services.AddSingleton<IRequiredPermissionsResolver, RequiredPermissionsResolver>();
-            services.AddScoped<PermissionsClaimsTransformer>();
             services.AddSingleton<IJwtSigningKeyResolver, JwtSigningKeyResolver>();
             services.AddSingleton<ISecurityTokenValidator, JwtSecurityTokenHandler>();
             services.AddSingleton<ITokenRefreshAgent, TokenRefreshAgent>();
