@@ -178,7 +178,12 @@ namespace Digipolis.Auth
             services.AddScoped<IClaimsTransformation, PermissionsClaimsTransformer>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.TryAddSingleton<HttpMessageHandler, HttpClientHandler>();
+            
+            services.AddHttpClient("refreshTokenclient")
+               .AddTypedClient<ITokenRefreshAgent, TokenRefreshAgent>();
+
+            services.AddHttpClient("resolveClient")
+                .AddTypedClient<IJwtSigningKeyResolver, JwtSigningKeyResolver>();
 
             services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, AuthActionsOptionsSetup>());
 
@@ -186,11 +191,18 @@ namespace Digipolis.Auth
 
             if (EnvironmentHelper.IsDevelopmentOrRequiredEnvironment(services, devPermissionsOptions.Environment) && devPermissionsOptions.UseDevPermissions)
             {
-                services.AddSingleton<IPolicyDescisionProvider, DevPolicyDescisionProvider>();
+                services.AddSingleton<IPolicyDecisionProvider, DevPolicyDecisionProvider>();
             }
             else
             {
-                services.AddSingleton<IPolicyDescisionProvider, PolicyDescisionProvider>();
+                services.AddHttpClient("pdpclient", (provider, client) =>
+                {
+                    var apiConfig = provider.GetService<IOptions<AuthOptions>>().Value;
+                    var uri = apiConfig.PdpUrl.EndsWith("/") ? apiConfig.PdpUrl : $"{apiConfig.PdpUrl}/";
+                    client.BaseAddress = new Uri(uri);
+                    client.DefaultRequestHeaders.Add(HeaderKeys.Apikey, apiConfig.PdpApiKey);
+                })
+                .AddTypedClient<IPolicyDecisionProvider, PolicyDecisionProvider>();
             }
 
             services.TryAddScoped<IPermissionApplicationNameProvider, DefaultPermissionApplicationNameProvider>();

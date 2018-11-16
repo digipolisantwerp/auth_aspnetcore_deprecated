@@ -32,14 +32,14 @@ namespace Digipolis.Auth.UnitTests.Startup
         }
 
         [Fact]
-        public void PolicyDescisionProviderIsRegisteredAsSingleton()
+        public void PolicyDecisionProviderIsRegisteredAsSingleton()
         {
             var services = new ServiceCollection();
 
             Act(services);
 
-            var registrations = services.Where(sd => sd.ServiceType == typeof(IPolicyDescisionProvider) &&
-                                                     sd.ImplementationType == typeof(PolicyDescisionProvider))
+            var registrations = services.Where(sd => sd.ServiceType == typeof(IPolicyDecisionProvider) &&
+                                                     sd.ImplementationType == typeof(PolicyDecisionProvider))
                                         .ToArray();
 
             Assert.Equal(1, registrations.Count());

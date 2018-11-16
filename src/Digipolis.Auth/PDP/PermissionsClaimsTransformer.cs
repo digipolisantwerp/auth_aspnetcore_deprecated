@@ -9,9 +9,9 @@ namespace Digipolis.Auth.PDP
     public class PermissionsClaimsTransformer : IClaimsTransformation
     {
         private readonly IPermissionApplicationNameProvider _permissionApplicationNameProvider;
-        private readonly IPolicyDescisionProvider _pdpProvider;
+        private readonly IPolicyDecisionProvider _pdpProvider;
 
-        public PermissionsClaimsTransformer(IPermissionApplicationNameProvider permissionApplicationNameProvider, IPolicyDescisionProvider pdpProvider)
+        public PermissionsClaimsTransformer(IPermissionApplicationNameProvider permissionApplicationNameProvider, IPolicyDecisionProvider pdpProvider)
         {
             if(permissionApplicationNameProvider == null) throw new ArgumentNullException(nameof(permissionApplicationNameProvider), $"{nameof(permissionApplicationNameProvider)} cannot be null");
             if (pdpProvider == null) throw new ArgumentNullException(nameof(pdpProvider), $"{nameof(pdpProvider)} cannot be null");

@@ -1,17 +1,9 @@
-﻿using Digipolis.Auth.Authorization;
-using Digipolis.Auth.Jwt;
-using Digipolis.Auth.Options;
+﻿using Digipolis.Auth.Options;
 using Digipolis.Auth.PDP;
-using Digipolis.Auth.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net.Http;
 using Xunit;
 
 namespace Digipolis.Auth.UnitTests.Startup
@@ -21,14 +13,14 @@ namespace Digipolis.Auth.UnitTests.Startup
         public Action<ServiceCollection> Act { get; set; }
 
         [Fact]
-        public void DevPolicyDescisionProviderIsRegisteredAsSingleton()
+        public void DevPolicyDecisionProviderIsRegisteredAsSingleton()
         {
             var services = new ServiceCollection();
 
             Act(services);
 
-            var registrations = services.Where(sd => sd.ServiceType == typeof(IPolicyDescisionProvider) &&
-                                                     sd.ImplementationType == typeof(DevPolicyDescisionProvider))
+            var registrations = services.Where(sd => sd.ServiceType == typeof(IPolicyDecisionProvider) &&
+                                                     sd.ImplementationType == typeof(DevPolicyDecisionProvider))
                                         .ToArray();
 
             Assert.Equal(1, registrations.Count());
@@ -59,15 +51,15 @@ namespace Digipolis.Auth.UnitTests.Startup
         }
 
         [Fact]
-        public void DevPolicyDescisionProviderIsRegistred()
+        public void DevPolicyDecisionProviderIsRegistred()
         {
             var services = new ServiceCollection();
 
             Act(services);
 
-            var pdpProvider = services.BuildServiceProvider().GetService<IPolicyDescisionProvider>();
+            var pdpProvider = services.BuildServiceProvider().GetService<IPolicyDecisionProvider>();
 
-            Assert.IsType(typeof(DevPolicyDescisionProvider), pdpProvider);
+            Assert.IsType(typeof(DevPolicyDecisionProvider), pdpProvider);
         }
     }
 }

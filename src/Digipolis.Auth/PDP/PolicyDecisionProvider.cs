@@ -9,31 +9,27 @@ using System.Threading.Tasks;
 
 namespace Digipolis.Auth.PDP
 {
-    public class PolicyDescisionProvider : IPolicyDescisionProvider
+    public class PolicyDecisionProvider : IPolicyDecisionProvider
     {
         private readonly IMemoryCache _cache;
         private readonly AuthOptions _options;
         private readonly MemoryCacheEntryOptions _cacheOptions;
         private readonly HttpClient _client;
-        private readonly bool cachingEnabled;
-        private readonly ILogger<PolicyDescisionProvider> _logger;
+        private readonly ILogger<PolicyDecisionProvider> _logger;
 
-        public PolicyDescisionProvider(IMemoryCache cache, IOptions<AuthOptions> options, HttpMessageHandler handler, ILogger<PolicyDescisionProvider> logger)
+        public PolicyDecisionProvider(HttpClient pdpClient, IMemoryCache cache, IOptions<AuthOptions> options, ILogger<PolicyDecisionProvider> logger)
         {
             if (cache == null) throw new ArgumentNullException(nameof(cache), $"{nameof(cache)} cannot be null");
             if (options == null || options.Value == null) throw new ArgumentNullException(nameof(options), $"{nameof(options)} cannot be null");
-            if (handler == null) throw new ArgumentNullException(nameof(handler), $"{nameof(handler)} cannot be null");
             if (logger == null) throw new ArgumentNullException(nameof(logger), $"{nameof(logger)} cannot be null");
 
             _cache = cache;
-            _options = options.Value;
-            _client = new HttpClient(handler);
-            _client.DefaultRequestHeaders.Add(HeaderKeys.Apikey, _options.PdpApiKey);
+            _options = options?.Value ?? throw new ArgumentNullException(nameof(options), $"{nameof(options)} cannot be null");
+            _client = pdpClient;
             _logger = logger;
 
             if (_options.PdpCacheDuration > 0)
             {
-                cachingEnabled = true;
                 _cacheOptions = new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = new TimeSpan(0, _options.PdpCacheDuration, 0) };
             }
         }
@@ -42,7 +38,7 @@ namespace Digipolis.Auth.PDP
         {
             PdpResponse pdpResponse = null;
 
-            if (cachingEnabled)
+            if (_options.PdpCacheDuration > 0)
             {
                 pdpResponse = _cache.Get<PdpResponse>(BuildCacheKey(user));
 
@@ -50,17 +46,18 @@ namespace Digipolis.Auth.PDP
                     return pdpResponse;
             }
 
-            var response = await _client.GetAsync($"{_options.PdpUrl}/applications/{application}/users/{user.Replace("@","%40")}/permissions");
-            if (response.IsSuccessStatusCode)
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"applications/{application}/users/{user.Replace("@", "%40")}/permissions"))
             {
-                pdpResponse = await response.Content.ReadAsAsync<PdpResponse>();
-            }
-            else
-            {
-                _logger.LogCritical($"Impossible to retreive permissions from {_options.PdpUrl} for {application} / {user}. Response status code: {response.StatusCode}");
+                using (var response = await _client.SendAsync(request))
+                {
+                    if (response.IsSuccessStatusCode)
+                        pdpResponse = await response.Content.ReadAsAsync<PdpResponse>();
+                    else
+                        _logger.LogCritical($"Impossible to retrieve permissions from {_options.PdpUrl} for {application} / {user}. Response status code: {response.StatusCode}");
+                }
             }
 
-            if (cachingEnabled && (pdpResponse?.permissions.Any()).GetValueOrDefault())
+            if (_options.PdpCacheDuration > 0 && (pdpResponse?.permissions.Any()).GetValueOrDefault())
                 _cache.Set(BuildCacheKey(user), pdpResponse, _cacheOptions);
 
             return pdpResponse;
