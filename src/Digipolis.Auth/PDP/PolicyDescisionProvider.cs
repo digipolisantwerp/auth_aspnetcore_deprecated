@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using Digipolis.Auth.Options;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Digipolis.Auth.Options;
-using System.Linq;
 
 namespace Digipolis.Auth.PDP
 {
