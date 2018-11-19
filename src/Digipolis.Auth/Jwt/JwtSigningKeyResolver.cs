@@ -23,17 +23,12 @@ namespace Digipolis.Auth.Jwt
         private const string CACHE_KEY = "JwtSigningKey";
         private readonly ILogger<JwtSigningKeyResolver> _logger;
 
-        public JwtSigningKeyResolver(IMemoryCache cache, IOptions<AuthOptions> options, HttpMessageHandler handler, ILogger<JwtSigningKeyResolver> logger)
+        public JwtSigningKeyResolver(HttpClient httpClient, IMemoryCache cache, IOptions<AuthOptions> options, ILogger<JwtSigningKeyResolver> logger)
         {
-            if (cache == null) throw new ArgumentNullException(nameof(cache), $"{nameof(cache)} cannot be null");
-            if (options == null || options.Value == null) throw new ArgumentNullException(nameof(options), $"{nameof(options)} cannot be null");
-            if (handler == null) throw new ArgumentNullException(nameof(handler), $"{nameof(handler)} cannot be null");
-            if (logger == null) throw new ArgumentNullException(nameof(logger), $"{nameof(logger)} cannot be null");
-
-            _cache = cache;
-            _options = options.Value;
-            _client = new HttpClient(handler, true);
-            _logger = logger;
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache), $"{nameof(cache)} cannot be null");
+            _options = options?.Value ?? throw new ArgumentNullException(nameof(options), $"{nameof(options)} cannot be null");
+            _client = httpClient ?? throw new ArgumentNullException(nameof(httpClient), $"{nameof(httpClient)} cannot be null");
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger), $"{nameof(logger)} cannot be null");
 
             if (_options.JwtSigningKeyCacheDuration > 0)
             {

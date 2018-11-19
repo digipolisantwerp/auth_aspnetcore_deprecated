@@ -108,7 +108,7 @@ namespace Digipolis.Auth.UnitTests.Jwt
             await tokenRefreshHandler.HandleRefreshAsync(jwt);
 
             tokenRefreshAgentMock.Verify(a => a.RefreshTokenAsync(jwt), Times.Never);
-            Assert.Equal(1, logger.LoggedMessages.Count);
+            Assert.Single(logger.LoggedMessages);
             Assert.Contains("Invalid jwt refresh request. token:", logger.LoggedMessages.First());
         }
     }

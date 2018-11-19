@@ -18,7 +18,7 @@ namespace Digipolis.Auth.UnitTests.PDP
         private string _application = "APP";
         private string _userId = "user123";
         private string _pdpUrl = "http://test.com";
-        private string requestedresource = "requestedResource";
+        private readonly string requestedresource = "requestedResource";
         private string _apiKey = "apiKeyValue";
         private AuthOptions _options;
         private TestLogger<PolicyDecisionProvider> _logger = TestLogger<PolicyDecisionProvider>.CreateLogger();
@@ -31,44 +31,38 @@ namespace Digipolis.Auth.UnitTests.PDP
         [Fact]
         public void ThrowsExceptionIfCacheIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new PolicyDecisionProvider(null,
+            Assert.Throws<ArgumentNullException>(() => new PolicyDecisionProvider(Mock.Of<HttpClient>(), null,
                 Options.Create(new AuthOptions()),
-                Mock.Of<HttpClientHandler>(),
                 _logger));
         }
 
         [Fact]
         public void ThrowsExceptionIfOptionsWrapperIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new PolicyDecisionProvider(Mock.Of<IMemoryCache>(), null,
-                Mock.Of<HttpClientHandler>(),
-                _logger));
+            Assert.Throws<ArgumentNullException>(() => new PolicyDecisionProvider(Mock.Of<HttpClient>(), Mock.Of<IMemoryCache>(), null, _logger));
         }
 
         [Fact]
         public void ThrowsExceptionIfOptionsAreNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new PolicyDecisionProvider(Mock.Of<IMemoryCache>(),
+            Assert.Throws<ArgumentNullException>(() => new PolicyDecisionProvider(Mock.Of<HttpClient>(), Mock.Of<IMemoryCache>(),
                 Options.Create<AuthOptions>(null),
-                Mock.Of<HttpClientHandler>(),
                 _logger));
         }
 
         [Fact]
-        public void ThrowsExceptionIfHandlerIsNull()
+        public void ThrowsExceptionIfHttpClientIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new PolicyDecisionProvider(Mock.Of<IMemoryCache>(),
+            Assert.Throws<ArgumentNullException>(() => new PolicyDecisionProvider(null, Mock.Of<IMemoryCache>(),
                 Options.Create(new AuthOptions()),
-               null,
                 _logger));
         }
 
         [Fact]
         public void ThrowsExceptionIfLoggerIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new PolicyDecisionProvider(Mock.Of<IMemoryCache>(),
+            Assert.Throws<ArgumentNullException>(() => new PolicyDecisionProvider(Mock.Of<HttpClient>(), Mock.Of<IMemoryCache>(),
                 Options.Create(new AuthOptions()),
-                Mock.Of<HttpClientHandler>(),
                 null));
         }
 
@@ -84,8 +78,11 @@ namespace Digipolis.Auth.UnitTests.PDP
                 permissions = new List<String>(new string[] { requestedresource })
             };
 
-            var mockHandler =new MockMessageHandler<PdpResponse>(HttpStatusCode.OK, pdpResponse);
-            var provider = new PolicyDecisionProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
+            var mockHandler = new MockMessageHandler<PdpResponse>(HttpStatusCode.OK, pdpResponse);
+            var client = new HttpClient(mockHandler);
+            var uri = _options.PdpUrl.EndsWith("/") ? _options.PdpUrl : $"{_options.PdpUrl}/";
+            client.BaseAddress = new Uri(uri);
+            var provider = new PolicyDecisionProvider(client, mockedCache.Object, Options.Create(_options), _logger);
             var result = await provider.GetPermissionsAsync(_userId, _application);
 
             Assert.Equal(pdpResponse.applicationId, result.applicationId);
@@ -106,26 +103,25 @@ namespace Digipolis.Auth.UnitTests.PDP
             };
 
             var mockHandler = new MockMessageHandler<PdpResponse>(HttpStatusCode.OK, pdpResponse);
-            var provider = new PolicyDecisionProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
+            var httpClient = new HttpClient(mockHandler);
+            httpClient.DefaultRequestHeaders.TryAddWithoutValidation(HeaderKeys.Apikey, _options.PdpApiKey);
+            var uri = _options.PdpUrl.EndsWith("/") ? _options.PdpUrl : $"{_options.PdpUrl}/";
+            httpClient.BaseAddress = new Uri(uri);
+            var provider = new PolicyDecisionProvider(httpClient, mockedCache.Object, Options.Create(_options), _logger);
             var result = await provider.GetPermissionsAsync(_userId, _application);
 
-            Assert.Equal(_apiKey, mockHandler.Headers.GetValues(HeaderKeys.Apikey).FirstOrDefault());
+            Assert.Equal(_apiKey, httpClient.DefaultRequestHeaders.GetValues(HeaderKeys.Apikey).FirstOrDefault());
         }
 
         [Fact]
         public async Task ReturnsNullIfUserUnknown()
         {
             var mockedCache = CreateEmptyMockedCache();
-
-            var pdpResponse = new PdpResponse
-            {
-                applicationId = _application,
-                userId = _userId,
-                permissions = new List<String>(new string[] { requestedresource })
-            };
-
             var mockHandler = new MockMessageHandler<PdpResponse>(HttpStatusCode.NotFound, null);
-            var provider = new PolicyDecisionProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
+            var client = new HttpClient(mockHandler);
+            var uri = _options.PdpUrl.EndsWith("/") ? _options.PdpUrl : $"{_options.PdpUrl}/";
+            client.BaseAddress = new Uri(uri);
+            var provider = new PolicyDecisionProvider(client, mockedCache.Object, Options.Create(_options), _logger);
             var result = await provider.GetPermissionsAsync("otherUser", _application);
 
             Assert.Null(result);
@@ -144,8 +140,7 @@ namespace Digipolis.Auth.UnitTests.PDP
             };
 
             var mockedCache = CreateMockedCache(BuildCacheKey(_userId), pdpResponse);
-            var mockHandler = new MockMessageHandler<PdpResponse>(HttpStatusCode.NotFound, null);
-            var provider = new PolicyDecisionProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
+            var provider = new PolicyDecisionProvider(Mock.Of<HttpClient>(), mockedCache.Object, Options.Create(_options), _logger);
 
             var result = await provider.GetPermissionsAsync(_userId, _application);
 
@@ -167,9 +162,11 @@ namespace Digipolis.Auth.UnitTests.PDP
                 userId = _userId,
                 permissions = new List<String>(new string[] { requestedresource })
             };
-
             var mockHandler = new MockMessageHandler<PdpResponse>(HttpStatusCode.OK, pdpResponse);
-            var provider = new PolicyDecisionProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
+            var client = new HttpClient(mockHandler);
+            var uri = _options.PdpUrl.EndsWith("/") ? _options.PdpUrl : $"{_options.PdpUrl}/";
+            client.BaseAddress = new Uri(uri);
+            var provider = new PolicyDecisionProvider(client, mockedCache.Object, Options.Create(_options), _logger);
 
             var result = await provider.GetPermissionsAsync(_userId, _application);
 
@@ -195,7 +192,10 @@ namespace Digipolis.Auth.UnitTests.PDP
             };
 
             var mockHandler = new MockMessageHandler<PdpResponse>(HttpStatusCode.OK, pdpResponse);
-            var provider = new PolicyDecisionProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
+            var client = new HttpClient(mockHandler);
+            var uri = _options.PdpUrl.EndsWith("/") ? _options.PdpUrl : $"{_options.PdpUrl}/";
+            client.BaseAddress = new Uri(uri);
+            var provider = new PolicyDecisionProvider(client, mockedCache.Object, Options.Create(_options), _logger);
 
             var result = await provider.GetPermissionsAsync(_userId, _application);
 
@@ -218,9 +218,11 @@ namespace Digipolis.Auth.UnitTests.PDP
                 userId = _userId,
                 permissions = new List<String>(new string[] { requestedresource })
             };
-
             var mockHandler = new MockMessageHandler<PdpResponse>(HttpStatusCode.OK, pdpResponse);
-            var provider = new PolicyDecisionProvider(mockedCache.Object, Options.Create(_options), mockHandler, _logger);
+            var client = new HttpClient(mockHandler);
+            var uri = _options.PdpUrl.EndsWith("/") ? _options.PdpUrl : $"{_options.PdpUrl}/";
+            client.BaseAddress = new Uri(uri);
+            var provider = new PolicyDecisionProvider(client, mockedCache.Object, Options.Create(_options), _logger);
 
             var result = await provider.GetPermissionsAsync(_userId, _application);
 

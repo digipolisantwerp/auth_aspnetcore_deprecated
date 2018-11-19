@@ -26,8 +26,9 @@ namespace Digipolis.Auth.PDP
                 return principal;
 
             var userId = principal.Identity.Name;
+            var applicationName = _permissionApplicationNameProvider.ApplicationName(principal);
 
-            var pdpResponse = await _pdpProvider.GetPermissionsAsync(userId, _permissionApplicationNameProvider.ApplicationName(principal));
+            var pdpResponse = await _pdpProvider.GetPermissionsAsync(userId, applicationName);
 
             pdpResponse?.permissions?.ToList().ForEach(permission =>
             {

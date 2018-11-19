@@ -165,17 +165,15 @@ namespace Digipolis.Auth
         {
             services.AddMemoryCache();
 
-            services.AddSingleton<IAuthorizationHandler, ConventionBasedAuthorizationHandler>();
-            services.AddSingleton<IAuthorizationHandler, CustomBasedAuthorizationHandler>();
-            services.AddSingleton<IRequiredPermissionsResolver, RequiredPermissionsResolver>();
-            services.AddSingleton<IJwtSigningKeyResolver, JwtSigningKeyResolver>();
-            services.AddSingleton<ISecurityTokenValidator, JwtSecurityTokenHandler>();
-            services.AddSingleton<ITokenRefreshAgent, TokenRefreshAgent>();
-            services.AddSingleton<ITokenRefreshHandler, TokenRefreshHandler>();
-            services.AddSingleton<ITokenValidationParametersFactory, TokenValidationParametersFactory>();
-            services.AddSingleton<JwtBearerOptionsFactory>();
-            services.AddSingleton<CookieOptionsFactory>();
-            services.AddScoped<IClaimsTransformation, PermissionsClaimsTransformer>();
+            services.TryAddSingleton<IAuthorizationHandler, ConventionBasedAuthorizationHandler>();
+            services.TryAddSingleton<IAuthorizationHandler, CustomBasedAuthorizationHandler>();
+            services.TryAddSingleton<IRequiredPermissionsResolver, RequiredPermissionsResolver>();
+            services.TryAddSingleton<ISecurityTokenValidator, JwtSecurityTokenHandler>();
+            services.TryAddSingleton<ITokenRefreshHandler, TokenRefreshHandler>();
+            services.TryAddSingleton<ITokenValidationParametersFactory, TokenValidationParametersFactory>();
+            services.TryAddSingleton<JwtBearerOptionsFactory>();
+            services.TryAddSingleton<CookieOptionsFactory>();
+            services.TryAddScoped<IClaimsTransformation, PermissionsClaimsTransformer>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             
@@ -187,11 +185,11 @@ namespace Digipolis.Auth
 
             services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, AuthActionsOptionsSetup>());
 
-            services.AddScoped<IAuthService, AuthService>();
+            services.TryAddScoped<IAuthService, AuthService>();
 
             if (EnvironmentHelper.IsDevelopmentOrRequiredEnvironment(services, devPermissionsOptions.Environment) && devPermissionsOptions.UseDevPermissions)
             {
-                services.AddSingleton<IPolicyDecisionProvider, DevPolicyDecisionProvider>();
+                services.TryAddSingleton<IPolicyDecisionProvider, DevPolicyDecisionProvider>();
             }
             else
             {

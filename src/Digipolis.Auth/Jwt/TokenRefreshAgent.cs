@@ -17,10 +17,10 @@ namespace Digipolis.Auth.Jwt
 
         private readonly ILogger<TokenRefreshAgent> _logger;
 
-        public TokenRefreshAgent(IOptions<AuthOptions> options, ILogger<TokenRefreshAgent> logger, HttpMessageHandler handler)
+        public TokenRefreshAgent(HttpClient httpClient, IOptions<AuthOptions> options, ILogger<TokenRefreshAgent> logger)
         {
             _authOptions = options.Value;
-            _client = new HttpClient(handler);
+            _client = httpClient ?? throw new ArgumentNullException(nameof(httpClient), $"{nameof(httpClient)} cannot be null");
             //_client.DefaultRequestHeaders.Accept.Add("Content-Type", "application/json");
             _logger = logger;
 

@@ -12,8 +12,6 @@ namespace Digipolis.Auth.UnitTests.PDP
         private string _application = "APP";
         private string _userId1 = "user1";
         private string[] _permissions = { "requestedResource1" };
-        private string _userId2 = "user2";
-        private string[] _permissions2 = { "requestedResource2" };
         private DevPermissionsOptions _options;
 
         public DevDevPolicyDecisionProviderTests()
