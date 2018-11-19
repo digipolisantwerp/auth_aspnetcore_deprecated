@@ -12,7 +12,6 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net.Http;
 using Xunit;
 
 namespace Digipolis.Auth.UnitTests.Startup

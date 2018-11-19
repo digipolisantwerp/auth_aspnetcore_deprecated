@@ -2,9 +2,6 @@
 using Microsoft.Extensions.Options;
 using Moq;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Digipolis.Auth.Mvc;
 using Digipolis.Auth.Options;
 using Xunit;

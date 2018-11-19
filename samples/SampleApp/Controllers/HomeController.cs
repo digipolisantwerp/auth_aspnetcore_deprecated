@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using System.Net;
-using Digipolis.Auth.Authorization;
-using Digipolis.Auth;
 using Digipolis.Auth.Jwt;
 using Digipolis.Auth.Services;
 

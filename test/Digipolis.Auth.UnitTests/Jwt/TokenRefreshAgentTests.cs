@@ -1,6 +1,5 @@
 ﻿using Digipolis.Auth.Jwt;
 using Digipolis.Auth.Options;
-using Moq;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
