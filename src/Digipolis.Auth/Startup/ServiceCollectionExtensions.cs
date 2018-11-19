@@ -19,7 +19,6 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http;
 
 namespace Digipolis.Auth
 {
@@ -165,32 +164,42 @@ namespace Digipolis.Auth
         {
             services.AddMemoryCache();
 
-            services.AddSingleton<IAuthorizationHandler, ConventionBasedAuthorizationHandler>();
-            services.AddSingleton<IAuthorizationHandler, CustomBasedAuthorizationHandler>();
-            services.AddSingleton<IRequiredPermissionsResolver, RequiredPermissionsResolver>();
-            services.AddSingleton<IJwtSigningKeyResolver, JwtSigningKeyResolver>();
-            services.AddSingleton<ISecurityTokenValidator, JwtSecurityTokenHandler>();
-            services.AddSingleton<ITokenRefreshAgent, TokenRefreshAgent>();
-            services.AddSingleton<ITokenRefreshHandler, TokenRefreshHandler>();
-            services.AddSingleton<ITokenValidationParametersFactory, TokenValidationParametersFactory>();
-            services.AddSingleton<JwtBearerOptionsFactory>();
-            services.AddSingleton<CookieOptionsFactory>();
-            services.AddScoped<IClaimsTransformation, PermissionsClaimsTransformer>();
+            services.TryAddSingleton<IAuthorizationHandler, ConventionBasedAuthorizationHandler>();
+            services.TryAddSingleton<IAuthorizationHandler, CustomBasedAuthorizationHandler>();
+            services.TryAddSingleton<IRequiredPermissionsResolver, RequiredPermissionsResolver>();
+            services.TryAddSingleton<ISecurityTokenValidator, JwtSecurityTokenHandler>();
+            services.TryAddSingleton<ITokenRefreshHandler, TokenRefreshHandler>();
+            services.TryAddSingleton<ITokenValidationParametersFactory, TokenValidationParametersFactory>();
+            services.TryAddSingleton<JwtBearerOptionsFactory>();
+            services.TryAddSingleton<CookieOptionsFactory>();
+            services.TryAddScoped<IClaimsTransformation, PermissionsClaimsTransformer>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.TryAddSingleton<HttpMessageHandler, HttpClientHandler>();
+            
+            services.AddHttpClient("refreshTokenclient")
+               .AddTypedClient<ITokenRefreshAgent, TokenRefreshAgent>();
+
+            services.AddHttpClient("resolveClient")
+                .AddTypedClient<IJwtSigningKeyResolver, JwtSigningKeyResolver>();
 
             services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, AuthActionsOptionsSetup>());
 
-            services.AddScoped<IAuthService, AuthService>();
+            services.TryAddScoped<IAuthService, AuthService>();
 
             if (EnvironmentHelper.IsDevelopmentOrRequiredEnvironment(services, devPermissionsOptions.Environment) && devPermissionsOptions.UseDevPermissions)
             {
-                services.AddSingleton<IPolicyDescisionProvider, DevPolicyDescisionProvider>();
+                services.TryAddSingleton<IPolicyDecisionProvider, DevPolicyDecisionProvider>();
             }
             else
             {
-                services.AddSingleton<IPolicyDescisionProvider, PolicyDescisionProvider>();
+                services.AddHttpClient("pdpclient", (provider, client) =>
+                {
+                    var apiConfig = provider.GetService<IOptions<AuthOptions>>().Value;
+                    var uri = apiConfig.PdpUrl.EndsWith("/") ? apiConfig.PdpUrl : $"{apiConfig.PdpUrl}/";
+                    client.BaseAddress = new Uri(uri);
+                    client.DefaultRequestHeaders.Add(HeaderKeys.Apikey, apiConfig.PdpApiKey);
+                })
+                .AddTypedClient<IPolicyDecisionProvider, PolicyDecisionProvider>();
             }
 
             services.TryAddScoped<IPermissionApplicationNameProvider, DefaultPermissionApplicationNameProvider>();

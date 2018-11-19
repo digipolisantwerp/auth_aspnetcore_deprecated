@@ -1,17 +1,15 @@
 ﻿using Digipolis.Auth.Options;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Digipolis.Auth.PDP
 {
-    public class DevPolicyDescisionProvider : IPolicyDescisionProvider
+    public class DevPolicyDecisionProvider : IPolicyDecisionProvider
     {
         private readonly DevPermissionsOptions _permissions;
 
-        public DevPolicyDescisionProvider(IOptions<DevPermissionsOptions> options)
+        public DevPolicyDecisionProvider(IOptions<DevPermissionsOptions> options)
         {
             if (options == null || options.Value == null) throw new ArgumentNullException(nameof(options), $"{nameof(options)} cannot be null");
 

@@ -2,7 +2,7 @@
 
 namespace Digipolis.Auth.PDP
 {
-    public interface IPolicyDescisionProvider
+    public interface IPolicyDecisionProvider
     {
         Task<PdpResponse> GetPermissionsAsync(string user, string application);
     }

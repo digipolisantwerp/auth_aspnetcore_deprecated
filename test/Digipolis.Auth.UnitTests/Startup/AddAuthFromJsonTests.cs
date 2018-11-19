@@ -18,7 +18,7 @@ namespace Digipolis.Auth.UnitTests.Startup
             {
                 var mockHostingEnvironment = new Mock<IHostingEnvironment>();
                 mockHostingEnvironment.Setup(h => h.EnvironmentName)
-                    .Returns("");
+                    .Returns("IntegrationTesting");
 
                 services.AddSingleton(typeof(ILogger<>), typeof(TestLogger<>));
                 services.AddSingleton<IHostingEnvironment>(mockHostingEnvironment.Object);

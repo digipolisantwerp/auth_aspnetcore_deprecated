@@ -1,17 +1,9 @@
-﻿using Digipolis.Auth.Authorization;
-using Digipolis.Auth.Jwt;
-using Digipolis.Auth.Options;
+﻿using Digipolis.Auth.Options;
 using Digipolis.Auth.PDP;
-using Digipolis.Auth.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net.Http;
 using Xunit;
 
 namespace Digipolis.Auth.UnitTests.Startup
@@ -21,17 +13,17 @@ namespace Digipolis.Auth.UnitTests.Startup
         public Action<ServiceCollection> Act { get; set; }
 
         [Fact]
-        public void DevPolicyDescisionProviderIsRegisteredAsSingleton()
+        public void DevPolicyDecisionProviderIsRegisteredAsSingleton()
         {
             var services = new ServiceCollection();
 
             Act(services);
 
-            var registrations = services.Where(sd => sd.ServiceType == typeof(IPolicyDescisionProvider) &&
-                                                     sd.ImplementationType == typeof(DevPolicyDescisionProvider))
+            var registrations = services.Where(sd => sd.ServiceType == typeof(IPolicyDecisionProvider) &&
+                                                     sd.ImplementationType == typeof(DevPolicyDecisionProvider))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
+            Assert.Single(registrations);
             Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
         }
 
@@ -45,7 +37,7 @@ namespace Digipolis.Auth.UnitTests.Startup
             var registrations = services.Where(sd => sd.ServiceType == typeof(IConfigureOptions<DevPermissionsOptions>))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
+            Assert.Single(registrations);
             Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
 
             var configOptions = registrations[0].ImplementationInstance as IConfigureOptions<DevPermissionsOptions>;
@@ -54,20 +46,20 @@ namespace Digipolis.Auth.UnitTests.Startup
             var devPermissionsOptions = new DevPermissionsOptions();
             configOptions.Configure(devPermissionsOptions);
 
-            Assert.Equal(true, devPermissionsOptions.UseDevPermissions);
+            Assert.True(devPermissionsOptions.UseDevPermissions);
             Assert.NotEmpty(devPermissionsOptions.Permissions);
         }
 
         [Fact]
-        public void DevPolicyDescisionProviderIsRegistred()
+        public void DevPolicyDecisionProviderIsRegistred()
         {
             var services = new ServiceCollection();
 
             Act(services);
 
-            var pdpProvider = services.BuildServiceProvider().GetService<IPolicyDescisionProvider>();
+            var pdpProvider = services.BuildServiceProvider().GetService<IPolicyDecisionProvider>();
 
-            Assert.IsType(typeof(DevPolicyDescisionProvider), pdpProvider);
+            Assert.IsType<DevPolicyDecisionProvider>(pdpProvider);
         }
     }
 }

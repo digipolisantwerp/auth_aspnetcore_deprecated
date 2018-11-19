@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Digipolis.Auth.Options;
+using Digipolis.Auth.PDP;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
-using Digipolis.Auth.Options;
-using Digipolis.Auth.PDP;
 
 namespace Digipolis.Auth.Controllers
 {
@@ -11,17 +11,17 @@ namespace Digipolis.Auth.Controllers
     public class PermissionsController : Controller
     {
         private readonly AuthOptions _authOptions;
-        private readonly IPolicyDescisionProvider _policyDescisionProvider;
+        private readonly IPolicyDecisionProvider _policyDecisionProvider;
 
-        public PermissionsController(IPolicyDescisionProvider policyDescisionProvider, IOptions<AuthOptions> options)
+        public PermissionsController(IPolicyDecisionProvider policyDecisionProvider, IOptions<AuthOptions> options)
         {
-            _policyDescisionProvider = policyDescisionProvider;
+            _policyDecisionProvider = policyDecisionProvider;
             _authOptions = options.Value;
         }
 
         public async Task<IActionResult> GetPermissions()
         {
-            var permissions = await _policyDescisionProvider.GetPermissionsAsync(User.Identity.Name, _authOptions.ApplicationName);
+            var permissions = await _policyDecisionProvider.GetPermissionsAsync(User.Identity.Name, _authOptions.ApplicationName);
 
             return Ok(permissions.permissions);
         }

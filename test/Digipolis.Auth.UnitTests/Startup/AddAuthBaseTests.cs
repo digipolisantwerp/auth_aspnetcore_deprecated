@@ -3,6 +3,7 @@ using Digipolis.Auth.Jwt;
 using Digipolis.Auth.Options;
 using Digipolis.Auth.PDP;
 using Digipolis.Auth.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +12,6 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net.Http;
 using Xunit;
 
 namespace Digipolis.Auth.UnitTests.Startup
@@ -32,18 +32,17 @@ namespace Digipolis.Auth.UnitTests.Startup
         }
 
         [Fact]
-        public void PolicyDescisionProviderIsRegisteredAsSingleton()
+        public void PolicyDecisionProviderIsRegisteredAsTransient()
         {
             var services = new ServiceCollection();
 
             Act(services);
 
-            var registrations = services.Where(sd => sd.ServiceType == typeof(IPolicyDescisionProvider) &&
-                                                     sd.ImplementationType == typeof(PolicyDescisionProvider))
+            var registrations = services.Where(sd => sd.ServiceType == typeof(IPolicyDecisionProvider))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
-            Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
+            Assert.Single(registrations);
+            Assert.Equal(ServiceLifetime.Transient, registrations[0].Lifetime);
         }
 
 
@@ -58,7 +57,7 @@ namespace Digipolis.Auth.UnitTests.Startup
                                                      sd.ImplementationType == typeof(ConventionBasedAuthorizationHandler))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
+            Assert.Single(registrations);
             Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
         }
 
@@ -74,23 +73,7 @@ namespace Digipolis.Auth.UnitTests.Startup
                                                      sd.ImplementationType == typeof(RequiredPermissionsResolver))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
-            Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
-        }
-
-
-        [Fact]
-        public void HttpClientHandlerIsRegisteredAsSingleton()
-        {
-            var services = new ServiceCollection();
-
-            Act(services);
-
-            var registrations = services.Where(sd => sd.ServiceType == typeof(HttpMessageHandler) &&
-                                                     sd.ImplementationType == typeof(HttpClientHandler))
-                                        .ToArray();
-
-            Assert.Equal(1, registrations.Count());
+            Assert.Single(registrations);
             Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
         }
 
@@ -101,11 +84,11 @@ namespace Digipolis.Auth.UnitTests.Startup
 
             Act(services);
 
-            var registrations = services.Where(sd => sd.ServiceType == typeof(PermissionsClaimsTransformer) &&
+            var registrations = services.Where(sd => sd.ServiceType == typeof(IClaimsTransformation) &&
                                                      sd.ImplementationType == typeof(PermissionsClaimsTransformer))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
+            Assert.Single(registrations);
             Assert.Equal(ServiceLifetime.Scoped, registrations[0].Lifetime);
         }
 
@@ -119,7 +102,7 @@ namespace Digipolis.Auth.UnitTests.Startup
             var registrations = services.Where(sd => sd.ServiceType == typeof(IConfigureOptions<AuthOptions>))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
+            Assert.Single(registrations);
             Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
 
             var configOptions = registrations[0].ImplementationInstance as IConfigureOptions<AuthOptions>;
@@ -185,18 +168,17 @@ namespace Digipolis.Auth.UnitTests.Startup
         }
 
         [Fact]
-        public void JwtSigningKeyResolverIsRegisteredAsSingleton()
+        public void JwtSigningKeyResolverIsRegisteredAsTransient()
         {
             var services = new ServiceCollection();
 
             Act(services);
 
-            var registrations = services.Where(sd => sd.ServiceType == typeof(IJwtSigningKeyResolver) &&
-                                                     sd.ImplementationType == typeof(JwtSigningKeyResolver))
+            var registrations = services.Where(sd => sd.ServiceType == typeof(IJwtSigningKeyResolver))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
-            Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
+            Assert.Single(registrations);
+            Assert.Equal(ServiceLifetime.Transient, registrations[0].Lifetime);
         }
 
         [Fact]
@@ -210,23 +192,22 @@ namespace Digipolis.Auth.UnitTests.Startup
                                                      sd.ImplementationType == typeof(JwtSecurityTokenHandler))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
+            Assert.Single(registrations);
             Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
         }
 
         [Fact]
-        public void TokenRefreshAgentIsRegisteredAsSingleton()
+        public void TokenRefreshAgentIsRegisteredAsTransient()
         {
             var services = new ServiceCollection();
 
             Act(services);
 
-            var registrations = services.Where(sd => sd.ServiceType == typeof(ITokenRefreshAgent) &&
-                                                     sd.ImplementationType == typeof(TokenRefreshAgent))
+            var registrations = services.Where(sd => sd.ServiceType == typeof(ITokenRefreshAgent))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
-            Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
+            Assert.Single(registrations);
+            Assert.Equal(ServiceLifetime.Transient, registrations[0].Lifetime);
         }
 
         [Fact]
@@ -240,7 +221,7 @@ namespace Digipolis.Auth.UnitTests.Startup
                                                      sd.ImplementationType == typeof(TokenRefreshHandler))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
+            Assert.Single(registrations);
             Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
         }
 
@@ -255,7 +236,7 @@ namespace Digipolis.Auth.UnitTests.Startup
                                                      sd.ImplementationType == typeof(TokenValidationParametersFactory))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
+            Assert.Single(registrations);
             Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
         }
 
@@ -270,7 +251,7 @@ namespace Digipolis.Auth.UnitTests.Startup
                                                      sd.ImplementationType == typeof(AuthService))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
+            Assert.Single(registrations);
             Assert.Equal(ServiceLifetime.Scoped, registrations[0].Lifetime);
         }
 
@@ -285,7 +266,7 @@ namespace Digipolis.Auth.UnitTests.Startup
                                                      sd.ImplementationType == typeof(HttpContextAccessor))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
+            Assert.Single(registrations);
             Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
         }
 
@@ -300,7 +281,7 @@ namespace Digipolis.Auth.UnitTests.Startup
                                                      sd.ImplementationType == typeof(JwtBearerOptionsFactory))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
+            Assert.Single(registrations);
             Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
         }
 
@@ -315,7 +296,7 @@ namespace Digipolis.Auth.UnitTests.Startup
                                                      sd.ImplementationType == typeof(CookieOptionsFactory))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
+            Assert.Single(registrations);
             Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
         }
     }

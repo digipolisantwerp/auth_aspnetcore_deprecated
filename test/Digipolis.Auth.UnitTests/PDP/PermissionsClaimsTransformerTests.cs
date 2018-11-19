@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
+﻿using Digipolis.Auth.Options;
+using Digipolis.Auth.PDP;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Digipolis.Auth.Options;
-using Digipolis.Auth.PDP;
 using Xunit;
 
 namespace Digipolis.Auth.UnitTests.PDP
@@ -29,11 +27,11 @@ namespace Digipolis.Auth.UnitTests.PDP
         [Fact]
         public void ThrowsExceptionIfpermissionApplicationNameProviderIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new PermissionsClaimsTransformer(null, Mock.Of<IPolicyDescisionProvider>()));
+            Assert.Throws<ArgumentNullException>(() => new PermissionsClaimsTransformer(null, Mock.Of<IPolicyDecisionProvider>()));
         }
 
         [Fact]
-        public void ThrowsExceptionIfPolicyDescisionProviderIsNull()
+        public void ThrowsExceptionIfPolicyDecisionProviderIsNull()
         {
             Assert.Throws<ArgumentNullException>(() => new PermissionsClaimsTransformer(Mock.Of<IPermissionApplicationNameProvider>(),
                null));
@@ -49,9 +47,9 @@ namespace Digipolis.Auth.UnitTests.PDP
                 permissions = new List<String>(new string[] { "permission1", "permission2" })
             };
 
-            var pdpProvider = CreateMockPolicyDescisionProvider(pdpResponse, ApplicationName);
+            var pdpProvider = CreateMockPolicyDecisionProvider(pdpResponse, _authOptions.ApplicationName);
 
-            var transformer = new PermissionsClaimsTransformer(CreateMockPermissionApplicationNameProvider(ApplicationName), pdpProvider);
+            var transformer = new PermissionsClaimsTransformer(CreateMockPermissionApplicationNameProvider(_authOptions.ApplicationName), pdpProvider);
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(Claims.Name, _userId), new Claim(ClaimTypes.Name, _userId) }, "Bearer"));
 
             var result = await transformer.TransformAsync(user);
@@ -70,7 +68,7 @@ namespace Digipolis.Auth.UnitTests.PDP
                 userId = _userId,
             };
 
-            var pdpProvider = CreateMockPolicyDescisionProvider(pdpResponse, ApplicationName);
+            var pdpProvider = CreateMockPolicyDecisionProvider(pdpResponse, ApplicationName);
 
             var transformer = new PermissionsClaimsTransformer(CreateMockPermissionApplicationNameProvider(ApplicationName), pdpProvider);
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(Claims.Name, _userId), new Claim(ClaimTypes.Name, _userId) }, "Bearer"));
@@ -81,9 +79,9 @@ namespace Digipolis.Auth.UnitTests.PDP
             Assert.False(result.HasClaim(c => c.Type == Claims.PermissionsType));
         }
 
-        private IPolicyDescisionProvider CreateMockPolicyDescisionProvider(PdpResponse pdpResponse, string applicationName)
+        private IPolicyDecisionProvider CreateMockPolicyDecisionProvider(PdpResponse pdpResponse, string applicationName)
         {
-            var mockPdpProvider = new Mock<IPolicyDescisionProvider>();
+            var mockPdpProvider = new Mock<IPolicyDecisionProvider>();
             mockPdpProvider.Setup(p => p.GetPermissionsAsync(_userId, applicationName))
                 .ReturnsAsync(pdpResponse);
 
@@ -93,8 +91,8 @@ namespace Digipolis.Auth.UnitTests.PDP
         private IPermissionApplicationNameProvider CreateMockPermissionApplicationNameProvider(string applicationName)
         {
             var mock = new Mock<IPermissionApplicationNameProvider>();
-            mock.Setup(m => m.ApplicationName(new System.Security.Claims.ClaimsPrincipal())).Returns(applicationName);
-            
+            mock.Setup(m => m.ApplicationName(It.IsAny<System.Security.Claims.ClaimsPrincipal>())).Returns(applicationName);
+
             return mock.Object;
         }
     }

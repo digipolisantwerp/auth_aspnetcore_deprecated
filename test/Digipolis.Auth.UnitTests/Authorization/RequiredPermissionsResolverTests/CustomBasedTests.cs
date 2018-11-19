@@ -54,7 +54,7 @@ namespace Digipolis.Auth.UnitTests.Authorization.ResolverTests
 
             var requiredPermissions = resolver.ResolveFromAttributeProperties(context);
 
-            Assert.Equal(1, requiredPermissions.Count());
+            Assert.Single(requiredPermissions);
             Assert.Contains("controllerpermission", requiredPermissions);
         }
 

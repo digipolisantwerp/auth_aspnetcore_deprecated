@@ -1,5 +1,9 @@
 # Auth Toolbox
 
+## 4.0.0
+- upgrade to netcoreapp2.1
+- httpclientfactory implementation
+
 ## 3.2.6
 - additional jwt-token source "cookie"
 - use of constants for jwt-token source (session, cookie or header)

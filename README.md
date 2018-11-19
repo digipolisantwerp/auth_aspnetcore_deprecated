@@ -19,6 +19,7 @@ All the permissions received from the PDP (Policy Decision Point) will be added 
 
 The toolbox also provides Authorization attributes that can be used in the controllers to enforce authorization.
 
+The **SampleApp-project** in the code provides examples for how to implement the toolbox in your project.
 
 ## Table of Contents
 

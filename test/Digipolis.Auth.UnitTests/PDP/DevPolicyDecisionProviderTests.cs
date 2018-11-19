@@ -7,16 +7,14 @@ using Xunit;
 
 namespace Digipolis.Auth.UnitTests.PDP
 {
-    public class DevDevPolicyDescisionProviderTests
+    public class DevDevPolicyDecisionProviderTests
     {
         private string _application = "APP";
         private string _userId1 = "user1";
         private string[] _permissions = { "requestedResource1" };
-        private string _userId2 = "user2";
-        private string[] _permissions2 = { "requestedResource2" };
         private DevPermissionsOptions _options;
 
-        public DevDevPolicyDescisionProviderTests()
+        public DevDevPolicyDecisionProviderTests()
         {
             _options = new DevPermissionsOptions
             {
@@ -32,14 +30,14 @@ namespace Digipolis.Auth.UnitTests.PDP
        [Fact]
         public void ThrowsExceptionIfOptionsWrapperIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new DevPolicyDescisionProvider(null));
+            Assert.Throws<ArgumentNullException>(() => new DevPolicyDecisionProvider(null));
         }
 
         
         [Fact]
         public async Task GetResponse()
         {
-            var provider = new DevPolicyDescisionProvider(Options.Create(_options));
+            var provider = new DevPolicyDecisionProvider(Options.Create(_options));
 
             var result = await provider.GetPermissionsAsync(_userId1, _application);
 
