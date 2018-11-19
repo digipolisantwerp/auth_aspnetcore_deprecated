@@ -3,9 +3,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System;
 
 namespace Digipolis.Auth.Jwt
 {
@@ -40,16 +40,17 @@ namespace Digipolis.Auth.Jwt
                 RelayState = redirectUrl
             };
 
-            var response = await _client.PostAsync<TokenLogoutRequest>(_authOptions.ApiAuthTokenLogoutUrl, tokenLogoutRequest, _jsonSettings);
-
-            if (!response.IsSuccessStatusCode)
+            using (var response = await _client.PostAsync<TokenLogoutRequest>(_authOptions.ApiAuthTokenLogoutUrl, tokenLogoutRequest, _jsonSettings))
             {
-                _logger.LogInformation($"Token logout failed. Response status code: {response.StatusCode}");
-                return null;
-            }
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogInformation($"Token logout failed. Response status code: {response.StatusCode}");
+                    return null;
+                }
 
-            var tokenLogoutResponse = await response.Content.ReadAsStringAsync();
-            return tokenLogoutResponse;
+                var tokenLogoutResponse = await response.Content.ReadAsStringAsync();
+                return tokenLogoutResponse;
+            }
         }
 
         public async Task<string> RefreshTokenAsync(string token)
@@ -59,16 +60,18 @@ namespace Digipolis.Auth.Jwt
                 OriginalJWT = token
             };
 
-            var response = await _client.PostAsync<TokenRefreshRequest>(_authOptions.ApiAuthTokenRefreshUrl, tokenRefreshRequest, _jsonSettings);
-
-            if (!response.IsSuccessStatusCode)
+            using (var response = await _client.PostAsync<TokenRefreshRequest>(_authOptions.ApiAuthTokenRefreshUrl, tokenRefreshRequest, _jsonSettings))
             {
-                _logger.LogInformation($"Token refresh failed. Response status code: {response.StatusCode}");
-                return null;  
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogInformation($"Token refresh failed. Response status code: {response.StatusCode}");
+                    return null;
+                }
+                var tokenRefreshResponse = await response.Content.ReadAsAsync<TokenRefreshResponse>();
+                return tokenRefreshResponse.Jwt;
             }
 
-            var tokenRefreshResponse = await response.Content.ReadAsAsync<TokenRefreshResponse>();
-            return tokenRefreshResponse.Jwt;
         }
     }
 }

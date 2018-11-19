@@ -10,6 +10,7 @@ using System.IO;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Digipolis.Auth.Jwt
 {
@@ -45,12 +46,12 @@ namespace Digipolis.Auth.Jwt
             if (x5uUrl == null)
                 throw new NullReferenceException("No x5u header present in jwt token or invalid jwt token.");
 
-            var key = GetSecurityKeyFromX5u(x5uUrl, true);
+            var key = GetSecurityKeyFromX5u(x5uUrl, true).Result;
             
             return new List<SecurityKey> { key };
         }
 
-        private SecurityKey GetSecurityKeyFromX5u(string x5uUrl, bool allowCached)
+        private async Task<SecurityKey> GetSecurityKeyFromX5u(string x5uUrl, bool allowCached)
         {
             SecurityKey key = null;
 
@@ -62,13 +63,15 @@ namespace Digipolis.Auth.Jwt
                     return key;
             }
 
-            var response = _client.GetAsync(x5uUrl).Result;
+            string x5u;
+            using (var response = await _client.GetAsync(x5uUrl))
+            {
+                if (!response.IsSuccessStatusCode)
+                    throw new HttpRequestException($"Retreiving x5u certificate failed. Request url: {x5uUrl}, Response status code: {response.StatusCode}");
 
-            if (!response.IsSuccessStatusCode)
-                throw new HttpRequestException($"Retreiving x5u certificate failed. Request url: {x5uUrl}, Response status code: {response.StatusCode}");
-
-            var x5uResponse = response.Content.ReadAsAsync<X5uResponse>().Result;
-            var x5u = x5uResponse.x5u;
+                var x5uResponse = await response.Content.ReadAsAsync<X5uResponse>();
+                x5u = x5uResponse.x5u;
+            }
 
             var cert = Encoding.UTF8.GetString(Convert.FromBase64String(x5u));
 

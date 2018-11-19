@@ -17,9 +17,11 @@ namespace Digipolis.Auth
         {
             var json = JsonConvert.SerializeObject(content, jsonSettings);
 
-            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
+            using (var stringContent = new StringContent(json, Encoding.UTF8, "application/json"))
+            {
+                return await httpClient.PostAsync(requestUri, stringContent);
+            }
 
-            return await httpClient.PostAsync(requestUri, stringContent); 
         }
     }
 }
