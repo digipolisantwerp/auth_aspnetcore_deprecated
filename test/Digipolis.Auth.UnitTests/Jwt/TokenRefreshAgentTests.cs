@@ -2,6 +2,7 @@
 using Digipolis.Auth.Options;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -27,7 +28,8 @@ namespace Digipolis.Auth.UnitTests.Jwt
             };
 
             var mockHandler = new MockMessageHandler<TokenRefreshResponse>(HttpStatusCode.OK, response);
-            var agent = new TokenRefreshAgent(Options.Create(_options), _logger, mockHandler);
+            var httpClient = new HttpClient(mockHandler);
+            var agent = new TokenRefreshAgent(httpClient, Options.Create(_options), _logger);
             var result = await agent.RefreshTokenAsync("token");
 
             Assert.Equal(response.Jwt, result);
@@ -37,11 +39,12 @@ namespace Digipolis.Auth.UnitTests.Jwt
         public async Task ReturnsNullIfNoSuccess()
         {
             var mockHandler = new MockMessageHandler<TokenRefreshResponse>(HttpStatusCode.InternalServerError, null);
-            var agent = new TokenRefreshAgent(Options.Create(_options), _logger, mockHandler);
+            var httpClient = new HttpClient(mockHandler);
+            var agent = new TokenRefreshAgent(httpClient, Options.Create(_options), _logger);
             var result = await agent.RefreshTokenAsync("token");
 
             Assert.Null(result);
-            Assert.Equal(1, _logger.LoggedMessages.Count);
+            Assert.Single(_logger.LoggedMessages);
             Assert.Contains($"Token refresh failed. Response status code: {HttpStatusCode.InternalServerError}", _logger.LoggedMessages.First());
         }
     }

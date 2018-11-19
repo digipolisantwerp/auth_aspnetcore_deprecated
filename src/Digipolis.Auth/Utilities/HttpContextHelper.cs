@@ -31,7 +31,7 @@ namespace Digipolis.Auth.Utilities
 
                 return ticket;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }

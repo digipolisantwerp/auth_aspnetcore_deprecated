@@ -23,7 +23,7 @@ namespace Digipolis.Auth.UnitTests.Startup
                                                      sd.ImplementationType == typeof(DevPolicyDecisionProvider))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
+            Assert.Single(registrations);
             Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
         }
 
@@ -37,7 +37,7 @@ namespace Digipolis.Auth.UnitTests.Startup
             var registrations = services.Where(sd => sd.ServiceType == typeof(IConfigureOptions<DevPermissionsOptions>))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
+            Assert.Single(registrations);
             Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
 
             var configOptions = registrations[0].ImplementationInstance as IConfigureOptions<DevPermissionsOptions>;
@@ -46,7 +46,7 @@ namespace Digipolis.Auth.UnitTests.Startup
             var devPermissionsOptions = new DevPermissionsOptions();
             configOptions.Configure(devPermissionsOptions);
 
-            Assert.Equal(true, devPermissionsOptions.UseDevPermissions);
+            Assert.True(devPermissionsOptions.UseDevPermissions);
             Assert.NotEmpty(devPermissionsOptions.Permissions);
         }
 
@@ -59,7 +59,7 @@ namespace Digipolis.Auth.UnitTests.Startup
 
             var pdpProvider = services.BuildServiceProvider().GetService<IPolicyDecisionProvider>();
 
-            Assert.IsType(typeof(DevPolicyDecisionProvider), pdpProvider);
+            Assert.IsType<DevPolicyDecisionProvider>(pdpProvider);
         }
     }
 }

@@ -10,6 +10,7 @@ using System.IO;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Digipolis.Auth.Jwt
 {
@@ -23,17 +24,12 @@ namespace Digipolis.Auth.Jwt
         private const string CACHE_KEY = "JwtSigningKey";
         private readonly ILogger<JwtSigningKeyResolver> _logger;
 
-        public JwtSigningKeyResolver(IMemoryCache cache, IOptions<AuthOptions> options, HttpMessageHandler handler, ILogger<JwtSigningKeyResolver> logger)
+        public JwtSigningKeyResolver(HttpClient httpClient, IMemoryCache cache, IOptions<AuthOptions> options, ILogger<JwtSigningKeyResolver> logger)
         {
-            if (cache == null) throw new ArgumentNullException(nameof(cache), $"{nameof(cache)} cannot be null");
-            if (options == null || options.Value == null) throw new ArgumentNullException(nameof(options), $"{nameof(options)} cannot be null");
-            if (handler == null) throw new ArgumentNullException(nameof(handler), $"{nameof(handler)} cannot be null");
-            if (logger == null) throw new ArgumentNullException(nameof(logger), $"{nameof(logger)} cannot be null");
-
-            _cache = cache;
-            _options = options.Value;
-            _client = new HttpClient(handler, true);
-            _logger = logger;
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache), $"{nameof(cache)} cannot be null");
+            _options = options?.Value ?? throw new ArgumentNullException(nameof(options), $"{nameof(options)} cannot be null");
+            _client = httpClient ?? throw new ArgumentNullException(nameof(httpClient), $"{nameof(httpClient)} cannot be null");
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger), $"{nameof(logger)} cannot be null");
 
             if (_options.JwtSigningKeyCacheDuration > 0)
             {
@@ -50,12 +46,12 @@ namespace Digipolis.Auth.Jwt
             if (x5uUrl == null)
                 throw new NullReferenceException("No x5u header present in jwt token or invalid jwt token.");
 
-            var key = GetSecurityKeyFromX5u(x5uUrl, true);
+            var key = GetSecurityKeyFromX5u(x5uUrl, true).Result;
             
             return new List<SecurityKey> { key };
         }
 
-        private SecurityKey GetSecurityKeyFromX5u(string x5uUrl, bool allowCached)
+        private async Task<SecurityKey> GetSecurityKeyFromX5u(string x5uUrl, bool allowCached)
         {
             SecurityKey key = null;
 
@@ -67,13 +63,15 @@ namespace Digipolis.Auth.Jwt
                     return key;
             }
 
-            var response = _client.GetAsync(x5uUrl).Result;
+            string x5u;
+            using (var response = await _client.GetAsync(x5uUrl))
+            {
+                if (!response.IsSuccessStatusCode)
+                    throw new HttpRequestException($"Retreiving x5u certificate failed. Request url: {x5uUrl}, Response status code: {response.StatusCode}");
 
-            if (!response.IsSuccessStatusCode)
-                throw new HttpRequestException($"Retreiving x5u certificate failed. Request url: {x5uUrl}, Response status code: {response.StatusCode}");
-
-            var x5uResponse = response.Content.ReadAsAsync<X5uResponse>().Result;
-            var x5u = x5uResponse.x5u;
+                var x5uResponse = await response.Content.ReadAsAsync<X5uResponse>();
+                x5u = x5uResponse.x5u;
+            }
 
             var cert = Encoding.UTF8.GetString(Convert.FromBase64String(x5u));
 

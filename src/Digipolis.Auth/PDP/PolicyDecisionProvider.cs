@@ -17,16 +17,12 @@ namespace Digipolis.Auth.PDP
         private readonly HttpClient _client;
         private readonly ILogger<PolicyDecisionProvider> _logger;
 
-        public PolicyDecisionProvider(HttpClient pdpClient, IMemoryCache cache, IOptions<AuthOptions> options, ILogger<PolicyDecisionProvider> logger)
+        public PolicyDecisionProvider(HttpClient httpClient, IMemoryCache cache, IOptions<AuthOptions> options, ILogger<PolicyDecisionProvider> logger)
         {
-            if (cache == null) throw new ArgumentNullException(nameof(cache), $"{nameof(cache)} cannot be null");
-            if (options == null || options.Value == null) throw new ArgumentNullException(nameof(options), $"{nameof(options)} cannot be null");
-            if (logger == null) throw new ArgumentNullException(nameof(logger), $"{nameof(logger)} cannot be null");
-
-            _cache = cache;
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache), $"{nameof(cache)} cannot be null");
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options), $"{nameof(options)} cannot be null");
-            _client = pdpClient;
-            _logger = logger;
+            _client = httpClient ?? throw new ArgumentNullException(nameof(httpClient), $"{nameof(httpClient)} cannot be null");
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger), $"{nameof(logger)} cannot be null");
 
             if (_options.PdpCacheDuration > 0)
             {
