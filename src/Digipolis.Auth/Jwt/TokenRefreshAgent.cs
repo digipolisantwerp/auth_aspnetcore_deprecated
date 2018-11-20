@@ -40,7 +40,7 @@ namespace Digipolis.Auth.Jwt
                 RelayState = redirectUrl
             };
 
-            using (var response = await _client.PostAsync<TokenLogoutRequest>(_authOptions.ApiAuthTokenLogoutUrl, tokenLogoutRequest, _jsonSettings))
+            using (var response = await _client.PostAsync(_authOptions.ApiAuthTokenLogoutUrl, tokenLogoutRequest, _jsonSettings))
             {
                 if (!response.IsSuccessStatusCode)
                 {
@@ -60,7 +60,7 @@ namespace Digipolis.Auth.Jwt
                 OriginalJWT = token
             };
 
-            using (var response = await _client.PostAsync<TokenRefreshRequest>(_authOptions.ApiAuthTokenRefreshUrl, tokenRefreshRequest, _jsonSettings))
+            using (var response = await _client.PostAsync(_authOptions.ApiAuthTokenRefreshUrl, tokenRefreshRequest, _jsonSettings))
             {
 
                 if (!response.IsSuccessStatusCode)
