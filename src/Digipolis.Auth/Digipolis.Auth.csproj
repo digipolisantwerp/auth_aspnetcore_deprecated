@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <VersionPrefix>4.0.1</VersionPrefix>
+    <VersionPrefix>4.1.0</VersionPrefix>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyName>Digipolis.Auth</AssemblyName>
     <PackageId>Digipolis.Auth</PackageId>

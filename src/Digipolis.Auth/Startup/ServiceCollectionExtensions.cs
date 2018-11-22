@@ -164,15 +164,15 @@ namespace Digipolis.Auth
         {
             services.AddMemoryCache();
 
-            services.TryAddSingleton<IAuthorizationHandler, ConventionBasedAuthorizationHandler>();
-            services.TryAddSingleton<IAuthorizationHandler, CustomBasedAuthorizationHandler>();
+            services.AddSingleton<IAuthorizationHandler, ConventionBasedAuthorizationHandler>();
+            services.AddSingleton<IAuthorizationHandler, CustomBasedAuthorizationHandler>();
             services.TryAddSingleton<IRequiredPermissionsResolver, RequiredPermissionsResolver>();
-            services.TryAddSingleton<ISecurityTokenValidator, JwtSecurityTokenHandler>();
+            services.AddSingleton<ISecurityTokenValidator, JwtSecurityTokenHandler>();
             services.TryAddSingleton<ITokenRefreshHandler, TokenRefreshHandler>();
             services.TryAddSingleton<ITokenValidationParametersFactory, TokenValidationParametersFactory>();
             services.TryAddSingleton<JwtBearerOptionsFactory>();
             services.TryAddSingleton<CookieOptionsFactory>();
-            services.TryAddScoped<IClaimsTransformation, PermissionsClaimsTransformer>();
+            services.AddScoped<IClaimsTransformation, PermissionsClaimsTransformer>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             
