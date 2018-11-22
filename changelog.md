@@ -1,5 +1,8 @@
 # Auth Toolbox
 
+## 4.1.0
+- bugfix custom permissions not found
+
 ## 4.0.1
 - memorystream disposal
 
