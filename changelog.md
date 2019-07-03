@@ -1,5 +1,9 @@
 # Auth Toolbox
 
+## 4.2.0
+- upgrade packages
+- change to netstandard 2.0
+
 ## 4.1.0
 - bugfix custom permissions not found
 
