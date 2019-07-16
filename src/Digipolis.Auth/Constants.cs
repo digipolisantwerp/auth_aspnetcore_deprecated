@@ -4,6 +4,7 @@
     {
         public const string ConventionBased = "ConventionBased";
         public const string CustomBased = "CustomBased";
+        public const string SignalRBased = "SignalRBased";
     }
 
     public static class AuthSchemes

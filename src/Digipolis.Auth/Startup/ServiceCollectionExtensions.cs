@@ -1,4 +1,7 @@
-﻿using Digipolis.ApplicationServices;
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using Digipolis.ApplicationServices;
 using Digipolis.Auth.Authorization;
 using Digipolis.Auth.Jwt;
 using Digipolis.Auth.Mvc;
@@ -16,9 +19,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace Digipolis.Auth
 {
@@ -149,6 +149,12 @@ namespace Digipolis.Auth
                                       policy.AuthenticationSchemes.Add(AuthSchemes.JwtHeaderAuth);
                                       policy.Requirements.Add(new CustomBasedRequirement());
                                   });
+                options.AddPolicy(Policies.SignalRBased,
+                                  policy =>
+                                  {
+                                      policy.AuthenticationSchemes.Add(AuthSchemes.JwtHeaderAuth);
+                                      policy.Requirements.Add(new SignalRBasedRequirements());
+                                  });
 
                 if (policies != null)
                 {
@@ -166,6 +172,7 @@ namespace Digipolis.Auth
 
             services.AddSingleton<IAuthorizationHandler, ConventionBasedAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, CustomBasedAuthorizationHandler>();
+            services.AddSingleton<IAuthorizationHandler, SignalRBasedAuthorizationHandler>();
             services.TryAddSingleton<IRequiredPermissionsResolver, RequiredPermissionsResolver>();
             services.AddSingleton<ISecurityTokenValidator, JwtSecurityTokenHandler>();
             services.TryAddSingleton<ITokenRefreshHandler, TokenRefreshHandler>();
@@ -175,7 +182,7 @@ namespace Digipolis.Auth
             services.AddScoped<IClaimsTransformation, PermissionsClaimsTransformer>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            
+
             services.AddHttpClient("refreshTokenclient")
                .AddTypedClient<ITokenRefreshAgent, TokenRefreshAgent>();
 
