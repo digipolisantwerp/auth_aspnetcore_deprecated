@@ -1,5 +1,11 @@
 # Auth Toolbox
 
+## 4.2.2
+- fixed memory leaks & minor refactoring
+
+## 4.2.1
+- bugfix to prevent endless amount of authz calls when user doesn't have any permissions 
+
 ## 4.2.0
 - upgrade packages
 - change to netstandard 2.0

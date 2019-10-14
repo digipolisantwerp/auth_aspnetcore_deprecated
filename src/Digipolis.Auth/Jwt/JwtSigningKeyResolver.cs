@@ -22,14 +22,12 @@ namespace Digipolis.Auth.Jwt
         private readonly HttpClient _client;
         private readonly bool _cachingEnabled;
         private const string CACHE_KEY = "JwtSigningKey";
-        private readonly ILogger<JwtSigningKeyResolver> _logger;
 
-        public JwtSigningKeyResolver(HttpClient httpClient, IMemoryCache cache, IOptions<AuthOptions> options, ILogger<JwtSigningKeyResolver> logger)
+        public JwtSigningKeyResolver(HttpClient httpClient, IMemoryCache cache, IOptions<AuthOptions> options)
         {
             _cache = cache ?? throw new ArgumentNullException(nameof(cache), $"{nameof(cache)} cannot be null");
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options), $"{nameof(options)} cannot be null");
             _client = httpClient ?? throw new ArgumentNullException(nameof(httpClient), $"{nameof(httpClient)} cannot be null");
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger), $"{nameof(logger)} cannot be null");
 
             if (_options.JwtSigningKeyCacheDuration > 0)
             {
@@ -53,8 +51,7 @@ namespace Digipolis.Auth.Jwt
 
         private async Task<SecurityKey> GetSecurityKeyFromX5u(string x5uUrl, bool allowCached)
         {
-            SecurityKey key = null;
-
+            SecurityKey key;
             if (allowCached && _cachingEnabled)
             {
                 key = _cache.Get(CACHE_KEY) as SecurityKey;
@@ -87,11 +84,11 @@ namespace Digipolis.Auth.Jwt
         {
             cert = cert.Replace("-----BEGIN PUBLIC KEY-----", "").Replace("-----END PUBLIC KEY-----", "");
 
-            var rsa = DecodeX509PublicKey(Convert.FromBase64String(cert));
-
-            var rsaSecurityKey = new RsaSecurityKey(rsa.ExportParameters(false));
-
-            return rsaSecurityKey;
+            using (var rsa = DecodeX509PublicKey(Convert.FromBase64String(cert)))
+            {
+                var rsaSecurityKey = new RsaSecurityKey(rsa.ExportParameters(false));
+                return rsaSecurityKey;
+            }
         }
 
         private static bool CompareBytearrays(byte[] a, byte[] b)

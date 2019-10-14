@@ -15,13 +15,13 @@ namespace Digipolis.Auth.UnitTests.PDP
 {
     public class PolicyDecisionProviderTests
     {
-        private string _application = "APP";
-        private string _userId = "user123";
-        private string _pdpUrl = "http://test.com";
-        private readonly string requestedresource = "requestedResource";
-        private string _apiKey = "apiKeyValue";
-        private AuthOptions _options;
-        private TestLogger<PolicyDecisionProvider> _logger = TestLogger<PolicyDecisionProvider>.CreateLogger();
+        private readonly string _application = "APP";
+        private readonly string _userId = "user123";
+        private readonly string _pdpUrl = "http://test.com";
+        private readonly string _requestedresource = "requestedResource";
+        private readonly string _apiKey = "apiKeyValue";
+        private readonly AuthOptions _options;
+        private readonly TestLogger<PolicyDecisionProvider> _logger = TestLogger<PolicyDecisionProvider>.CreateLogger();
 
         public PolicyDecisionProviderTests()
         {
@@ -75,7 +75,7 @@ namespace Digipolis.Auth.UnitTests.PDP
             {
                 applicationId = _application,
                 userId = _userId,
-                permissions = new List<String>(new string[] { requestedresource })
+                permissions = new List<String>(new string[] { _requestedresource })
             };
 
             var mockHandler = new MockMessageHandler<PdpResponse>(HttpStatusCode.OK, pdpResponse);
@@ -99,7 +99,7 @@ namespace Digipolis.Auth.UnitTests.PDP
             {
                 applicationId = _application,
                 userId = _userId,
-                permissions = new List<String>(new string[] { requestedresource })
+                permissions = new List<String>(new string[] { _requestedresource })
             };
 
             var mockHandler = new MockMessageHandler<PdpResponse>(HttpStatusCode.OK, pdpResponse);
@@ -108,7 +108,7 @@ namespace Digipolis.Auth.UnitTests.PDP
             var uri = _options.PdpUrl.EndsWith("/") ? _options.PdpUrl : $"{_options.PdpUrl}/";
             httpClient.BaseAddress = new Uri(uri);
             var provider = new PolicyDecisionProvider(httpClient, mockedCache.Object, Options.Create(_options), _logger);
-            var result = await provider.GetPermissionsAsync(_userId, _application);
+            _ = await provider.GetPermissionsAsync(_userId, _application);
 
             Assert.Equal(_apiKey, httpClient.DefaultRequestHeaders.GetValues(HeaderKeys.Apikey).FirstOrDefault());
         }
@@ -136,7 +136,7 @@ namespace Digipolis.Auth.UnitTests.PDP
             {
                 applicationId = _application,
                 userId = _userId,
-                permissions = new List<String>(new string[] { requestedresource })
+                permissions = new List<String>(new string[] { _requestedresource })
             };
 
             var mockedCache = CreateMockedCache(BuildCacheKey(_userId), pdpResponse);
@@ -160,7 +160,7 @@ namespace Digipolis.Auth.UnitTests.PDP
             {
                 applicationId = _application,
                 userId = _userId,
-                permissions = new List<String>(new string[] { requestedresource })
+                permissions = new List<String>(new string[] { _requestedresource })
             };
             var mockHandler = new MockMessageHandler<PdpResponse>(HttpStatusCode.OK, pdpResponse);
             var client = new HttpClient(mockHandler);
@@ -176,7 +176,7 @@ namespace Digipolis.Auth.UnitTests.PDP
         }
 
         [Fact]
-        public async Task ShouldNotCacheResponseWithoutPermissions()
+        public async Task ShouldCacheResponseWithoutPermissions()
         {
             _options.PdpCacheDuration = 60;
             var cacheEntry = new TestCacheEntry();
@@ -199,8 +199,9 @@ namespace Digipolis.Auth.UnitTests.PDP
 
             var result = await provider.GetPermissionsAsync(_userId, _application);
 
-            mockedCache.Verify(c => c.CreateEntry(It.IsAny<object>()), Times.Never);
-            Assert.Null(cacheEntry.Value);
+            mockedCache.Verify(c => c.CreateEntry(It.IsAny<object>()), Times.Once);
+            Assert.NotNull(cacheEntry.Value);
+            Assert.Equal(new List<string>(), ((PdpResponse)cacheEntry.Value).permissions);
         }
 
         [Fact]
@@ -216,7 +217,7 @@ namespace Digipolis.Auth.UnitTests.PDP
             {
                 applicationId = _application,
                 userId = _userId,
-                permissions = new List<String>(new string[] { requestedresource })
+                permissions = new List<String>(new string[] { _requestedresource })
             };
             var mockHandler = new MockMessageHandler<PdpResponse>(HttpStatusCode.OK, pdpResponse);
             var client = new HttpClient(mockHandler);
