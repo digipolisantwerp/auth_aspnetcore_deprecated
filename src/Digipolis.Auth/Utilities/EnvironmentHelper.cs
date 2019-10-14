@@ -7,20 +7,29 @@ namespace Digipolis.Auth.Utilities
     {
         public static bool IsRequiredEnvironment(IServiceCollection services, string requiredEnvironment)
         {
-            var hostingEnvironment = services.BuildServiceProvider().GetRequiredService<IHostingEnvironment>();
-            return hostingEnvironment.IsEnvironment(requiredEnvironment);
+            using (var sp = services.BuildServiceProvider())
+            {
+                var hostingEnvironment = sp.GetRequiredService<IHostingEnvironment>();
+                return hostingEnvironment.IsEnvironment(requiredEnvironment);
+            }
         }
 
         public static bool IsDevelopmentOrRequiredEnvironment(IServiceCollection services, string requiredEnvironment)
         {
-            var hostingEnvironment = services.BuildServiceProvider().GetRequiredService<IHostingEnvironment>();
-            return hostingEnvironment.IsDevelopment() || hostingEnvironment.IsEnvironment(requiredEnvironment);
+            using (var sp = services.BuildServiceProvider())
+            {
+                var hostingEnvironment = sp.GetRequiredService<IHostingEnvironment>();
+                return hostingEnvironment.IsDevelopment() || hostingEnvironment.IsEnvironment(requiredEnvironment);
+            }
         }
 
         public static bool IsDevelopmentEnvironment(IServiceCollection services)
         {
-            var hostingEnvironment = services.BuildServiceProvider().GetRequiredService<IHostingEnvironment>();
-            return hostingEnvironment.IsDevelopment();
+            using (var sp = services.BuildServiceProvider())
+            {
+                var hostingEnvironment = sp.GetRequiredService<IHostingEnvironment>();
+                return hostingEnvironment.IsDevelopment();
+            }
         }
     }
 }

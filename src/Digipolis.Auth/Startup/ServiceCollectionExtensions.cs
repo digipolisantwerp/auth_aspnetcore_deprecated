@@ -91,11 +91,16 @@ namespace Digipolis.Auth
 
         private static IServiceCollection AddAuth(this IServiceCollection services, Dictionary<string, AuthorizationPolicy> policies)
         {
-            var serviceProvider = services.BuildServiceProvider();
+            AuthOptions authOptions;
+            DevPermissionsOptions devPermissionsOptions;
+            IApplicationContext applicationContext;
 
-            var authOptions = BuildOptions<AuthOptions>(serviceProvider, services);
-            var devPermissionsOptions = BuildOptions<DevPermissionsOptions>(serviceProvider, services);
-            var applicationContext = GetApplicationContext(serviceProvider);
+            using (var serviceProvider = services.BuildServiceProvider())
+            {
+                authOptions = BuildOptions<AuthOptions>(serviceProvider, services);
+                devPermissionsOptions = BuildOptions<DevPermissionsOptions>(serviceProvider, services);
+                applicationContext = GetApplicationContext(serviceProvider);
+            }
 
             if (authOptions.EnableCookieAuth && authOptions.UseDotnetKeystore)
             {
@@ -117,7 +122,12 @@ namespace Digipolis.Auth
 
             if (authOptions.EnableCookieAuth)
             {
-                var cookieOptionsFactory = services.BuildServiceProvider().GetService<CookieOptionsFactory>();
+                CookieOptionsFactory cookieOptionsFactory;
+                using (var sp = services.BuildServiceProvider())
+                {
+                    cookieOptionsFactory = sp.GetService<CookieOptionsFactory>();
+                }
+
                 authenticationBuilder.AddCookie(AuthSchemes.CookieAuth, options =>
                     {
                         cookieOptionsFactory.Setup(options);
@@ -126,7 +136,11 @@ namespace Digipolis.Auth
 
             if (authOptions.EnableJwtHeaderAuth)
             {
-                var jwtBearerOptionsFactory = services.BuildServiceProvider().GetService<JwtBearerOptionsFactory>();
+                JwtBearerOptionsFactory jwtBearerOptionsFactory;
+                using (var sp = services.BuildServiceProvider())
+                {
+                    jwtBearerOptionsFactory = sp.GetService<JwtBearerOptionsFactory>();
+                }
                 authenticationBuilder.AddJwtBearer(AuthSchemes.JwtHeaderAuth, options =>
                 {
                     jwtBearerOptionsFactory.Setup(options);
@@ -175,7 +189,7 @@ namespace Digipolis.Auth
             services.AddScoped<IClaimsTransformation, PermissionsClaimsTransformer>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            
+
             services.AddHttpClient("refreshTokenclient")
                .AddTypedClient<ITokenRefreshAgent, TokenRefreshAgent>();
 
