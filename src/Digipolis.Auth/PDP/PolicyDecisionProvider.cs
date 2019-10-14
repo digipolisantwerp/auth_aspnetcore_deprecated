@@ -3,6 +3,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -53,8 +54,15 @@ namespace Digipolis.Auth.PDP
                 }
             }
 
-            if (_options.PdpCacheDuration > 0 && (pdpResponse?.permissions.Any()).GetValueOrDefault())
+            if (_options.PdpCacheDuration > 0 && pdpResponse != null)
+            {
+                if (!pdpResponse.permissions?.Any() ?? true)
+                {
+                    //no permissions found => cache empty list
+                    pdpResponse.permissions = new List<string>();
+                }
                 _cache.Set(BuildCacheKey(user), pdpResponse, _cacheOptions);
+            }
 
             return pdpResponse;
         }
@@ -63,4 +71,4 @@ namespace Digipolis.Auth.PDP
     }
 }
 
-    
+

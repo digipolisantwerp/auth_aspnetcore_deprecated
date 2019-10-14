@@ -176,7 +176,7 @@ namespace Digipolis.Auth.UnitTests.PDP
         }
 
         [Fact]
-        public async Task ShouldNotCacheResponseWithoutPermissions()
+        public async Task ShouldCacheResponseWithoutPermissions()
         {
             _options.PdpCacheDuration = 60;
             var cacheEntry = new TestCacheEntry();
@@ -199,8 +199,9 @@ namespace Digipolis.Auth.UnitTests.PDP
 
             var result = await provider.GetPermissionsAsync(_userId, _application);
 
-            mockedCache.Verify(c => c.CreateEntry(It.IsAny<object>()), Times.Never);
-            Assert.Null(cacheEntry.Value);
+            mockedCache.Verify(c => c.CreateEntry(It.IsAny<object>()), Times.Once);
+            Assert.NotNull(cacheEntry.Value);
+            Assert.Equal(new List<string>(), ((PdpResponse)cacheEntry.Value).permissions);
         }
 
         [Fact]
