@@ -122,11 +122,8 @@ namespace Digipolis.Auth
 
             if (authOptions.EnableCookieAuth)
             {
-                CookieOptionsFactory cookieOptionsFactory;
-                using (var sp = services.BuildServiceProvider())
-                {
-                    cookieOptionsFactory = sp.GetService<CookieOptionsFactory>();
-                }
+                var sp = services.BuildServiceProvider();
+                var cookieOptionsFactory = sp.GetService<CookieOptionsFactory>();
 
                 authenticationBuilder.AddCookie(AuthSchemes.CookieAuth, options =>
                     {
@@ -136,15 +133,13 @@ namespace Digipolis.Auth
 
             if (authOptions.EnableJwtHeaderAuth)
             {
-                JwtBearerOptionsFactory jwtBearerOptionsFactory;
-                using (var sp = services.BuildServiceProvider())
-                {
-                    jwtBearerOptionsFactory = sp.GetService<JwtBearerOptionsFactory>();
-                }
+                var sp = services.BuildServiceProvider();
+                var jwtBearerOptionsFactory = sp.GetService<JwtBearerOptionsFactory>();
                 authenticationBuilder.AddJwtBearer(AuthSchemes.JwtHeaderAuth, options =>
                 {
                     jwtBearerOptionsFactory.Setup(options);
                 });
+
             }
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap = new Dictionary<string, string>();
