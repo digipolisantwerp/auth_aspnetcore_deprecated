@@ -1,5 +1,8 @@
 # Auth Toolbox
 
+## 4.2.4
+- fixed early disposal of memorycache
+
 ## 4.2.3
 - fixed early disposal of key
 
