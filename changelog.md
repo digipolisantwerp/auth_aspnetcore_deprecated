@@ -1,5 +1,8 @@
 # Auth Toolbox
 
+## 4.2.3
+- fixed early disposal of key
+
 ## 4.2.2
 - fixed memory leaks & minor refactoring
 

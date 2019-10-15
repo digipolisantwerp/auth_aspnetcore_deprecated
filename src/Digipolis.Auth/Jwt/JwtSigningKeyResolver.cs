@@ -84,11 +84,12 @@ namespace Digipolis.Auth.Jwt
         {
             cert = cert.Replace("-----BEGIN PUBLIC KEY-----", "").Replace("-----END PUBLIC KEY-----", "");
 
+            RsaSecurityKey rsaSecurityKey;
             using (var rsa = DecodeX509PublicKey(Convert.FromBase64String(cert)))
             {
-                var rsaSecurityKey = new RsaSecurityKey(rsa.ExportParameters(false));
-                return rsaSecurityKey;
+                rsaSecurityKey = new RsaSecurityKey(rsa.ExportParameters(false));
             }
+            return rsaSecurityKey;
         }
 
         private static bool CompareBytearrays(byte[] a, byte[] b)
