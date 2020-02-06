@@ -67,7 +67,7 @@ The **SampleApp-project** in the code provides examples for how to implement the
 
 ## Versions
 
-The latest version of this package targets **.NET Standard 2.0**.
+The latest version of this package targets **.NET Standard 2.1**.
 
 Use version 2.x if you need a version targetting **.NET Standard 1.6**. The source code of this version is available in [branch 2.x](https://github.com/digipolisantwerp/auth_aspnetcore/tree/2.x) for maintenance reasons.
 
@@ -77,7 +77,7 @@ To add the toolbox to a project, you add the package to the csproj project file:
 
 ```xml
   <ItemGroup>
-    <PackageReference Include="Digipolis.Auth" Version="3.0.0" />
+    <PackageReference Include="Digipolis.Auth" Version="5.0.0" />
   </ItemGroup>
 ```
 
@@ -85,7 +85,7 @@ or if your project still works with project.json :
 
 ``` json
 "dependencies": {
-    "Digipolis.Auth":  "3.0.0"
+    "Digipolis.Auth":  "5.0.0"
  }
 ```
 
@@ -95,7 +95,7 @@ In Visual Studio you can also use the NuGet Package Manager to do this.
 
 ## Dependencies
 
-This toolbox targets **netstandard2.0** and can only be used on a platform implementing this standard (for example .NET Core 2.0).
+This toolbox targets **netstandard2.1** and can only be used on a platform implementing this standard (for example .NET Core 3.1).
 For .NET Core 1.x projects, use a version 2.x of this toolbox.
 
 The toolbox has a dependency on the IApplicationContext provided by the **Digipolis.ApplicationServices** toolbox that can be found [on github.](https://github.com/digipolisantwerp/application_aspnetcore)
