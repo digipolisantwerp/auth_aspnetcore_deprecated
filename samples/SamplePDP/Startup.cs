@@ -12,7 +12,7 @@ namespace SamplePDP
         {
         }
 
-        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, ILoggingBuilder loggerFactory)
         {
             loggerFactory.AddConsole();
 

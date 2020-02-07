@@ -144,7 +144,7 @@ namespace Digipolis.Auth
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap = new Dictionary<string, string>();
 
-            services.AddAuthorization(options =>
+            services.AddAuthorizationCore(options =>
             {
                 options.AddPolicy(Policies.ConventionBased,
                                   policy =>

@@ -1,5 +1,9 @@
 # Auth Toolbox
 
+## 5.0.0
+
+- version update to .Net Standard 2.1
+
 ## 4.2.4
 - fixed early disposal of memorycache
 
