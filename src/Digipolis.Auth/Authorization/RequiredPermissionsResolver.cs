@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Filters;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata;
 using static Digipolis.Auth.HttpMethods;
 using static Digipolis.Auth.Operations;
 
@@ -13,32 +16,33 @@ namespace Digipolis.Auth.Authorization
     {
         public IEnumerable<string> ResolveFromAttributeProperties(AuthorizationHandlerContext context)
         {
-            var authContext = context.Resource as Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext;
-            var actionDescriptor = authContext.ActionDescriptor as ControllerActionDescriptor;
-
+            var endpoint = context.Resource as Endpoint;
             var requiredPermissions = new List<string>();
-            var attributes = actionDescriptor.MethodInfo.CustomAttributes
-                                                                .Where(a => a.AttributeType == typeof(AuthorizeWithAttribute)).ToList();
+            var authorizationAttributes = endpoint.Metadata?.ToList() ?? new List<object>();
 
-            attributes.AddRange(actionDescriptor.ControllerTypeInfo.CustomAttributes
-                                                                .Where(a => a.AttributeType == typeof(AuthorizeWithAttribute)).ToList());
-
-            attributes.ForEach(attribute =>
+            for (var i = 0; i < authorizationAttributes.Count; i++)
             {
-                var permissions = attribute.NamedArguments
+                var attribute = authorizationAttributes[i];
+                var attributeData = (CustomAttributeData)attribute;
+                if (attributeData.AttributeType != typeof(AuthorizeWithAttribute))
+                {
+                    continue;
+                }
+
+                var permissions = attributeData.NamedArguments
                     .FirstOrDefault(a => a.MemberName == nameof(AuthorizeWithAttribute.Permissions))
                     .TypedValue.Value as ReadOnlyCollection<CustomAttributeTypedArgument>;
 
                 if (permissions != null)
                     permissions.ToList<CustomAttributeTypedArgument>().ForEach(p => requiredPermissions.Add(p.Value.ToString()));
 
-                var permission = attribute.NamedArguments
+                var permission = attributeData.NamedArguments
                     .FirstOrDefault(a => a.MemberName == nameof(AuthorizeWithAttribute.Permission))
                     .TypedValue.Value?.ToString();
 
                 if (permission != null)
                     requiredPermissions.Add(permission);
-            });
+            }
 
             return requiredPermissions;
         }

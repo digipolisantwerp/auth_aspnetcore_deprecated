@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Security.Claims;
 using Digipolis.Auth.Authorization;
 using Xunit;
+using System.Threading.Tasks;
 
 namespace Digipolis.Auth.UnitTests.Authorization.ResolverTests
 {
@@ -61,7 +62,6 @@ namespace Digipolis.Auth.UnitTests.Authorization.ResolverTests
         private AuthorizationHandlerContext CreateAuthorizationHandlerContext(Type controllerType, string action)
         {
             var actionContext = new ActionContext();
-
             var mockHttpContext = new Mock<HttpContext>();
             mockHttpContext.Setup(c => c.Request)
                 .Returns(Mock.Of<HttpRequest>());
@@ -76,7 +76,11 @@ namespace Digipolis.Auth.UnitTests.Authorization.ResolverTests
             };
             actionContext.ActionDescriptor = actionDescriptor;
 
-            var resource = new Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext(actionContext, new List<IFilterMetadata>());
+            var controllerFilters = actionDescriptor.ControllerTypeInfo.CustomAttributes.ToList() ?? new List<CustomAttributeData>();
+            var methodFilters = actionDescriptor.MethodInfo.CustomAttributes.ToList() ?? new List<CustomAttributeData>();
+            var endpointMetadata = new EndpointMetadataCollection(controllerFilters.Union(methodFilters));
+
+            var resource = new Microsoft.AspNetCore.Http.Endpoint(context => Task.CompletedTask, endpointMetadata, action);
 
             var requirements = new IAuthorizationRequirement[] { new ConventionBasedRequirement() };
 
@@ -86,6 +90,7 @@ namespace Digipolis.Auth.UnitTests.Authorization.ResolverTests
             };
             var user = new ClaimsPrincipal(new ClaimsIdentity(claims, "Bearer"));
             var context = new AuthorizationHandlerContext(requirements, user, resource);
+            
             return context;
         }
     }
